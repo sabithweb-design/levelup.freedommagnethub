@@ -1,0 +1,85 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * CORE PHILOSOPHY
+     * This ruleset implements a public-read, admin-write security model for a Learning Management System (LMS) landing page.
+     * It prioritizes data availability for potential students while strictly protecting content integrity through 
+     * Database-Backed Access Control (DBAC).
+     *
+     * DATA STRUCTURE
+     * - /programs/{programId}: Centralized documents containing all landing page content (images, videos, text).
+     * - /roles_admin/{userId}: A metadata collection where the presence of a document signifies administrative privileges.
+     *
+     * KEY SECURITY DECISIONS
+     * - Public Read Access: All program data is publicly accessible to support dynamic landing page generation without authentication.
+     * - Global Admin Roles: Write operations are restricted to users whose UIDs exist within the 'roles_admin' collection.
+     * - Relational Integrity: On creation and update of programs, we enforce that the document's internal 'id' field matches the 
+     *   Firestore document ID to ensure consistent querying and data linking.
+     * - Structural Segregation: Admin roles are kept in a separate top-level collection to isolate sensitive authorization 
+     *   logic from public content.
+     */
+
+    // --- HELPER FUNCTIONS ---
+
+    /** @description Checks if the request is from an authenticated user. */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /** @description Checks if the authenticated user has an entry in the admin roles collection. */
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    /** @description Combines authentication and admin checks for state-changing operations. */
+    function isExistingAdmin() {
+      return isAdmin() && resource != null;
+    }
+
+    // --- COLLECTIONS ---
+
+    /**
+     * @description Rules for the 'programs' collection which stores LMS landing page content.
+     * @path /programs/{programId}
+     * @allow (get) Any user (even unauthenticated) can view a specific program's content.
+     * @deny (create) An unauthenticated user or a non-admin user attempts to create a new program.
+     * @principle Public read-only access for content consumption; Admin-only access for content management.
+     */
+    match /programs/{programId} {
+      // Publicly readable for the landing page UI
+      allow get, list: if true;
+
+      // Only admins can create new programs. Ensure internal ID matches the path.
+      allow create: if isAdmin() 
+                    && request.resource.data.id == programId;
+
+      // Only admins can update existing programs. Enforce ID immutability.
+      allow update: if isExistingAdmin() 
+                    && request.resource.data.id == resource.data.id;
+
+      // Only admins can delete programs.
+      allow delete: if isExistingAdmin();
+    }
+
+    /**
+     * @description Rules for the 'roles_admin' collection which defines system administrators.
+     * @path /roles_admin/{userId}
+     * @allow (get) An authenticated user checking their own admin status.
+     * @deny (list) A non-admin user attempting to list all system administrators.
+     * @principle Database-Backed Access Control (DBAC) to manage administrative permissions.
+     */
+    match /roles_admin/{userId} {
+      // Users can check if they themselves are admins. Admins can look up any admin.
+      allow get: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      
+      // Listing admins is restricted to existing admins to prevent user enumeration.
+      allow list: if isAdmin();
+
+      // Only existing admins can grant or revoke admin status.
+      // Note: This assumes a "bootstrap" admin is created via the Firebase Console initially.
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}
