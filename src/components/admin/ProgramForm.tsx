@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, getStorage } from 'firebase/storage';
@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save, Upload, Plus, Trash2, Video, X } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, Upload, Plus, Trash2, Video, X, ImagePlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -27,6 +27,8 @@ function getYouTubeId(url: string) {
 export function ProgramForm({ programId }: { programId: string }) {
   const db = useFirestore();
   const storage = getStorage();
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+  const testimonialInputRef = useRef<HTMLInputElement>(null);
   
   const programRef = useMemoFirebase(() => doc(db, 'programs', programId), [db, programId]);
   const { data: program, isLoading } = useDoc(programRef);
@@ -231,16 +233,29 @@ export function ProgramForm({ programId }: { programId: string }) {
       </Card>
 
       <Card className="shadow-sm border-border/50">
-        <CardHeader>
-          <CardTitle>Gallery & Visuals</CardTitle>
-          <CardDescription>Upload course previews and student images.</CardDescription>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>Gallery & Visuals</CardTitle>
+            <CardDescription>Upload course previews and student images.</CardDescription>
+          </div>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="flex gap-2"
+            onClick={() => galleryInputRef.current?.click()}
+          >
+            <ImagePlus className="w-4 h-4" />
+            Add More Images
+          </Button>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-8">
           <div className="space-y-4">
-            <Label>Course Preview Images (Inside the Program)</Label>
+            <div className="flex items-center justify-between">
+              <Label className="text-base font-bold">Course Previews ({program?.gallery?.length || 0})</Label>
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {program?.gallery?.map((url: string, idx: number) => (
-                <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border group">
+                <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border group bg-muted">
                   <img src={url} alt="Gallery" className="object-cover w-full h-full" />
                   <button 
                     onClick={() => removeExistingImage(url)}
@@ -251,62 +266,72 @@ export function ProgramForm({ programId }: { programId: string }) {
                 </div>
               ))}
               {galleryFiles.map((fileObj, idx) => (
-                <div key={`new-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-primary/50">
-                  <img src={fileObj.preview} alt="New Preview" className="object-cover w-full h-full opacity-50" />
+                <div key={`new-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-primary/50 bg-muted/30">
+                  <img src={fileObj.preview} alt="New Preview" className="object-cover w-full h-full opacity-60" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
                   </div>
                   <button 
                     onClick={() => removeSelectedFile(idx, 'gallery')}
-                    className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full"
+                    className="absolute top-1 right-1 bg-black/70 text-white p-1 rounded-full hover:bg-black"
                   >
                     <X className="w-3 h-3" />
                   </button>
                 </div>
               ))}
-              <Label className="aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors">
-                <Upload className="w-5 h-5 text-muted-foreground mb-1" />
-                <span className="text-[10px] uppercase font-bold text-muted-foreground">Add Image</span>
-                <input 
-                  type="file" 
-                  multiple 
-                  accept="image/*"
-                  className="hidden" 
-                  onChange={e => handleFileChange(e, 'gallery')} 
-                />
-              </Label>
+              <input 
+                ref={galleryInputRef}
+                type="file" 
+                multiple 
+                accept="image/*"
+                className="hidden" 
+                onChange={e => handleFileChange(e, 'gallery')} 
+              />
+              <button 
+                onClick={() => galleryInputRef.current?.click()}
+                className="aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors bg-muted/10"
+              >
+                <Plus className="w-6 h-6 text-muted-foreground mb-1" />
+                <span className="text-[10px] uppercase font-bold text-muted-foreground">Select Files</span>
+              </button>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <Label>Student Profile Photos (for Testimonials)</Label>
+          <div className="space-y-4 border-t pt-8">
+            <div className="flex items-center justify-between">
+              <Label className="text-base font-bold">Student Profiles ({program?.imageTestimonials?.length || 0})</Label>
+            </div>
             <div className="flex flex-wrap gap-4">
               {program?.imageTestimonials?.map((t: any, idx: number) => (
-                <div key={idx} className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-accent/20">
+                <div key={idx} className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-accent/20 bg-muted">
                   <img src={t.imageUrl} alt="Testimonial" className="object-cover w-full h-full" />
                 </div>
               ))}
               {testimonialFiles.map((fileObj, idx) => (
-                <div key={`new-t-${idx}`} className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-primary/50 group">
-                  <img src={fileObj.preview} alt="New Testimonial" className="object-cover w-full h-full opacity-50" />
+                <div key={`new-t-${idx}`} className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-primary/50 group bg-muted/30">
+                  <img src={fileObj.preview} alt="New Testimonial" className="object-cover w-full h-full opacity-60" />
                   <button 
                     onClick={() => removeSelectedFile(idx, 'testimonial')}
-                    className="absolute inset-0 flex items-center justify-center bg-black/20"
+                    className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-colors"
                   >
-                    <X className="w-4 h-4 text-white" />
+                    <X className="w-5 h-5 text-white" />
                   </button>
                 </div>
               ))}
-              <Label className="w-16 h-16 border-2 border-dashed rounded-full flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors">
-                <Plus className="w-4 h-4 text-muted-foreground" />
-                <input 
-                  type="file" 
-                  multiple 
-                  accept="image/*"
-                  className="hidden" 
-                  onChange={e => handleFileChange(e, 'testimonial')} 
-                />
-              </Label>
+              <input 
+                ref={testimonialInputRef}
+                type="file" 
+                multiple 
+                accept="image/*"
+                className="hidden" 
+                onChange={e => handleFileChange(e, 'testimonial')} 
+              />
+              <button 
+                onClick={() => testimonialInputRef.current?.click()}
+                className="w-16 h-16 border-2 border-dashed rounded-full flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors bg-muted/10"
+              >
+                <Plus className="w-5 h-5 text-muted-foreground" />
+              </button>
             </div>
           </div>
         </CardContent>
@@ -346,7 +371,7 @@ export function ProgramForm({ programId }: { programId: string }) {
           {isSaving ? (
             <>
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              SAVING...
+              UPLOADING & SAVING...
             </>
           ) : (
             <>
