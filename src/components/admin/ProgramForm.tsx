@@ -38,7 +38,7 @@ export function ProgramForm({ programId }: { programId: string }) {
     subtitle: '',
     demoVideoUrl: '',
     joinButtonLink: '',
-    offerEndTime: new Date().toISOString(),
+    offerEndTime: '',
     videoTestimonials: ['', '', '', ''],
   });
 
@@ -56,8 +56,11 @@ export function ProgramForm({ programId }: { programId: string }) {
         offerEndTime: program.expiryDate || new Date().toISOString(),
         videoTestimonials: program.videoTestimonials || ['', '', '', ''],
       });
+    } else if (!isLoading && !formData.offerEndTime) {
+      // Set a default date on mount if no program exists yet, only on client
+      setFormData(prev => ({ ...prev, offerEndTime: new Date().toISOString() }));
     }
-  }, [program]);
+  }, [program, isLoading]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'gallery' | 'testimonial') => {
     const files = Array.from(e.target.files || []);
@@ -132,7 +135,7 @@ export function ProgramForm({ programId }: { programId: string }) {
         videoTestimonials: formData.videoTestimonials.map(v => getYouTubeId(v)),
         imageTestimonials: [...currentImageTestimonials, ...newImageTestimonials],
         joinButtonLink: formData.joinButtonLink,
-        expiryDate: formData.offerEndTime,
+        expiryDate: formData.offerEndTime || new Date().toISOString(),
       };
 
       setDoc(programRef, updateData, { merge: true })
@@ -222,7 +225,7 @@ export function ProgramForm({ programId }: { programId: string }) {
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={new Date(formData.offerEndTime)}
+                  selected={formData.offerEndTime ? new Date(formData.offerEndTime) : undefined}
                   onSelect={(date) => date && setFormData({...formData, offerEndTime: date.toISOString()})}
                   initialFocus
                 />
