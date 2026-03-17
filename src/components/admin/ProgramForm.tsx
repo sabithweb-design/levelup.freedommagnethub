@@ -1,10 +1,9 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { useFirestore, useDoc, useMemoFirebase, useStorage } from '@/firebase';
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, getStorage } from 'firebase/storage';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,7 +27,7 @@ function getYouTubeId(url: string) {
 
 export function ProgramForm({ programId }: { programId: string }) {
   const db = useFirestore();
-  const storage = getStorage();
+  const storage = useStorage();
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const testimonialInputRef = useRef<HTMLInputElement>(null);
   
@@ -369,7 +368,7 @@ export function ProgramForm({ programId }: { programId: string }) {
                 <Label>Question</Label>
                 <Input 
                   value={faq.question} 
-                  onChange={e => updateFAQ(idx, 'question', e.target.value)} 
+                  onChange={e => updateFAQ, 'question', e.target.value)} 
                   placeholder="e.g. Do I need prior experience?"
                 />
               </div>
