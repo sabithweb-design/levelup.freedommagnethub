@@ -8,22 +8,30 @@ import { Badge } from '@/components/ui/badge';
 
 const Logo = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    {/* Magnet Terminals */}
-    <rect x="25" y="5" width="22" height="28" fill="#2B3990" /> {/* Blue */}
-    <rect x="53" y="5" width="22" height="28" fill="#FF0000" /> {/* Red */}
+    {/* Magnet Terminals (Bars) */}
+    <rect x="25" y="10" width="22" height="35" fill="#2B3990" /> {/* Blue */}
+    <rect x="53" y="10" width="22" height="35" fill="#FF0000" /> {/* Red */}
     
-    {/* Central Figure - Head */}
-    <circle cx="50" cy="48" r="7" fill="#333333" />
+    {/* Central Circle */}
+    <circle cx="50" cy="55" r="9" fill="#333333" />
     
-    {/* Wing / U-Shape Base */}
+    {/* U-Shape Body / Wings */}
     <path 
-      d="M25 33C25 33 25 75 50 95C75 75 75 33 75 33C75 33 75 85 50 105C25 85 25 33 25 33Z" 
+      d="M25 45C25 45 25 85 50 105C75 85 75 45 75 45C75 45 75 95 50 115C25 95 25 45 25 45Z" 
       fill="#333333" 
     />
     
     {/* Internal Swooshes */}
-    <path d="M28 45Q40 85 72 45Q50 75 28 45Z" fill="white" fillOpacity="0.2" />
-    <path d="M32 55Q50 90 68 55Q50 80 32 55Z" fill="white" fillOpacity="0.3" />
+    <path 
+      d="M28 55C35 85 65 85 72 55C60 90 40 90 28 55Z" 
+      fill="white" 
+      fillOpacity="0.2" 
+    />
+    <path 
+      d="M32 65C40 85 60 85 68 65C55 90 45 90 32 65Z" 
+      fill="white" 
+      fillOpacity="0.3" 
+    />
   </svg>
 );
 
@@ -36,15 +44,15 @@ export default async function ProgramPage({ params }: { params: { id: string } }
 
   return (
     <div className="bg-background min-h-screen">
-      {/* Navigation */}
-      <nav className="p-6 max-w-7xl mx-auto flex justify-between items-center">
-        <div className="flex flex-col items-center gap-2 group cursor-pointer">
-          <Logo className="w-16 h-16 transition-transform duration-300 group-hover:scale-105" />
+      {/* Navigation - Centered Brand Hub */}
+      <nav className="pt-16 pb-12 px-6 max-w-7xl mx-auto flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center gap-4 group cursor-pointer">
+          <Logo className="w-32 h-32 md:w-40 md:h-40 transition-transform duration-300 group-hover:scale-105" />
           <div className="text-center">
-            <h2 className="font-headline font-black text-2xl tracking-tighter text-[#333333] leading-none uppercase">
+            <h2 className="font-headline font-black text-4xl md:text-5xl tracking-tighter text-[#333333] leading-[0.85] uppercase">
               Freedom
             </h2>
-            <h2 className="font-headline font-black text-2xl tracking-tighter text-[#333333] leading-none uppercase">
+            <h2 className="font-headline font-black text-4xl md:text-5xl tracking-tighter text-[#333333] leading-[0.85] uppercase">
               Magnet Hub
             </h2>
           </div>
@@ -78,8 +86,15 @@ export default async function ProgramPage({ params }: { params: { id: string } }
 
       {/* Footer */}
       <footer className="py-16 px-6 border-t border-border bg-white flex flex-col items-center">
-        <Logo className="w-12 h-12 mb-4 opacity-50 grayscale hover:grayscale-0 transition-all" />
-        <p className="font-headline font-bold text-lg text-primary/80 uppercase tracking-widest mb-4">Freedom Magnet Hub</p>
+        <Logo className="w-16 h-16 mb-4 opacity-50 grayscale hover:grayscale-0 transition-all" />
+        <div className="text-center mb-6">
+          <h2 className="font-headline font-black text-xl tracking-tighter text-[#333333] leading-none uppercase">
+            Freedom
+          </h2>
+          <h2 className="font-headline font-black text-xl tracking-tighter text-[#333333] leading-none uppercase">
+            Magnet Hub
+          </h2>
+        </div>
         <p className="text-muted-foreground text-xs">
           &copy; {new Date().getFullYear()} Freedom Magnet Hub. All rights reserved.
         </p>
