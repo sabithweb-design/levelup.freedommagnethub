@@ -47,7 +47,6 @@ export default async function ProgramPage({ params }: { params: { id: string } }
       {/* Navigation */}
       <nav className="py-6 px-6 max-w-7xl mx-auto flex items-center justify-between border-b border-border/50">
         <div className="flex items-center gap-3 group cursor-pointer">
-          <Logo className="w-12 h-12 transition-transform duration-300 group-hover:scale-110" />
           <div className="flex flex-col">
             <span className="font-headline font-black text-xl tracking-tighter text-primary leading-none uppercase">
               Freedom
