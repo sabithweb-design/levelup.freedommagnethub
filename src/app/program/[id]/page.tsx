@@ -8,9 +8,9 @@ import { Badge } from '@/components/ui/badge';
 
 const Logo = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    {/* Magnet Terminals (Bars) */}
-    <rect x="25" y="10" width="22" height="35" fill="#2B3990" /> {/* Blue */}
-    <rect x="53" y="10" width="22" height="35" fill="#FF0000" /> {/* Red */}
+    {/* Magnet Terminals (Bars) with radius */}
+    <rect x="25" y="10" width="22" height="35" rx="4" fill="#2B3990" /> {/* Blue */}
+    <rect x="53" y="10" width="22" height="35" rx="4" fill="#FF0000" /> {/* Red */}
     
     {/* Central Circle */}
     <circle cx="50" cy="55" r="9" fill="#333333" />
@@ -44,23 +44,28 @@ export default async function ProgramPage({ params }: { params: { id: string } }
 
   return (
     <div className="bg-background min-h-screen">
-      {/* Navigation - Centered Brand Hub */}
-      <nav className="pt-16 pb-12 px-6 max-w-7xl mx-auto flex flex-col items-center justify-center">
-        <div className="flex flex-col items-center gap-4 group cursor-pointer">
-          <Logo className="w-32 h-32 md:w-40 md:h-40 transition-transform duration-300 group-hover:scale-105" />
-          <div className="text-center">
-            <h2 className="font-headline font-black text-4xl md:text-5xl tracking-tighter text-[#333333] leading-[0.85] uppercase">
+      {/* Navigation */}
+      <nav className="py-6 px-6 max-w-7xl mx-auto flex items-center justify-between border-b border-border/50">
+        <div className="flex items-center gap-3 group cursor-pointer">
+          <Logo className="w-12 h-12 transition-transform duration-300 group-hover:scale-110" />
+          <div className="flex flex-col">
+            <span className="font-headline font-black text-xl tracking-tighter text-primary leading-none uppercase">
               Freedom
-            </h2>
-            <h2 className="font-headline font-black text-4xl md:text-5xl tracking-tighter text-[#333333] leading-[0.85] uppercase">
+            </span>
+            <span className="font-headline font-black text-xl tracking-tighter text-[#333333] leading-none uppercase">
               Magnet Hub
-            </h2>
+            </span>
           </div>
+        </div>
+        <div className="hidden md:flex gap-8 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          <a href="#curriculum" className="hover:text-primary transition-colors">Curriculum</a>
+          <a href="#testimonials" className="hover:text-primary transition-colors">Testimonials</a>
+          <a href="#faq" className="hover:text-primary transition-colors">FAQ</a>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <header className="py-12 px-6 max-w-5xl mx-auto text-center">
+      <header className="py-20 px-6 max-w-5xl mx-auto text-center">
         <Badge variant="secondary" className="mb-6 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-accent border border-accent/20">
           Professional Certification
         </Badge>
@@ -78,9 +83,13 @@ export default async function ProgramPage({ params }: { params: { id: string } }
 
       {/* Main Content Sections */}
       <main>
-        <Gallery images={program.gallery} />
-        <VideoTestimonials videoIds={program.videoTestimonials} />
-        <ImageTestimonials testimonials={program.imageTestimonials} />
+        <div id="gallery">
+          <Gallery images={program.gallery} />
+        </div>
+        <div id="testimonials">
+          <VideoTestimonials videoIds={program.videoTestimonials} />
+          <ImageTestimonials testimonials={program.imageTestimonials} />
+        </div>
         <CountdownCTA expiryDate={program.expiryDate} />
       </main>
 
