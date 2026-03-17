@@ -368,7 +368,7 @@ export function ProgramForm({ programId }: { programId: string }) {
                 <Label>Question</Label>
                 <Input 
                   value={faq.question} 
-                  onChange={e => updateFAQ, 'question', e.target.value)} 
+                  onChange={e => updateFAQ(idx, 'question', e.target.value)} 
                   placeholder="e.g. Do I need prior experience?"
                 />
               </div>
