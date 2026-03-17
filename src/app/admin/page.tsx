@@ -2,7 +2,7 @@
 
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { ProgramForm } from '@/components/admin/ProgramForm';
-import { ShieldCheck, LayoutDashboard } from 'lucide-react';
+import { ShieldCheck, LayoutDashboard, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
@@ -18,14 +18,20 @@ export default function AdminPage() {
                 Admin Panel <span className="text-muted-foreground font-normal">| Freedom Magnet Hub</span>
               </h1>
             </div>
-            <div className="flex items-center gap-4">
-              <Button variant="outline" size="sm" asChild className="hidden sm:flex gap-2 border-primary text-primary hover:bg-primary hover:text-white">
+            <div className="flex items-center gap-3">
+              <Button variant="ghost" size="sm" asChild className="hidden sm:flex gap-2 text-primary hover:bg-primary/5">
                 <Link href="/dashboard">
                   <LayoutDashboard className="w-4 h-4" />
-                  View Dashboard
+                  Dashboard
                 </Link>
               </Button>
-              <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest hidden md:block">
+              <Button variant="default" size="sm" asChild className="hidden sm:flex gap-2 bg-accent hover:bg-accent/90 text-white font-bold">
+                <Link href="/program/nextjs-mastery" target="_blank">
+                  <ExternalLink className="w-4 h-4" />
+                  View Public Site
+                </Link>
+              </Button>
+              <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest hidden lg:block ml-4">
                 Content Management
               </div>
             </div>
@@ -35,12 +41,18 @@ export default function AdminPage() {
         <main className="max-w-5xl mx-auto px-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-headline font-black text-primary uppercase">Edit Program Content</h2>
-            <Button variant="ghost" size="sm" asChild className="sm:hidden text-primary">
-              <Link href="/dashboard">
-                <LayoutDashboard className="w-4 h-4 mr-2" />
-                Dashboard
-              </Link>
-            </Button>
+            <div className="flex gap-2 sm:hidden">
+              <Button variant="ghost" size="icon" asChild>
+                <Link href="/dashboard">
+                  <LayoutDashboard className="w-4 h-4" />
+                </Link>
+              </Button>
+              <Button variant="default" size="icon" className="bg-accent" asChild>
+                <Link href="/program/nextjs-mastery" target="_blank">
+                  <ExternalLink className="w-4 h-4 text-white" />
+                </Link>
+              </Button>
+            </div>
           </div>
           <ProgramForm programId="nextjs-mastery" />
         </main>
