@@ -20,7 +20,7 @@ export default function AdminPage() {
             </div>
             <div className="flex items-center gap-3">
               <Button variant="default" size="sm" asChild className="hidden sm:flex gap-2 bg-accent hover:bg-accent/90 text-white font-bold">
-                <Link href="/program/nextjs-mastery" target="_blank">
+                <Link href="/" target="_blank">
                   <ExternalLink className="w-4 h-4" />
                   View Public Site
                 </Link>
@@ -37,7 +37,7 @@ export default function AdminPage() {
             <h2 className="text-2xl font-headline font-black text-primary uppercase">Edit Program Content</h2>
             <div className="flex gap-2 sm:hidden">
               <Button variant="default" size="icon" className="bg-accent" asChild>
-                <Link href="/program/nextjs-mastery" target="_blank">
+                <Link href="/" target="_blank">
                   <ExternalLink className="w-4 h-4 text-white" />
                 </Link>
               </Button>
