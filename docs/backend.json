@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "Program": {
@@ -12,46 +13,65 @@
         },
         "title": {
           "type": "string",
-          "description": "The main title or name of the learning program, prominently displayed on the landing page."
+          "description": "The main title or name of the learning program."
         },
         "subtitle": {
           "type": "string",
-          "description": "A descriptive subtitle for the learning program, providing a brief overview or hook."
+          "description": "A descriptive subtitle for the learning program."
         },
-        "demoVideoUrl": {
+        "demoVideoId": {
           "type": "string",
-          "description": "The YouTube URL for the program's main demonstration video, embedded using the Plyr player.",
-          "format": "uri"
+          "description": "The YouTube video ID for the main demo video."
         },
-        "imageGalleryUrls": {
+        "gallery": {
           "type": "array",
-          "description": "An array of URLs for images that form the program's visual gallery. These images are typically uploaded to Firebase Storage. (Relationship: Program 1:N Image URLs)",
+          "items": { "type": "string" },
+          "description": "URLs for images in the gallery."
+        },
+        "videoTestimonials": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "YouTube IDs for video testimonials."
+        },
+        "imageTestimonials": {
+          "type": "array",
           "items": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "role": { "type": "string" },
+              "content": { "type": "string" },
+              "imageUrl": { "type": "string" }
+            }
           }
         },
-        "videoTestimonialUrls": {
+        "features": {
           "type": "array",
-          "description": "An array of YouTube URLs for video testimonials related to the program. The UI displays 4 such testimonials. (Relationship: Program 1:N Video Testimonials)",
           "items": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "title": { "type": "string" },
+              "description": { "type": "string" },
+              "iconName": { "type": "string" }
+            }
           }
         },
-        "imageTestimonialUrls": {
+        "faqs": {
           "type": "array",
-          "description": "An array of URLs for image-based testimonials related to the program. The UI displays 5 such testimonials, typically uploaded to Firebase Storage. (Relationship: Program 1:N Image Testimonials)",
           "items": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "question": { "type": "string" },
+              "answer": { "type": "string" }
+            }
           }
         },
         "joinButtonLink": {
           "type": "string",
-          "description": "The URL to which the 'Join Now' call-to-action button navigates.",
           "format": "uri"
         },
-        "offerEndTime": {
+        "expiryDate": {
           "type": "string",
-          "description": "The specific date and time when the special offer or enrollment period for this program ends, used to power a countdown timer.",
           "format": "date-time"
         }
       },
@@ -59,12 +79,9 @@
         "id",
         "title",
         "subtitle",
-        "demoVideoUrl",
-        "imageGalleryUrls",
-        "videoTestimonialUrls",
-        "imageTestimonialUrls",
+        "demoVideoId",
         "joinButtonLink",
-        "offerEndTime"
+        "expiryDate"
       ]
     }
   },
@@ -83,32 +100,16 @@
           "schema": {
             "$ref": "#/backend/entities/Program"
           },
-          "description": "Stores individual learning program landing page content. Each document represents a complete program and is publicly readable. Write access is restricted to administrators. Includes all content fields like title, video URLs, image gallery URLs, and testimonial URLs directly within the document, ensuring authorization independence.",
-          "params": [
-            {
-              "name": "programId",
-              "description": "The unique identifier for a specific learning program."
-            }
-          ]
+          "description": "Stores individual learning program landing page content."
         }
       },
       {
         "path": "/roles_admin/{userId}",
         "definition": {
           "entityName": "AdminRole",
-          "schema": {
-            "$ref": "#/backend/entities/AdminRole"
-          },
-          "description": "Stores documents representing administrator roles. The existence of a document with a user's UID as its ID signifies that user is an administrator. This collection is used for database-backed access control (DBAC) to secure write operations on programs and other administrative data. Ensures authorization independence by not relying on external `get()` calls for role verification.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user who possesses the administrator role."
-            }
-          ]
+          "description": "Stores documents representing administrator roles."
         }
       }
-    ],
-    "reasoning": "The recommended Firestore structure centralizes all landing page content for each learning program within a single document in the `/programs` collection. This design adheres to the core principles by ensuring Authorization Independence and enabling Query-as-Permission (QAP) security rules.\n\n**Authorization Independence:** Each `Program` document at `/programs/{programId}` is entirely self-contained. All dynamic content, including `title`, `subtitle`, `demoVideoUrl`, and critically, the arrays of URLs for `imageGalleryUrls`, `videoTestimonialUrls`, and `imageTestimonialUrls`, are embedded directly within the `Program` document. This eliminates any need for subcollections whose security rules would depend on attributes of the parent `Program` document. Consequently, there's no requirement for `get()` calls in security rules to check parent data, making authorization atomic, simple, and robust. An admin can create or update a program document in a single write operation without complex rule evaluations.\n\n**Query-as-Permission (QAPs):**\n1.  **Public Landing Page (Read Access):** All documents within the `/programs` collection share the same security posture: they are publicly readable. This homogeneity is achieved through **Structural Segregation**. Since all data in this collection is intended for public display, a simple security rule can grant `read` access to `match /programs/{programId}` for everyone (`allow read:`). This fulfills QAPs because reads are not filtered; users either have permission to read *any* program by its ID, or they don't, based on the `programId` they request. The dynamic route `/program/:id` directly maps to `get(/programs/{programId})` operations, which are highly efficient and secure with this structure.\n2.  **Admin Panel (Write Access):** For administration, write access (create, update, delete) to `/programs/{programId}` will be restricted to authenticated users with an 'admin' role. This is modeled using a separate **Global Roles (DBAC)** collection, `/roles_admin/{userId}`. The mere existence of a document in `/roles_admin/{request.auth.uid}` grants admin privileges. This approach allows for clear and independent security rules (`allow write: if request.auth != null && exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));`). For an admin panel listing all programs, a `list` operation on `/programs` would retrieve all documents, and since all documents in `/programs` are designed to be managed by admins, this `list` operation is secure and satisfies QAPs by being restricted at the collection level based on the admin role."
+    ]
   }
 }

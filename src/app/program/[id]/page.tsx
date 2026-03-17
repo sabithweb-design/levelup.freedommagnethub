@@ -46,7 +46,7 @@ export default function ProgramPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background p-6 text-center">
         <h1 className="text-2xl font-bold mb-4 text-primary">Program Not Found</h1>
-        <p className="text-muted-foreground mb-8 max-w-md">This program hasn't been configured in the Admin Panel yet. Please contact support or visit the admin console.</p>
+        <p className="text-muted-foreground mb-8 max-w-md">This program hasn't been configured in the Admin Panel yet.</p>
         <Button asChild variant="outline">
           <a href="/admin">Go to Admin Panel</a>
         </Button>
@@ -83,7 +83,6 @@ export default function ProgramPage() {
 
       {/* Hero Section */}
       <header className="relative pt-24 pb-32 px-6 overflow-hidden">
-        {/* Abstract Background Elements */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl -z-10 pointer-events-none">
           <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
           <div className="absolute bottom-[20%] right-[-5%] w-[30%] h-[30%] bg-accent/5 rounded-full blur-[100px]"></div>
@@ -121,7 +120,7 @@ export default function ProgramPage() {
 
       {/* Features Section */}
       <section id="features">
-        <Features />
+        <Features features={program.features} />
       </section>
 
       {/* Main Content Sections */}
@@ -142,11 +141,11 @@ export default function ProgramPage() {
         </div>
 
         <section id="faq">
-          <FAQ />
+          <FAQ faqs={program.faqs} />
         </section>
 
         <div id="join">
-          <CountdownCTA expiryDate={program.expiryDate} />
+          <CountdownCTA expiryDate={program.expiryDate} joinLink={program.joinButtonLink} />
         </div>
       </main>
 
@@ -193,16 +192,8 @@ export default function ProgramPage() {
 
         <div className="max-w-7xl mx-auto pt-16 mt-16 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-6">
           <p className="text-muted-foreground text-xs font-medium">
-            &copy; {new Date().getFullYear()} Freedom Magnet Hub. Built for creators, by experts.
+            &copy; {new Date().getFullYear()} Freedom Magnet Hub.
           </p>
-          <div className="flex gap-6">
-            <div className="w-8 h-8 rounded-full bg-primary/5 flex items-center justify-center text-primary hover:bg-primary/10 cursor-pointer transition-colors">
-              <span className="sr-only">Social</span>
-            </div>
-            <div className="w-8 h-8 rounded-full bg-primary/5 flex items-center justify-center text-primary hover:bg-primary/10 cursor-pointer transition-colors">
-              <span className="sr-only">Social</span>
-            </div>
-          </div>
         </div>
       </footer>
     </div>

@@ -7,31 +7,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { FAQItem } from '@/lib/db';
 
-const faqs = [
-  {
-    question: "Do I need prior experience to join?",
-    answer: "While some basic understanding is helpful, our program is designed to take you from foundational concepts to advanced architecture. We provide a 'Bridge Module' for those just starting out."
-  },
-  {
-    question: "How long do I have access to the materials?",
-    answer: "You get lifetime access! This includes all video lessons, project files, and any future updates we make to the course content as technologies evolve."
-  },
-  {
-    question: "Is there a certification upon completion?",
-    answer: "Yes, once you complete all modules and the capstone project, you will receive a verified Freedom Magnet Hub Certificate of Excellence that you can display on LinkedIn."
-  },
-  {
-    question: "What if I get stuck during the course?",
-    answer: "We have a dedicated Discord community and a support ticket system where our mentors and fellow students are active 24/7 to help you troubleshoot any issues."
-  },
-  {
-    question: "Do you offer a refund policy?",
-    answer: "We stand by our content. If you've completed less than 20% of the course and find it's not a fit within the first 14 days, we offer a full, no-questions-asked refund."
-  }
-];
+export function FAQ({ faqs }: { faqs?: FAQItem[] }) {
+  if (!faqs || faqs.length === 0) return null;
 
-export function FAQ() {
   return (
     <section className="py-32 px-6 bg-muted/20">
       <div className="max-w-3xl mx-auto">

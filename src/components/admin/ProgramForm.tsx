@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -12,11 +13,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save, Upload, Plus, Trash2, Video, X, ImagePlus } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, Upload, Plus, Trash2, Video, X, ImagePlus, ListPlus, HelpCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
+import { Feature, FAQItem } from '@/lib/db';
 
 function getYouTubeId(url: string) {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -40,6 +42,8 @@ export function ProgramForm({ programId }: { programId: string }) {
     joinButtonLink: '',
     offerEndTime: '',
     videoTestimonials: ['', '', '', ''],
+    features: [] as Feature[],
+    faqs: [] as FAQItem[],
   });
 
   const [galleryFiles, setGalleryFiles] = useState<{file: File, preview: string}[]>([]);
@@ -53,14 +57,13 @@ export function ProgramForm({ programId }: { programId: string }) {
         subtitle: program.subtitle || '',
         demoVideoUrl: program.demoVideoId ? `https://www.youtube.com/watch?v=${program.demoVideoId}` : '',
         joinButtonLink: program.joinButtonLink || '',
-        offerEndTime: program.expiryDate || new Date().toISOString(),
+        offerEndTime: program.expiryDate || '',
         videoTestimonials: program.videoTestimonials || ['', '', '', ''],
+        features: program.features || [],
+        faqs: program.faqs || [],
       });
-    } else if (!isLoading && !formData.offerEndTime) {
-      // Set a default date on mount if no program exists yet, only on client
-      setFormData(prev => ({ ...prev, offerEndTime: new Date().toISOString() }));
     }
-  }, [program, isLoading]);
+  }, [program]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'gallery' | 'testimonial') => {
     const files = Array.from(e.target.files || []);
@@ -95,6 +98,46 @@ export function ProgramForm({ programId }: { programId: string }) {
           requestResourceData: { gallery: newGallery }
         }));
       });
+  };
+
+  const addFeature = () => {
+    setFormData(prev => ({
+      ...prev,
+      features: [...prev.features, { title: '', description: '', iconName: 'Trophy' }]
+    }));
+  };
+
+  const updateFeature = (index: number, field: keyof Feature, value: string) => {
+    const newFeatures = [...formData.features];
+    newFeatures[index] = { ...newFeatures[index], [field]: value };
+    setFormData(prev => ({ ...prev, features: newFeatures }));
+  };
+
+  const removeFeature = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      features: prev.features.filter((_, i) => i !== index)
+    }));
+  };
+
+  const addFAQ = () => {
+    setFormData(prev => ({
+      ...prev,
+      faqs: [...prev.faqs, { question: '', answer: '' }]
+    }));
+  };
+
+  const updateFAQ = (index: number, field: keyof FAQItem, value: string) => {
+    const newFAQs = [...formData.faqs];
+    newFAQs[index] = { ...newFAQs[index], [field]: value };
+    setFormData(prev => ({ ...prev, faqs: newFAQs }));
+  };
+
+  const removeFAQ = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      faqs: prev.faqs.filter((_, i) => i !== index)
+    }));
   };
 
   const handleSave = async () => {
@@ -134,6 +177,8 @@ export function ProgramForm({ programId }: { programId: string }) {
         gallery: [...currentGallery, ...uploadedGalleryUrls],
         videoTestimonials: formData.videoTestimonials.map(v => getYouTubeId(v)),
         imageTestimonials: [...currentImageTestimonials, ...newImageTestimonials],
+        features: formData.features,
+        faqs: formData.faqs,
         joinButtonLink: formData.joinButtonLink,
         expiryDate: formData.offerEndTime || new Date().toISOString(),
       };
@@ -232,6 +277,117 @@ export function ProgramForm({ programId }: { programId: string }) {
               </PopoverContent>
             </Popover>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-sm border-border/50">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>The Freedom Framework (Features)</CardTitle>
+            <CardDescription>Customize the core value propositions of your program.</CardDescription>
+          </div>
+          <Button variant="outline" size="sm" className="flex gap-2" onClick={addFeature}>
+            <ListPlus className="w-4 h-4" />
+            Add Feature
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {formData.features.map((feature, idx) => (
+            <div key={idx} className="p-4 border rounded-xl space-y-3 relative group bg-muted/20">
+              <button 
+                onClick={() => removeFeature(idx)}
+                className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Feature Title</Label>
+                  <Input 
+                    value={feature.title} 
+                    onChange={e => updateFeature(idx, 'title', e.target.value)} 
+                    placeholder="e.g. Expert Led Instruction"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Icon Name</Label>
+                  <select 
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={feature.iconName}
+                    onChange={e => updateFeature(idx, 'iconName', e.target.value)}
+                  >
+                    <option value="Trophy">Trophy</option>
+                    <option value="BookOpen">Book</option>
+                    <option value="Globe">Globe</option>
+                    <option value="Users">Users</option>
+                    <option value="ShieldCheck">Shield</option>
+                    <option value="Zap">Zap</option>
+                    <option value="Star">Star</option>
+                    <option value="CheckCircle2">Checkmark</option>
+                  </select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Description</Label>
+                <Textarea 
+                  value={feature.description} 
+                  onChange={e => updateFeature(idx, 'description', e.target.value)} 
+                  placeholder="Short explanation of this feature..."
+                />
+              </div>
+            </div>
+          ))}
+          {formData.features.length === 0 && (
+            <div className="text-center py-12 bg-muted/10 border-2 border-dashed rounded-2xl">
+              <p className="text-muted-foreground">No features defined. Add some to show on the landing page.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-sm border-border/50">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>Common Questions (FAQ)</CardTitle>
+            <CardDescription>Address student concerns directly from the dashboard.</CardDescription>
+          </div>
+          <Button variant="outline" size="sm" className="flex gap-2" onClick={addFAQ}>
+            <HelpCircle className="w-4 h-4" />
+            Add Question
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {formData.faqs.map((faq, idx) => (
+            <div key={idx} className="p-4 border rounded-xl space-y-3 relative group bg-muted/20">
+              <button 
+                onClick={() => removeFAQ(idx)}
+                className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+              <div className="space-y-2">
+                <Label>Question</Label>
+                <Input 
+                  value={faq.question} 
+                  onChange={e => updateFAQ(idx, 'question', e.target.value)} 
+                  placeholder="e.g. Do I need prior experience?"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Answer</Label>
+                <Textarea 
+                  value={faq.answer} 
+                  onChange={e => updateFAQ(idx, 'answer', e.target.value)} 
+                  placeholder="Provide a detailed answer..."
+                />
+              </div>
+            </div>
+          ))}
+          {formData.faqs.length === 0 && (
+            <div className="text-center py-12 bg-muted/10 border-2 border-dashed rounded-2xl">
+              <p className="text-muted-foreground">No FAQs defined. Add some to help your conversions.</p>
+            </div>
+          )}
         </CardContent>
       </Card>
 

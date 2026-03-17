@@ -1,11 +1,11 @@
+
 "use client"
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Timer } from 'lucide-react';
 
-export function CountdownCTA({ expiryDate }: { expiryDate: string }) {
+export function CountdownCTA({ expiryDate, joinLink }: { expiryDate: string; joinLink: string }) {
   const [timeLeft, setTimeLeft] = useState<{ d: number; h: number; m: number; s: number } | null>(null);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export function CountdownCTA({ expiryDate }: { expiryDate: string }) {
       <div className="max-w-4xl mx-auto text-center relative z-10">
         <h2 className="text-3xl md:text-5xl font-headline font-bold mb-6">Ready to Accelerate Your Career?</h2>
         <p className="text-primary-foreground/80 text-lg md:text-xl mb-12 max-w-2xl mx-auto">
-          Join hundreds of professionals mastering Next.js. Limited spots available for this cohort.
+          Join hundreds of professionals mastering our methodology. Limited spots available for this cohort.
         </p>
 
         {timeLeft && (
@@ -56,8 +56,12 @@ export function CountdownCTA({ expiryDate }: { expiryDate: string }) {
         )}
 
         <div className="flex flex-col items-center gap-4">
-          <Button size="lg" className="h-16 px-12 text-lg font-bold bg-accent hover:bg-accent/90 text-white rounded-full shadow-xl hover:shadow-2xl transition-all hover:scale-105 active:scale-95">
-            JOIN THE PROGRAM NOW
+          <Button 
+            size="lg" 
+            className="h-16 px-12 text-lg font-bold bg-accent hover:bg-accent/90 text-white rounded-full shadow-xl hover:shadow-2xl transition-all hover:scale-105 active:scale-95"
+            asChild
+          >
+            <a href={joinLink || '#'}>JOIN THE PROGRAM NOW</a>
           </Button>
           <div className="flex items-center gap-2 text-sm opacity-80 mt-4">
             <Timer className="w-4 h-4" />
