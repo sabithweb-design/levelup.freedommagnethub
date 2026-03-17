@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
@@ -10,22 +9,9 @@ import { VideoTestimonials, ImageTestimonials } from '@/components/program/Testi
 import { CountdownCTA } from '@/components/program/CountdownCTA';
 import { Features } from '@/components/program/Features';
 import { FAQ } from '@/components/program/FAQ';
-import { Badge } from '@/components/ui/badge';
 import { Loader2, ArrowRight, CheckCircle2, Globe, ShieldCheck, Trophy, Layout } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-
-const Logo = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
-    <rect x="25" y="10" width="22" height="35" rx="6" fill="currentColor" />
-    <rect x="53" y="10" width="22" height="35" rx="6" fill="#FF0000" />
-    <circle cx="50" cy="55" r="9" fill="#333333" />
-    <path 
-      d="M25 45C25 45 25 85 50 105C75 85 75 45 75 45C75 45 75 95 50 115C25 95 25 45 25 45Z" 
-      fill="#333333" 
-    />
-  </svg>
-);
 
 export default function ProgramPage() {
   const params = useParams();
@@ -49,9 +35,6 @@ export default function ProgramPage() {
   if (!program) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background p-6 text-center">
-        <div className="w-20 h-20 mb-8 text-primary/20">
-          <Logo className="w-full h-full" />
-        </div>
         <h1 className="text-4xl font-headline font-black mb-4 text-primary uppercase tracking-tighter">Program Not Found</h1>
         <p className="text-muted-foreground mb-8 max-w-md text-lg font-medium leading-relaxed">
           The requested learning pathway hasn't been configured in the Freedom Magnet Hub yet.
@@ -70,11 +53,10 @@ export default function ProgramPage() {
 
   return (
     <div className="bg-background min-h-screen selection:bg-primary selection:text-white">
-      {/* Navigation */}
+      {/* Navigation - Clean Layout (No Logo Icon) */}
       <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-border/50">
         <div className="py-4 px-6 max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4 group cursor-pointer">
-            <Logo className="w-8 h-8 text-primary transition-transform group-hover:scale-110" />
+          <div className="flex items-center gap-1 group cursor-pointer">
             <div className="flex flex-col">
               <span className="font-headline font-black text-xl tracking-tighter text-primary leading-none uppercase">
                 Freedom
@@ -187,8 +169,7 @@ export default function ProgramPage() {
       <footer className="py-32 px-6 border-t border-border bg-muted/20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-20">
           <div className="md:col-span-2">
-            <div className="flex items-center gap-4 mb-10">
-              <Logo className="w-12 h-12 text-primary" />
+            <div className="flex items-center gap-1 mb-10">
               <div className="flex flex-col">
                 <span className="font-headline font-black text-3xl tracking-tighter text-primary leading-none uppercase">
                   Freedom

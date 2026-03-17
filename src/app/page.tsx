@@ -1,8 +1,6 @@
-
 import { redirect } from 'next/navigation';
 
 export default function HomePage() {
-  // Defaulting to the primary program ID. 
-  // In a multi-program app, this could be a directory or a featured program.
+  // Automatically guide the visitor to our flagship program landing page
   redirect('/program/nextjs-mastery');
 }
