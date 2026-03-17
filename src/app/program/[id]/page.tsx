@@ -5,6 +5,7 @@ import { Gallery } from '@/components/program/Gallery';
 import { VideoTestimonials, ImageTestimonials } from '@/components/program/Testimonials';
 import { CountdownCTA } from '@/components/program/CountdownCTA';
 import { Badge } from '@/components/ui/badge';
+import { Magnet } from 'lucide-react';
 
 export default async function ProgramPage({ params }: { params: { id: string } }) {
   const program = await getProgram(params.id);
@@ -15,13 +16,15 @@ export default async function ProgramPage({ params }: { params: { id: string } }
 
   return (
     <div className="bg-background min-h-screen">
-      {/* Navigation Dummy for Layout Balance */}
+      {/* Navigation */}
       <nav className="p-6 max-w-7xl mx-auto flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold">L</span>
+        <div className="flex items-center gap-3">
+          <div className="relative w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md border border-border overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-[#00008B]/10"></div>
+            <div className="absolute bottom-0 left-0 w-full h-1/2 bg-[#FF0000]/10"></div>
+            <Magnet className="w-6 h-6 text-primary relative z-10" />
           </div>
-          <span className="font-headline font-bold text-xl tracking-tight text-primary">LearnVista</span>
+          <span className="font-headline font-bold text-xl tracking-tight text-primary uppercase">Freedom Magnet Hub</span>
         </div>
       </nav>
 
@@ -53,7 +56,7 @@ export default async function ProgramPage({ params }: { params: { id: string } }
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-border bg-white text-center">
         <p className="text-muted-foreground text-sm">
-          &copy; {new Date().getFullYear()} LearnVista Landing. All rights reserved.
+          &copy; {new Date().getFullYear()} Freedom Magnet Hub. All rights reserved.
         </p>
         <div className="flex justify-center gap-8 mt-4 text-xs font-medium text-primary/60">
           <a href="#" className="hover:text-primary transition-colors">Terms of Service</a>

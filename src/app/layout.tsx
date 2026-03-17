@@ -2,8 +2,8 @@ import type {Metadata} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'LearnVista | Premium LMS Landing Page',
-  description: 'Experience the future of learning with LearnVista. Modern, professional, and results-driven.',
+  title: 'Freedom Magnet Hub | Professional LMS & Career Growth',
+  description: 'Experience the future of career growth and professional certification with Freedom Magnet Hub.',
 };
 
 export default function RootLayout({
