@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, getStorage } from 'firebase/storage';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -12,13 +12,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save, Upload, Plus, Trash2, Video } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, Upload, Plus, Trash2, Video, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
-// Helper to extract YouTube ID
 function getYouTubeId(url: string) {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
@@ -41,8 +40,8 @@ export function ProgramForm({ programId }: { programId: string }) {
     videoTestimonials: ['', '', '', ''],
   });
 
-  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
-  const [testimonialFiles, setTestimonialFiles] = useState<File[]>([]);
+  const [galleryFiles, setGalleryFiles] = useState<{file: File, preview: string}[]>([]);
+  const [testimonialFiles, setTestimonialFiles] = useState<{file: File, preview: string}[]>([]);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -50,7 +49,7 @@ export function ProgramForm({ programId }: { programId: string }) {
       setFormData({
         title: program.title || '',
         subtitle: program.subtitle || '',
-        demoVideoUrl: `https://www.youtube.com/watch?v=${program.demoVideoId || ''}`,
+        demoVideoUrl: program.demoVideoId ? `https://www.youtube.com/watch?v=${program.demoVideoId}` : '',
         joinButtonLink: program.joinButtonLink || '',
         offerEndTime: program.expiryDate || new Date().toISOString(),
         videoTestimonials: program.videoTestimonials || ['', '', '', ''],
@@ -58,46 +57,82 @@ export function ProgramForm({ programId }: { programId: string }) {
     }
   }, [program]);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'gallery' | 'testimonial') => {
+    const files = Array.from(e.target.files || []);
+    const newFiles = files.map(file => ({
+      file,
+      preview: URL.createObjectURL(file)
+    }));
+
+    if (type === 'gallery') {
+      setGalleryFiles(prev => [...prev, ...newFiles]);
+    } else {
+      setTestimonialFiles(prev => [...prev, ...newFiles]);
+    }
+  };
+
+  const removeSelectedFile = (index: number, type: 'gallery' | 'testimonial') => {
+    if (type === 'gallery') {
+      setGalleryFiles(prev => prev.filter((_, i) => i !== index));
+    } else {
+      setTestimonialFiles(prev => prev.filter((_, i) => i !== index));
+    }
+  };
+
+  const removeExistingImage = (url: string) => {
+    if (!program) return;
+    const newGallery = (program.gallery || []).filter((item: string) => item !== url);
+    updateDoc(programRef, { gallery: newGallery })
+      .catch(e => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: programRef.path,
+          operation: 'update',
+          requestResourceData: { gallery: newGallery }
+        }));
+      });
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // 1. Upload Gallery Images
-      const galleryUrls = [...(program?.gallery || [])];
-      for (const file of galleryFiles) {
-        const fileRef = ref(storage, `programs/${programId}/gallery/${Date.now()}-${file.name}`);
-        const snapshot = await uploadBytes(fileRef, file);
+      const uploadedGalleryUrls = [];
+      for (const item of galleryFiles) {
+        const fileRef = ref(storage, `programs/${programId}/gallery/${Date.now()}-${item.file.name}`);
+        const snapshot = await uploadBytes(fileRef, item.file);
         const url = await getDownloadURL(snapshot.ref);
-        galleryUrls.push(url);
+        uploadedGalleryUrls.push(url);
       }
 
-      // 2. Upload Testimonial Images (for simplicity, we update the existing testimonials or add new ones)
-      // Note: This logic assumes we append new testimonials to the existing array
-      const imageTestimonials = [...(program?.imageTestimonials || [])];
-      for (const file of testimonialFiles) {
-        const fileRef = ref(storage, `programs/${programId}/testimonials/${Date.now()}-${file.name}`);
-        const snapshot = await uploadBytes(fileRef, file);
+      const uploadedTestimonialUrls = [];
+      for (const item of testimonialFiles) {
+        const fileRef = ref(storage, `programs/${programId}/testimonials/${Date.now()}-${item.file.name}`);
+        const snapshot = await uploadBytes(fileRef, item.file);
         const url = await getDownloadURL(snapshot.ref);
-        imageTestimonials.push({
-          name: "New Student",
-          role: "Graduate",
-          content: "This program changed my career path!",
-          imageUrl: url
-        });
+        uploadedTestimonialUrls.push(url);
       }
+
+      const currentGallery = program?.gallery || [];
+      const currentImageTestimonials = program?.imageTestimonials || [];
+
+      const newImageTestimonials = uploadedTestimonialUrls.map(url => ({
+        name: "Verified Student",
+        role: "Program Graduate",
+        content: "This course provided the breakthrough I needed for my professional development.",
+        imageUrl: url
+      }));
 
       const updateData = {
         id: programId,
         title: formData.title,
         subtitle: formData.subtitle,
         demoVideoId: getYouTubeId(formData.demoVideoUrl),
-        gallery: galleryUrls,
+        gallery: [...currentGallery, ...uploadedGalleryUrls],
         videoTestimonials: formData.videoTestimonials.map(v => getYouTubeId(v)),
-        imageTestimonials: imageTestimonials,
+        imageTestimonials: [...currentImageTestimonials, ...newImageTestimonials],
         joinButtonLink: formData.joinButtonLink,
         expiryDate: formData.offerEndTime,
       };
 
-      // 3. Save to Firestore (Non-blocking update per guidelines)
       setDoc(programRef, updateData, { merge: true })
         .then(() => {
           toast({ title: "Success", description: "Program content updated successfully." });
@@ -202,35 +237,64 @@ export function ProgramForm({ programId }: { programId: string }) {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
-            <Label>Course Preview Images</Label>
-            <div className="flex flex-wrap gap-4">
-              {program?.gallery?.map((url, idx) => (
-                <div key={idx} className="relative w-24 h-24 rounded-lg overflow-hidden border">
+            <Label>Course Preview Images (Inside the Program)</Label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {program?.gallery?.map((url: string, idx: number) => (
+                <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border group">
                   <img src={url} alt="Gallery" className="object-cover w-full h-full" />
+                  <button 
+                    onClick={() => removeExistingImage(url)}
+                    className="absolute top-1 right-1 bg-destructive text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
                 </div>
               ))}
-              <Label className="w-24 h-24 border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors">
+              {galleryFiles.map((fileObj, idx) => (
+                <div key={`new-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-primary/50">
+                  <img src={fileObj.preview} alt="New Preview" className="object-cover w-full h-full opacity-50" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                  </div>
+                  <button 
+                    onClick={() => removeSelectedFile(idx, 'gallery')}
+                    className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+              <Label className="aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors">
                 <Upload className="w-5 h-5 text-muted-foreground mb-1" />
-                <span className="text-[10px] uppercase font-bold text-muted-foreground">Upload</span>
+                <span className="text-[10px] uppercase font-bold text-muted-foreground">Add Image</span>
                 <input 
                   type="file" 
                   multiple 
+                  accept="image/*"
                   className="hidden" 
-                  onChange={e => setGalleryFiles(Array.from(e.target.files || []))} 
+                  onChange={e => handleFileChange(e, 'gallery')} 
                 />
               </Label>
             </div>
-            {galleryFiles.length > 0 && (
-              <p className="text-xs text-primary font-medium">{galleryFiles.length} new files ready for upload.</p>
-            )}
           </div>
 
           <div className="space-y-4">
-            <Label>Testimonial Profile Photos (5 suggested)</Label>
+            <Label>Student Profile Photos (for Testimonials)</Label>
             <div className="flex flex-wrap gap-4">
-              {program?.imageTestimonials?.map((t, idx) => (
+              {program?.imageTestimonials?.map((t: any, idx: number) => (
                 <div key={idx} className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-accent/20">
                   <img src={t.imageUrl} alt="Testimonial" className="object-cover w-full h-full" />
+                </div>
+              ))}
+              {testimonialFiles.map((fileObj, idx) => (
+                <div key={`new-t-${idx}`} className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-primary/50 group">
+                  <img src={fileObj.preview} alt="New Testimonial" className="object-cover w-full h-full opacity-50" />
+                  <button 
+                    onClick={() => removeSelectedFile(idx, 'testimonial')}
+                    className="absolute inset-0 flex items-center justify-center bg-black/20"
+                  >
+                    <X className="w-4 h-4 text-white" />
+                  </button>
                 </div>
               ))}
               <Label className="w-16 h-16 border-2 border-dashed rounded-full flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors">
@@ -238,8 +302,9 @@ export function ProgramForm({ programId }: { programId: string }) {
                 <input 
                   type="file" 
                   multiple 
+                  accept="image/*"
                   className="hidden" 
-                  onChange={e => setTestimonialFiles(Array.from(e.target.files || []))} 
+                  onChange={e => handleFileChange(e, 'testimonial')} 
                 />
               </Label>
             </div>
