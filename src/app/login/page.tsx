@@ -46,7 +46,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-muted/30 p-6">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center space-y-2">
-          <div className="flex justify-center mb-4">
+          <div className="justify-center flex mb-4">
             <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/20">
               <ShieldCheck className="w-10 h-10" />
             </div>
@@ -74,7 +74,7 @@ export default function LoginPage() {
                 <Input 
                   id="email" 
                   type="email" 
-                  placeholder="admin@frredommagnethub.com" 
+                  placeholder="admin@freedommagnethub.com" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
