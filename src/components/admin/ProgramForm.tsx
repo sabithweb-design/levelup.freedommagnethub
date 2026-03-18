@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -14,9 +13,9 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save, Upload, Plus, Trash2, Video, X, ImagePlus, ListPlus, HelpCircle, Type, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, ImagePlus, ListPlus, HelpCircle, Type, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 import { Feature, FAQItem } from '@/lib/db';
@@ -30,6 +29,7 @@ function getYouTubeId(url: string) {
 export function ProgramForm({ programId }: { programId: string }) {
   const db = useFirestore();
   const storage = useStorage();
+  const { toast } = useToast();
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const testimonialInputRef = useRef<HTMLInputElement>(null);
   
@@ -156,18 +156,28 @@ export function ProgramForm({ programId }: { programId: string }) {
     try {
       const uploadedGalleryUrls = [];
       for (const item of galleryFiles) {
-        const fileRef = ref(storage, `programs/${programId}/gallery/${Date.now()}-${item.file.name}`);
-        const snapshot = await uploadBytes(fileRef, item.file);
-        const url = await getDownloadURL(snapshot.ref);
-        uploadedGalleryUrls.push(url);
+        try {
+          const fileRef = ref(storage, `programs/${programId}/gallery/${Date.now()}-${item.file.name}`);
+          const snapshot = await uploadBytes(fileRef, item.file);
+          const url = await getDownloadURL(snapshot.ref);
+          uploadedGalleryUrls.push(url);
+        } catch (err: any) {
+          console.error("Gallery upload error:", err);
+          throw new Error(`Failed to upload gallery image: ${err.message}`);
+        }
       }
 
       const uploadedTestimonialUrls = [];
       for (const item of testimonialFiles) {
-        const fileRef = ref(storage, `programs/${programId}/testimonials/${Date.now()}-${item.file.name}`);
-        const snapshot = await uploadBytes(fileRef, item.file);
-        const url = await getDownloadURL(snapshot.ref);
-        uploadedTestimonialUrls.push(url);
+        try {
+          const fileRef = ref(storage, `programs/${programId}/testimonials/${Date.now()}-${item.file.name}`);
+          const snapshot = await uploadBytes(fileRef, item.file);
+          const url = await getDownloadURL(snapshot.ref);
+          uploadedTestimonialUrls.push(url);
+        } catch (err: any) {
+          console.error("Testimonial upload error:", err);
+          throw new Error(`Failed to upload profile photo: ${err.message}`);
+        }
       }
 
       const currentGallery = program?.gallery || [];
@@ -215,7 +225,11 @@ export function ProgramForm({ programId }: { programId: string }) {
 
     } catch (e: any) {
       console.error(e);
-      toast({ variant: "destructive", title: "Error", description: e.message || "Failed to save data." });
+      toast({ 
+        variant: "destructive", 
+        title: "Upload Failed", 
+        description: e.message || "Ensure Firebase Storage is enabled in your console." 
+      });
     } finally {
       setIsSaving(false);
     }
@@ -453,11 +467,6 @@ export function ProgramForm({ programId }: { programId: string }) {
               </div>
             </div>
           ))}
-          {formData.features.length === 0 && (
-            <div className="text-center py-12 bg-muted/10 border-2 border-dashed rounded-2xl">
-              <p className="text-muted-foreground">No features defined. Add some to show on the landing page.</p>
-            </div>
-          )}
         </CardContent>
       </Card>
 
@@ -499,11 +508,6 @@ export function ProgramForm({ programId }: { programId: string }) {
               </div>
             </div>
           ))}
-          {formData.faqs.length === 0 && (
-            <div className="text-center py-12 bg-muted/10 border-2 border-dashed rounded-2xl">
-              <p className="text-muted-foreground">No FAQs defined. Add some to help your conversions.</p>
-            </div>
-          )}
         </CardContent>
       </Card>
 

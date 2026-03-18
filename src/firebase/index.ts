@@ -50,10 +50,3 @@ export * from './non-blocking-updates';
 export * from './non-blocking-login';
 export * from './errors';
 export * from './error-emitter';
-
-/** Hook to access Firebase Storage instance. */
-import { useFirebase } from './provider';
-export const useStorage = () => {
-  const { firebaseApp } = useFirebase();
-  return getStorage(firebaseApp);
-}
