@@ -14,7 +14,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save, Upload, Plus, Trash2, Video, X, ImagePlus, ListPlus, HelpCircle, Type } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, Upload, Plus, Trash2, Video, X, ImagePlus, ListPlus, HelpCircle, Type, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -41,6 +41,9 @@ export function ProgramForm({ programId }: { programId: string }) {
     subtitle: '',
     titleFontSize: 80,
     subtitleFontSize: 24,
+    lineHeight: 1.1,
+    letterSpacing: -2,
+    textAlign: 'center' as 'left' | 'center' | 'right',
     demoVideoUrl: '',
     joinButtonLink: '',
     offerEndTime: '',
@@ -60,6 +63,9 @@ export function ProgramForm({ programId }: { programId: string }) {
         subtitle: program.subtitle || '',
         titleFontSize: program.titleFontSize || 80,
         subtitleFontSize: program.subtitleFontSize || 24,
+        lineHeight: program.lineHeight || 1.1,
+        letterSpacing: program.letterSpacing || -2,
+        textAlign: program.textAlign || 'center',
         demoVideoUrl: program.demoVideoId ? `https://www.youtube.com/watch?v=${program.demoVideoId}` : '',
         joinButtonLink: program.joinButtonLink || '',
         offerEndTime: program.expiryDate || '',
@@ -180,6 +186,9 @@ export function ProgramForm({ programId }: { programId: string }) {
         subtitle: formData.subtitle,
         titleFontSize: formData.titleFontSize,
         subtitleFontSize: formData.subtitleFontSize,
+        lineHeight: formData.lineHeight,
+        letterSpacing: formData.letterSpacing,
+        textAlign: formData.textAlign,
         demoVideoId: getYouTubeId(formData.demoVideoUrl),
         gallery: [...currentGallery, ...uploadedGalleryUrls],
         videoTestimonials: formData.videoTestimonials.map(v => getYouTubeId(v)),
@@ -232,39 +241,101 @@ export function ProgramForm({ programId }: { programId: string }) {
             />
           </div>
 
-          <div className="space-y-4 p-4 bg-muted/20 rounded-xl border border-border/50">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="space-y-4 p-6 bg-muted/20 rounded-xl border border-border/50">
+            <div className="flex items-center gap-2 mb-4">
               <Type className="w-4 h-4 text-primary" />
-              <Label className="text-sm font-bold uppercase tracking-widest">Typography Adjustments</Label>
+              <Label className="text-sm font-bold uppercase tracking-widest">Headline Typography & Layout</Label>
             </div>
             
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <Label className="text-xs text-muted-foreground uppercase font-black">Title Size</Label>
-                  <span className="text-xs font-bold bg-primary/10 text-primary px-2 py-1 rounded">{formData.titleFontSize}px</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-xs text-muted-foreground uppercase font-black">Title Font Size</Label>
+                    <span className="text-xs font-bold bg-primary/10 text-primary px-2 py-1 rounded">{formData.titleFontSize}px</span>
+                  </div>
+                  <Slider 
+                    value={[formData.titleFontSize]} 
+                    onValueChange={val => setFormData({...formData, titleFontSize: val[0]})} 
+                    min={40} 
+                    max={120} 
+                    step={1}
+                  />
                 </div>
-                <Slider 
-                  value={[formData.titleFontSize]} 
-                  onValueChange={val => setFormData({...formData, titleFontSize: val[0]})} 
-                  min={40} 
-                  max={120} 
-                  step={1}
-                />
+
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-xs text-muted-foreground uppercase font-black">Subtitle Font Size</Label>
+                    <span className="text-xs font-bold bg-primary/10 text-primary px-2 py-1 rounded">{formData.subtitleFontSize}px</span>
+                  </div>
+                  <Slider 
+                    value={[formData.subtitleFontSize]} 
+                    onValueChange={val => setFormData({...formData, subtitleFontSize: val[0]})} 
+                    min={14} 
+                    max={48} 
+                    step={1}
+                  />
+                </div>
               </div>
 
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <Label className="text-xs text-muted-foreground uppercase font-black">Subtitle Size</Label>
-                  <span className="text-xs font-bold bg-primary/10 text-primary px-2 py-1 rounded">{formData.subtitleFontSize}px</span>
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-xs text-muted-foreground uppercase font-black">Line Height (Spacing)</Label>
+                    <span className="text-xs font-bold bg-primary/10 text-primary px-2 py-1 rounded">{formData.lineHeight}</span>
+                  </div>
+                  <Slider 
+                    value={[formData.lineHeight]} 
+                    onValueChange={val => setFormData({...formData, lineHeight: val[0]})} 
+                    min={0.8} 
+                    max={2.5} 
+                    step={0.1}
+                  />
                 </div>
-                <Slider 
-                  value={[formData.subtitleFontSize]} 
-                  onValueChange={val => setFormData({...formData, subtitleFontSize: val[0]})} 
-                  min={14} 
-                  max={48} 
-                  step={1}
-                />
+
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <Label className="text-xs text-muted-foreground uppercase font-black">Letter Spacing (Width)</Label>
+                    <span className="text-xs font-bold bg-primary/10 text-primary px-2 py-1 rounded">{formData.letterSpacing}px</span>
+                  </div>
+                  <Slider 
+                    value={[formData.letterSpacing]} 
+                    onValueChange={val => setFormData({...formData, letterSpacing: val[0]})} 
+                    min={-10} 
+                    max={30} 
+                    step={1}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t mt-4">
+              <Label className="text-xs text-muted-foreground uppercase font-black mb-3 block">Text Alignment</Label>
+              <div className="flex gap-2">
+                <Button 
+                  variant={formData.textAlign === 'left' ? 'default' : 'outline'} 
+                  size="sm"
+                  onClick={() => setFormData({...formData, textAlign: 'left'})}
+                  className="flex-1 font-bold"
+                >
+                  <AlignLeft className="w-4 h-4 mr-2" /> Left
+                </Button>
+                <Button 
+                  variant={formData.textAlign === 'center' ? 'default' : 'outline'} 
+                  size="sm"
+                  onClick={() => setFormData({...formData, textAlign: 'center'})}
+                  className="flex-1 font-bold"
+                >
+                  <AlignCenter className="w-4 h-4 mr-2" /> Center
+                </Button>
+                <Button 
+                  variant={formData.textAlign === 'right' ? 'default' : 'outline'} 
+                  size="sm"
+                  onClick={() => setFormData({...formData, textAlign: 'right'})}
+                  className="flex-1 font-bold"
+                >
+                  <AlignRight className="w-4 h-4 mr-2" /> Right
+                </Button>
               </div>
             </div>
           </div>

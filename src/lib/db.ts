@@ -23,6 +23,9 @@ export interface Program {
   subtitle: string;
   titleFontSize?: number;
   subtitleFontSize?: number;
+  lineHeight?: number;
+  letterSpacing?: number;
+  textAlign?: 'left' | 'center' | 'right';
   demoVideoId: string;
   gallery: string[];
   videoTestimonials: string[];

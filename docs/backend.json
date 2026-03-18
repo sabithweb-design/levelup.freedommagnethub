@@ -27,6 +27,19 @@
           "type": "number",
           "description": "Font size for the subtitle in pixels."
         },
+        "lineHeight": {
+          "type": "number",
+          "description": "Line height for the main heading."
+        },
+        "letterSpacing": {
+          "type": "number",
+          "description": "Letter spacing for the main heading in pixels."
+        },
+        "textAlign": {
+          "type": "string",
+          "enum": ["left", "center", "right"],
+          "description": "Text alignment for the hero content."
+        },
         "demoVideoId": {
           "type": "string",
           "description": "The YouTube video ID for the main demo video."
