@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { ShieldCheck, Loader2, AlertCircle, UserPlus, LogIn } from 'lucide-react';
+import { ShieldCheck, Loader2, AlertCircle, LogIn } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 
@@ -16,7 +16,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState('admin@frredommagnethub.com');
   const [password, setPassword] = useState('Cfmh@123');
   const [isLoading, setIsLoading] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const auth = useAuth();
   const router = useRouter();
@@ -34,28 +33,10 @@ export default function LoginPage() {
     } catch (err: any) {
       console.error(err);
       if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-        setError('Login failed. If this is your first time, you may need to initialize the admin account below.');
+        setError('Login failed. Please check your credentials.');
       } else {
         setError(err.message || 'An unexpected error occurred.');
       }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleCreateAdmin = async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      toast({ 
-        title: "Admin Account Created", 
-        description: `Successfully initialized ${email}. You are now logged in.`,
-      });
-      router.push('/admin');
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || 'Could not initialize admin account.');
     } finally {
       setIsLoading(false);
     }
@@ -123,22 +104,6 @@ export default function LoginPage() {
                 ) : (
                   <span className="flex items-center gap-2"><LogIn className="w-5 h-5" /> LOGIN</span>
                 )}
-              </Button>
-              
-              <div className="relative w-full py-4">
-                <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
-                <div className="relative flex justify-center text-xs uppercase"><span className="bg-white px-2 text-muted-foreground font-bold">First Time?</span></div>
-              </div>
-
-              <Button 
-                type="button"
-                variant="outline"
-                onClick={handleCreateAdmin}
-                className="w-full h-12 rounded-xl font-bold border-primary/20 text-primary hover:bg-primary/5"
-                disabled={isLoading}
-              >
-                <UserPlus className="w-4 h-4 mr-2" />
-                INITIALIZE ADMIN ACCOUNT
               </Button>
             </CardFooter>
           </form>
