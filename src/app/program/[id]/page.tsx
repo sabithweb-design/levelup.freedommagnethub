@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
@@ -13,6 +12,7 @@ import { FAQ } from '@/components/program/FAQ';
 import { Loader2, ArrowRight, CheckCircle2, Globe, ShieldCheck, Trophy, Layout } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 export default function ProgramPage() {
   const params = useParams();
