@@ -1,17 +1,38 @@
 'use client';
 
-import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useFirestore, useCollection, useMemoFirebase, useUser } from '@/firebase';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { collection } from 'firebase/firestore';
-import { LayoutDashboard, FileText, Image as ImageIcon, MessageSquare, Settings, ArrowUpRight, Plus, ExternalLink, Edit3 } from 'lucide-react';
+import { LayoutDashboard, FileText, Image as ImageIcon, MessageSquare, Settings, ArrowUpRight, Plus, ExternalLink, Edit3, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 
 export default function DashboardPage() {
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
   const db = useFirestore();
   const programsQuery = useMemoFirebase(() => collection(db, 'programs'), [db]);
-  const { data: programs, isLoading } = useCollection(programsQuery);
+  const { data: programs, isLoading: isProgramsLoading } = useCollection(programsQuery);
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, isUserLoading, router]);
+
+  if (isUserLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-12 h-12 animate-spin text-primary" />
+          <p className="text-sm font-headline font-bold uppercase tracking-widest text-muted-foreground">Verifying Authorization...</p>
+        </div>
+      </div>
+    );
+  }
 
   const stats = [
     { 
@@ -79,9 +100,11 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-headline font-black text-primary uppercase tracking-tight">Management Console</h1>
             <p className="text-muted-foreground">Overview of your LMS ecosystem and performance.</p>
           </div>
-          <Button className="bg-accent hover:bg-accent/90 text-white font-bold rounded-full px-6">
-            <Plus className="w-4 h-4 mr-2" />
-            CREATE PROGRAM
+          <Button className="bg-accent hover:bg-accent/90 text-white font-bold rounded-full px-6" asChild>
+            <Link href="/admin">
+              <Plus className="w-4 h-4 mr-2" />
+              CREATE PROGRAM
+            </Link>
           </Button>
         </header>
 
@@ -92,7 +115,7 @@ export default function DashboardPage() {
               <CardContent className="p-6 flex items-center justify-between">
                 <div>
                   <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">{stat.label}</p>
-                  <p className="text-3xl font-black text-foreground">{isLoading ? '...' : stat.value}</p>
+                  <p className="text-3xl font-black text-foreground">{isProgramsLoading ? '...' : stat.value}</p>
                 </div>
                 <div className={`${stat.bg} ${stat.color} p-4 rounded-2xl`}>
                   <stat.icon className="w-6 h-6" />
@@ -110,7 +133,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {isLoading ? (
+              {isProgramsLoading ? (
                 <div className="py-10 text-center text-muted-foreground">Loading programs...</div>
               ) : programs && programs.length > 0 ? (
                 programs.map((program) => (

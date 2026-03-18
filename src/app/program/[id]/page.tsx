@@ -194,7 +194,7 @@ export default function ProgramPage() {
               <li><a href="#curriculum" className="hover:text-primary transition-colors">Program Specs</a></li>
               <li><a href="#features" className="hover:text-primary transition-colors">Learning Path</a></li>
               <li><a href="#testimonials" className="hover:text-primary transition-colors">Student Results</a></li>
-              <li><a href="/admin" className="text-accent hover:opacity-80">Admin Console</a></li>
+              <li><Link href="/login" className="text-accent hover:opacity-80">Admin Console</Link></li>
             </ul>
           </div>
 
