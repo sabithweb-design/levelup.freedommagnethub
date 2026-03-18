@@ -547,9 +547,11 @@ export function ProgramForm({ programId }: { programId: string }) {
               {galleryFiles.map((fileObj, idx) => (
                 <div key={`new-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-primary/50 bg-muted/30">
                   <img src={fileObj.preview} alt="New Preview" className="object-cover w-full h-full opacity-60" />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                  </div>
+                  {isSaving && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                      <Loader2 className="w-5 h-5 animate-spin text-white" />
+                    </div>
+                  )}
                   <button 
                     onClick={() => removeSelectedFile(idx, 'gallery')}
                     className="absolute top-1 right-1 bg-black/70 text-white p-1 rounded-full hover:bg-black"
@@ -589,9 +591,14 @@ export function ProgramForm({ programId }: { programId: string }) {
               {testimonialFiles.map((fileObj, idx) => (
                 <div key={`new-t-${idx}`} className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-primary/50 group bg-muted/30">
                   <img src={fileObj.preview} alt="New Testimonial" className="object-cover w-full h-full opacity-60" />
+                  {isSaving && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-full">
+                      <Loader2 className="w-5 h-5 animate-spin text-white" />
+                    </div>
+                  )}
                   <button 
                     onClick={() => removeSelectedFile(idx, 'testimonial')}
-                    className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-colors"
+                    className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-colors opacity-0 group-hover:opacity-100"
                   >
                     <X className="w-5 h-5 text-white" />
                   </button>

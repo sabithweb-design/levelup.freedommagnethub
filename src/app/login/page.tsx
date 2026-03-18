@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useAuth } from '@/firebase';
+import { useAuth, useFirestore } from '@/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,12 +18,22 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showInit, setShowInit] = useState(false);
   const auth = useAuth();
+  const db = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
+
+  const ensureAdminRecord = async (uid: string) => {
+    try {
+      await setDoc(doc(db, 'roles_admin', uid), {
+        role: 'admin',
+        createdAt: serverTimestamp(),
+      }, { merge: true });
+    } catch (e) {
+      console.error("Failed to create admin record:", e);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,16 +41,12 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      await ensureAdminRecord(credential.user.uid);
       toast({ title: "Welcome back!", description: "Successfully authenticated as admin." });
       router.push('/admin');
     } catch (err: any) {
-      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
-        setError('Login failed. Please check your credentials or ensure the account exists.');
-        setShowInit(true);
-      } else {
-        setError(err.message || 'An unexpected error occurred.');
-      }
+      setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }
@@ -50,16 +57,17 @@ export default function LoginPage() {
       setError("Please enter an email and password to initialize.");
       return;
     }
-    setIsInitializing(true);
+    setIsLoading(true);
     setError(null);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      await ensureAdminRecord(credential.user.uid);
       toast({ title: "Admin Account Created", description: "Successfully initialized and logged in." });
       router.push('/admin');
     } catch (err: any) {
       setError(err.message || "Failed to create account.");
     } finally {
-      setIsInitializing(false);
+      setIsLoading(false);
     }
   };
 
@@ -132,7 +140,7 @@ export default function LoginPage() {
               <Button 
                 type="submit" 
                 className="w-full h-14 rounded-xl font-bold text-lg bg-primary hover:bg-primary/95 shadow-xl shadow-primary/20 transition-all"
-                disabled={isLoading || isInitializing}
+                disabled={isLoading}
               >
                 {isLoading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -141,21 +149,15 @@ export default function LoginPage() {
                 )}
               </Button>
 
-              {showInit && (
-                <Button 
-                  type="button"
-                  variant="outline"
-                  onClick={handleInitialize}
-                  className="w-full h-12 rounded-xl font-bold text-xs uppercase tracking-widest border-primary/20 text-primary hover:bg-primary/5 transition-all"
-                  disabled={isLoading || isInitializing}
-                >
-                  {isInitializing ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <span className="flex items-center gap-2"><UserPlus className="w-4 h-4" /> Initialize Account</span>
-                  )}
-                </Button>
-              )}
+              <Button 
+                type="button"
+                variant="ghost"
+                onClick={handleInitialize}
+                className="w-full text-[10px] uppercase tracking-widest text-muted-foreground hover:text-primary transition-all"
+                disabled={isLoading}
+              >
+                Need to initialize first-time access? Click here.
+              </Button>
             </CardFooter>
           </form>
         </Card>
