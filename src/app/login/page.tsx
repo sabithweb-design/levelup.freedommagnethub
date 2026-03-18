@@ -2,13 +2,13 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { ShieldCheck, Loader2, AlertCircle, LogIn } from 'lucide-react';
+import { ShieldCheck, Loader2, AlertCircle, LogIn, UserPlus } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 
@@ -16,7 +16,9 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showInit, setShowInit] = useState(false);
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
@@ -31,14 +33,32 @@ export default function LoginPage() {
       toast({ title: "Welcome back!", description: "Successfully authenticated as admin." });
       router.push('/admin');
     } catch (err: any) {
-      console.error(err);
       if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
-        setError('Login failed. Please check your credentials.');
+        setError('Login failed. Please check your credentials or ensure the account exists.');
+        setShowInit(true);
       } else {
         setError(err.message || 'An unexpected error occurred.');
       }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleInitialize = async () => {
+    if (!email || !password) {
+      setError("Please enter an email and password to initialize.");
+      return;
+    }
+    setIsInitializing(true);
+    setError(null);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      toast({ title: "Admin Account Created", description: "Successfully initialized and logged in." });
+      router.push('/admin');
+    } catch (err: any) {
+      setError(err.message || "Failed to create account.");
+    } finally {
+      setIsInitializing(false);
     }
   };
 
@@ -98,7 +118,7 @@ export default function LoginPage() {
               <Button 
                 type="submit" 
                 className="w-full h-14 rounded-xl font-bold text-lg bg-primary hover:bg-primary/95 shadow-xl shadow-primary/20 transition-all"
-                disabled={isLoading}
+                disabled={isLoading || isInitializing}
               >
                 {isLoading ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -106,6 +126,22 @@ export default function LoginPage() {
                   <span className="flex items-center gap-2"><LogIn className="w-5 h-5" /> LOGIN</span>
                 )}
               </Button>
+
+              {showInit && (
+                <Button 
+                  type="button"
+                  variant="outline"
+                  onClick={handleInitialize}
+                  className="w-full h-12 rounded-xl font-bold text-xs uppercase tracking-widest border-primary/20 text-primary hover:bg-primary/5 transition-all"
+                  disabled={isLoading || isInitializing}
+                >
+                  {isInitializing ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <span className="flex items-center gap-2"><UserPlus className="w-4 h-4" /> Initialize Account</span>
+                  )}
+                </Button>
+              )}
             </CardFooter>
           </form>
         </Card>
