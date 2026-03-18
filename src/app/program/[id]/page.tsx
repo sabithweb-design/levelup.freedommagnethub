@@ -7,6 +7,7 @@ import { VideoPlayer } from '@/components/program/VideoPlayer';
 import { Gallery } from '@/components/program/Gallery';
 import { VideoTestimonials, ImageTestimonials } from '@/components/program/Testimonials';
 import { CountdownCTA } from '@/components/program/CountdownCTA';
+import { StickyOfferBar } from '@/components/program/StickyOfferBar';
 import { Features } from '@/components/program/Features';
 import { FAQ } from '@/components/program/FAQ';
 import { Loader2, ArrowRight, CheckCircle2, Globe, ShieldCheck, Trophy, Layout } from 'lucide-react';
@@ -182,6 +183,8 @@ export default function ProgramPage() {
       <div id="join" className="scroll-mt-20">
         <CountdownCTA expiryDate={program.expiryDate} joinLink={program.joinButtonLink} />
       </div>
+
+      <StickyOfferBar expiryDate={program.expiryDate} joinLink={program.joinButtonLink} />
 
       <footer className="py-32 px-6 border-t border-border bg-muted/20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-20">
