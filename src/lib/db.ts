@@ -21,6 +21,8 @@ export interface Program {
   id: string;
   title: string;
   subtitle: string;
+  titleFontSize?: number;
+  subtitleFontSize?: number;
   demoVideoId: string;
   gallery: string[];
   videoTestimonials: string[];

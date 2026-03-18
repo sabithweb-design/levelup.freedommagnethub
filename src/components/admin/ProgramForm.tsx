@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -11,8 +12,9 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Slider } from '@/components/ui/slider';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save, Upload, Plus, Trash2, Video, X, ImagePlus, ListPlus, HelpCircle } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, Upload, Plus, Trash2, Video, X, ImagePlus, ListPlus, HelpCircle, Type } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -37,6 +39,8 @@ export function ProgramForm({ programId }: { programId: string }) {
   const [formData, setFormData] = useState({
     title: '',
     subtitle: '',
+    titleFontSize: 80,
+    subtitleFontSize: 24,
     demoVideoUrl: '',
     joinButtonLink: '',
     offerEndTime: '',
@@ -54,6 +58,8 @@ export function ProgramForm({ programId }: { programId: string }) {
       setFormData({
         title: program.title || '',
         subtitle: program.subtitle || '',
+        titleFontSize: program.titleFontSize || 80,
+        subtitleFontSize: program.subtitleFontSize || 24,
         demoVideoUrl: program.demoVideoId ? `https://www.youtube.com/watch?v=${program.demoVideoId}` : '',
         joinButtonLink: program.joinButtonLink || '',
         offerEndTime: program.expiryDate || '',
@@ -172,6 +178,8 @@ export function ProgramForm({ programId }: { programId: string }) {
         id: programId,
         title: formData.title,
         subtitle: formData.subtitle,
+        titleFontSize: formData.titleFontSize,
+        subtitleFontSize: formData.subtitleFontSize,
         demoVideoId: getYouTubeId(formData.demoVideoUrl),
         gallery: [...currentGallery, ...uploadedGalleryUrls],
         videoTestimonials: formData.videoTestimonials.map(v => getYouTubeId(v)),
@@ -213,7 +221,7 @@ export function ProgramForm({ programId }: { programId: string }) {
           <CardTitle>Basic Information</CardTitle>
           <CardDescription>Main headlines and call-to-action details.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="title">Course Title</Label>
             <Input 
@@ -223,6 +231,44 @@ export function ProgramForm({ programId }: { programId: string }) {
               placeholder="e.g. Master Next.js & React"
             />
           </div>
+
+          <div className="space-y-4 p-4 bg-muted/20 rounded-xl border border-border/50">
+            <div className="flex items-center gap-2 mb-2">
+              <Type className="w-4 h-4 text-primary" />
+              <Label className="text-sm font-bold uppercase tracking-widest">Typography Adjustments</Label>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <Label className="text-xs text-muted-foreground uppercase font-black">Title Size</Label>
+                  <span className="text-xs font-bold bg-primary/10 text-primary px-2 py-1 rounded">{formData.titleFontSize}px</span>
+                </div>
+                <Slider 
+                  value={[formData.titleFontSize]} 
+                  onValueChange={val => setFormData({...formData, titleFontSize: val[0]})} 
+                  min={40} 
+                  max={120} 
+                  step={1}
+                />
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <Label className="text-xs text-muted-foreground uppercase font-black">Subtitle Size</Label>
+                  <span className="text-xs font-bold bg-primary/10 text-primary px-2 py-1 rounded">{formData.subtitleFontSize}px</span>
+                </div>
+                <Slider 
+                  value={[formData.subtitleFontSize]} 
+                  onValueChange={val => setFormData({...formData, subtitleFontSize: val[0]})} 
+                  min={14} 
+                  max={48} 
+                  step={1}
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="subtitle">Subtitle</Label>
             <Textarea 

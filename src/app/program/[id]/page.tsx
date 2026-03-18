@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
@@ -92,11 +93,17 @@ export default function ProgramPage() {
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Accredited Learning Path</span>
           </div>
           
-          <h1 className="text-6xl md:text-9xl font-headline font-black text-primary mb-10 leading-[0.9] tracking-tighter">
+          <h1 
+            className="font-headline font-black text-primary mb-10 leading-[0.9] tracking-tighter"
+            style={{ fontSize: program.titleFontSize ? `${program.titleFontSize}px` : undefined }}
+          >
             {program.title}
           </h1>
           
-          <p className="text-xl md:text-2xl text-muted-foreground mb-16 max-w-3xl mx-auto font-medium leading-relaxed">
+          <p 
+            className="text-muted-foreground mb-16 max-w-3xl mx-auto font-medium leading-relaxed"
+            style={{ fontSize: program.subtitleFontSize ? `${program.subtitleFontSize}px` : undefined }}
+          >
             {program.subtitle}
           </p>
           

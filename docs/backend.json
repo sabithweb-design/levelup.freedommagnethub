@@ -19,6 +19,14 @@
           "type": "string",
           "description": "A descriptive subtitle for the learning program."
         },
+        "titleFontSize": {
+          "type": "number",
+          "description": "Font size for the main title in pixels."
+        },
+        "subtitleFontSize": {
+          "type": "number",
+          "description": "Font size for the subtitle in pixels."
+        },
         "demoVideoId": {
           "type": "string",
           "description": "The YouTube video ID for the main demo video."
