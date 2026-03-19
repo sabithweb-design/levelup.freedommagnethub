@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
@@ -206,7 +207,7 @@ export default function ProgramPage() {
               </div>
             </div>
             <p className="text-foreground/80 text-xl max-w-md mb-10 font-medium leading-relaxed">
-              We engineer pathways to professional autonomy through strategic education and world-class mentorship.
+              {program.footerDescription || 'We engineer pathways to professional autonomy through strategic education and world-class mentorship.'}
             </p>
             <div className="flex gap-4">
               <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-accent cursor-pointer hover:bg-accent hover:text-white transition-all"><Globe className="w-5 h-5" /></div>
@@ -237,7 +238,7 @@ export default function ProgramPage() {
 
         <div className="max-w-7xl mx-auto pt-20 mt-20 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <p className="text-white/20 text-[10px] font-black uppercase tracking-widest">
-            &copy; {new Date().getFullYear()} Freedom Magnet Hub Global. All Rights Reserved.
+            &copy; {new Date().getFullYear()} {program.footerCopyright || 'Freedom Magnet Hub Global. All Rights Reserved.'}
           </p>
           <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-white/10">
             <span className="cursor-pointer hover:text-white">English (US)</span>

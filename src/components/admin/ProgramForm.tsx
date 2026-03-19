@@ -13,7 +13,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, Type, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, MessageSquareQuote, LayoutList, Tag } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, Type, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, MessageSquareQuote, LayoutList, Tag, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -47,6 +47,8 @@ export function ProgramForm({ programId }: { programId: string }) {
     oldPriceLabel: '',
     currentPriceLabel: '',
     priceSubtext: '',
+    footerDescription: '',
+    footerCopyright: '',
     videoTestimonials: ['', '', '', ''],
     features: [] as Feature[],
     faqs: [] as FAQItem[],
@@ -72,6 +74,8 @@ export function ProgramForm({ programId }: { programId: string }) {
         oldPriceLabel: program.oldPriceLabel || 'Join ₹1000 / month',
         currentPriceLabel: program.currentPriceLabel || 'Now Pay ₹589 today',
         priceSubtext: program.priceSubtext || '(₹499 + GST) Lifetime Access',
+        footerDescription: program.footerDescription || 'We engineer pathways to professional autonomy through strategic education and world-class mentorship.',
+        footerCopyright: program.footerCopyright || `Freedom Magnet Hub Global. All Rights Reserved.`,
         videoTestimonials: program.videoTestimonials || ['', '', '', ''],
         features: program.features || [],
         faqs: program.faqs || [],
@@ -190,6 +194,8 @@ export function ProgramForm({ programId }: { programId: string }) {
       oldPriceLabel: formData.oldPriceLabel,
       currentPriceLabel: formData.currentPriceLabel,
       priceSubtext: formData.priceSubtext,
+      footerDescription: formData.footerDescription,
+      footerCopyright: formData.footerCopyright,
     };
 
     setDoc(programRef, updateData, { merge: true })
@@ -417,6 +423,37 @@ export function ProgramForm({ programId }: { programId: string }) {
                 />
               </PopoverContent>
             </Popover>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-sm border-border/50">
+        <CardHeader>
+          <CardTitle>Footer Settings</CardTitle>
+          <CardDescription>Manage your brand identity and legal notices in the footer.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="footerDescription">Brand Description / Mission</Label>
+            <Textarea 
+              id="footerDescription" 
+              value={formData.footerDescription} 
+              onChange={e => setFormData({...formData, footerDescription: e.target.value})} 
+              placeholder="e.g. We engineer pathways to professional autonomy..."
+              className="min-h-[100px]"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="footerCopyright">Copyright Notice</Label>
+            <Input 
+              id="footerCopyright" 
+              value={formData.footerCopyright} 
+              onChange={e => setFormData({...formData, footerCopyright: e.target.value})} 
+              placeholder="e.g. Freedom Magnet Hub Global. All Rights Reserved."
+            />
+            <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+              <Info className="w-3 h-3" /> Note: The system automatically prefixes the year and copyright symbol.
+            </p>
           </div>
         </CardContent>
       </Card>

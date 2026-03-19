@@ -36,4 +36,6 @@ export interface Program {
   oldPriceLabel?: string;
   currentPriceLabel?: string;
   priceSubtext?: string;
+  footerDescription?: string;
+  footerCopyright?: string;
 }

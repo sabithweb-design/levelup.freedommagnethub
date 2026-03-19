@@ -105,6 +105,14 @@
         "priceSubtext": {
           "type": "string",
           "description": "Small text below active price, e.g., '(₹499 + GST) Lifetime Access'"
+        },
+        "footerDescription": {
+          "type": "string",
+          "description": "The brand description shown in the footer."
+        },
+        "footerCopyright": {
+          "type": "string",
+          "description": "The copyright notice shown at the very bottom."
         }
       },
       "required": [
