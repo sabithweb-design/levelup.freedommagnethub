@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
@@ -64,12 +63,6 @@ export default function ProgramPage() {
 
   return (
     <div className="bg-background min-h-screen selection:bg-primary selection:text-white relative">
-      {/* Background Ambient Glows */}
-      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        <div className="absolute top-[10%] left-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse"></div>
-        <div className="absolute bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-accent/10 rounded-full blur-[140px] animate-pulse delay-1000"></div>
-      </div>
-
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-background/60 backdrop-blur-[12px] border-b border-white/5">
         <div className="py-4 px-6 max-w-7xl mx-auto flex items-center justify-between">
@@ -141,7 +134,6 @@ export default function ProgramPage() {
           </div>
 
           <div className="max-w-4xl w-full mx-auto relative group">
-            <div className="absolute -inset-4 bg-primary/20 rounded-[3rem] blur-3xl opacity-50 group-hover:opacity-70 transition-opacity"></div>
             <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 bg-white/[0.03] backdrop-blur-[12px] p-1">
               <VideoPlayer videoId={program.demoVideoId} />
             </div>

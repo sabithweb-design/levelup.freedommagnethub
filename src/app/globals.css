@@ -4,24 +4,28 @@
 
 @layer base {
   :root {
-    --background: 225 39% 7%; /* Midnight Blue #0B0F19 */
-    --foreground: 215 20% 75%; /* Soft Gray/Blue #CBD5E1 */
-    --card: 222 34% 13%; /* Slate Navy #151B2B */
+    /* Main Background: #0A192F */
+    --background: 216 65% 11%;
+    /* Text Color: #E2E8F0 */
+    --foreground: 214 32% 91%;
+    /* Card Backgrounds: #112240 */
+    --card: 218 58% 16%;
     --card-foreground: 210 40% 98%;
-    --popover: 225 39% 7%;
+    --popover: 216 65% 11%;
     --popover-foreground: 210 40% 98%;
     --primary: 355 100% 63%; /* Fiery Red/Orange #FF416C */
     --primary-foreground: 210 40% 98%;
-    --secondary: 222 34% 10%;
+    --secondary: 218 58% 12%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 222 34% 10%;
+    --muted: 218 58% 14%;
     --muted-foreground: 215 16% 56%;
     --accent: 330 100% 60%; /* Neon Pink */
     --accent-foreground: 210 40% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 222 34% 15%;
-    --input: 222 34% 15%;
+    /* Border slightly lighter than card for visibility */
+    --border: 218 58% 22%;
+    --input: 218 58% 22%;
     --ring: 355 100% 63%;
     --radius: 1.125rem;
 
@@ -36,9 +40,6 @@
   }
   body {
     @apply bg-background text-foreground font-body antialiased;
-    /* Rich Midnight Blue background with Hero spotlight */
-    background: radial-gradient(circle at 50% 0%, #1A253C 0%, #0B0F19 60%), #0B0F19;
-    background-attachment: scroll;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline tracking-tight text-white font-bold;
@@ -47,7 +48,6 @@
 
 /* Custom Utilities */
 .glass-card {
-  /* Using --card variable (#151B2B) with backdrop blur and translucent border */
   @apply bg-card/60 backdrop-blur-[12px] border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.4)];
 }
 
