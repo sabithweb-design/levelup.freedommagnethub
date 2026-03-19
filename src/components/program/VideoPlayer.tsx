@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import Plyr from 'plyr';
 import 'plyr/dist/plyr.css';
 
 /**
@@ -11,35 +10,53 @@ import 'plyr/dist/plyr.css';
  */
 
 export function VideoPlayer({ videoId }: { videoId: string }) {
-  const playerRef = useRef<HTMLDivElement>(null);
-  const instanceRef = useRef<Plyr | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const instanceRef = useRef<any>(null);
 
   useEffect(() => {
-    if (!playerRef.current || !videoId) return;
+    if (!containerRef.current || !videoId) return;
 
-    // Initialize Plyr instance
-    instanceRef.current = new Plyr(playerRef.current, {
-      controls: [
-        'play-large', 
-        'play', 
-        'progress', 
-        'current-time', 
-        'mute', 
-        'volume', 
-        'settings', 
-        'fullscreen'
-      ],
-      settings: ['quality', 'speed'],
-      youtube: {
-        noCookie: true,
-        rel: 0,
-        showinfo: 0,
-        iv_load_policy: 3,
-        modestbranding: 1
-      },
-      // Hiding related videos and maximizing focus
-      tooltips: { controls: true, seek: true }
-    });
+    let player: any;
+
+    const initPlyr = async () => {
+      try {
+        // Dynamically import Plyr to avoid SSR "document is not defined" errors
+        const Plyr = (await import('plyr')).default;
+        
+        // The element Plyr attaches to
+        const playerElement = containerRef.current?.querySelector('.plyr-container');
+        
+        if (!playerElement) return;
+
+        player = new Plyr(playerElement as HTMLElement, {
+          controls: [
+            'play-large', 
+            'play', 
+            'progress', 
+            'current-time', 
+            'mute', 
+            'volume', 
+            'settings', 
+            'fullscreen'
+          ],
+          settings: ['quality', 'speed'],
+          youtube: {
+            noCookie: true,
+            rel: 0,
+            showinfo: 0,
+            iv_load_policy: 3,
+            modestbranding: 1
+          },
+          tooltips: { controls: true, seek: true }
+        });
+
+        instanceRef.current = player;
+      } catch (error) {
+        console.error("Failed to initialize Plyr:", error);
+      }
+    };
+
+    initPlyr();
 
     return () => {
       if (instanceRef.current) {
@@ -51,9 +68,9 @@ export function VideoPlayer({ videoId }: { videoId: string }) {
   if (!videoId) return null;
 
   return (
-    <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl bg-black border-4 border-white/10 group custom-video-player">
+    <div ref={containerRef} className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl bg-black border-4 border-white/10 group custom-video-player">
       <div 
-        ref={playerRef} 
+        className="plyr-container"
         data-plyr-provider="youtube" 
         data-plyr-embed-id={videoId}
       />
