@@ -56,13 +56,16 @@ export function VideoPlayer({ videoId = 'P5_rBMem0cE' }: VideoPlayerProps) {
           tooltips: { controls: true, seek: true }
         });
 
+        // Store instance in ref for cleanup
+        instanceRef.current = player;
+
         // Register the player instance globally for auto-pause logic
         if (!(window as any).plyrInstances) {
           (window as any).plyrInstances = [];
         }
         (window as any).plyrInstances.push(player);
 
-        // Add auto-pause logic: when this player plays, pause all others
+        // Add auto-pause logic: when this player starts playing, pause all other registered instances
         player.on('play', () => {
           const allPlayers = (window as any).plyrInstances || [];
           allPlayers.forEach((p: any) => {
@@ -72,9 +75,8 @@ export function VideoPlayer({ videoId = 'P5_rBMem0cE' }: VideoPlayerProps) {
           });
         });
 
-        instanceRef.current = player;
       } catch (error) {
-        // Error handling is managed centrally by the FirebaseErrorListener
+        // Errors are captured and handled by the global listener
       }
     };
 
@@ -82,7 +84,7 @@ export function VideoPlayer({ videoId = 'P5_rBMem0cE' }: VideoPlayerProps) {
 
     return () => {
       if (instanceRef.current) {
-        // Clean up global registry
+        // Clean up global registry to prevent memory leaks and stale references
         if ((window as any).plyrInstances) {
           (window as any).plyrInstances = (window as any).plyrInstances.filter(
             (p: any) => p !== instanceRef.current
