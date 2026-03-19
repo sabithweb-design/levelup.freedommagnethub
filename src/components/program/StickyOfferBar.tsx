@@ -6,7 +6,7 @@ import { Timer, ArrowRight, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; joinLink: string }) {
-  const [timeLeft, setTimeLeft] = useState<{ d: number; h: number; m: number; s: number } | null>(null);
+  const [timeLeft, setTimeLeft] = useState<{ h: number; m: number; s: number } | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -15,8 +15,7 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
       if (difference <= 0) return null;
 
       return {
-        d: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        h: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        h: Math.floor(difference / (1000 * 60 * 60)),
         m: Math.floor((difference / 1000 / 60) % 60),
         s: Math.floor((difference / 1000) % 60),
       };
@@ -54,7 +53,6 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
             </div>
             <div className="flex gap-2 md:gap-4 lg:gap-6">
               {[
-                { label: 'DAYS', val: timeLeft.d },
                 { label: 'HRS', val: timeLeft.h },
                 { label: 'MIN', val: timeLeft.m },
                 { label: 'SEC', val: timeLeft.s },

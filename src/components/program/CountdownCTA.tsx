@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect } from 'react';
@@ -6,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Timer } from 'lucide-react';
 
 export function CountdownCTA({ expiryDate, joinLink }: { expiryDate: string; joinLink: string }) {
-  const [timeLeft, setTimeLeft] = useState<{ d: number; h: number; m: number; s: number } | null>(null);
+  const [timeLeft, setTimeLeft] = useState<{ h: number; m: number; s: number } | null>(null);
 
   useEffect(() => {
     const calculate = () => {
@@ -14,8 +13,7 @@ export function CountdownCTA({ expiryDate, joinLink }: { expiryDate: string; joi
       if (difference <= 0) return null;
 
       return {
-        d: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        h: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        h: Math.floor(difference / (1000 * 60 * 60)),
         m: Math.floor((difference / 1000 / 60) % 60),
         s: Math.floor((difference / 1000) % 60),
       };
@@ -40,7 +38,6 @@ export function CountdownCTA({ expiryDate, joinLink }: { expiryDate: string; joi
         {timeLeft && (
           <div className="flex justify-center gap-4 mb-12">
             {[
-              { label: 'Days', val: timeLeft.d },
               { label: 'Hours', val: timeLeft.h },
               { label: 'Min', val: timeLeft.m },
               { label: 'Sec', val: timeLeft.s },
