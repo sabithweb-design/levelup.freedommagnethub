@@ -1,32 +1,64 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+import Plyr from 'plyr';
+import 'plyr/dist/plyr.css';
+
 /**
- * @fileOverview A professional YouTube video player component.
- * Uses optimized embed parameters to minimize external branding and maximize focus.
+ * @fileOverview A professional custom video player using Plyr.js.
+ * Wraps YouTube videos to provide a clean, branded LMS-style interface
+ * and minimizes standard YouTube UI distractions.
  */
 
 export function VideoPlayer({ videoId }: { videoId: string }) {
+  const playerRef = useRef<HTMLDivElement>(null);
+  const instanceRef = useRef<Plyr | null>(null);
+
+  useEffect(() => {
+    if (!playerRef.current || !videoId) return;
+
+    // Initialize Plyr instance
+    instanceRef.current = new Plyr(playerRef.current, {
+      controls: [
+        'play-large', 
+        'play', 
+        'progress', 
+        'current-time', 
+        'mute', 
+        'volume', 
+        'settings', 
+        'fullscreen'
+      ],
+      settings: ['quality', 'speed'],
+      youtube: {
+        noCookie: true,
+        rel: 0,
+        showinfo: 0,
+        iv_load_policy: 3,
+        modestbranding: 1
+      },
+      // Hiding related videos and maximizing focus
+      tooltips: { controls: true, seek: true }
+    });
+
+    return () => {
+      if (instanceRef.current) {
+        instanceRef.current.destroy();
+      }
+    };
+  }, [videoId]);
+
   if (!videoId) return null;
 
-  // Parameters used to minimize branding:
-  // modestbranding=1: Removes the YouTube logo from the control bar (standard requirement).
-  // rel=0: Ensures related videos at the end are only from the same channel.
-  // iv_load_policy=3: Hides video annotations (pop-ups).
-  // Note: YouTube deprecated 'showinfo=0' in 2018, so uploader info is enforced by the platform.
-  const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&modestbranding=1&iv_load_policy=3&controls=1&showinfo=0`;
-
   return (
-    <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl bg-black border-4 border-white/10 group">
-      <iframe
-        className="absolute inset-0 w-full h-full"
-        src={embedUrl}
-        title="Program Video Player"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowFullScreen
-      ></iframe>
-      {/* Decorative inner border to add a premium feel */}
-      <div className="absolute inset-0 pointer-events-none border border-white/10 rounded-2xl"></div>
+    <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl bg-black border-4 border-white/10 group custom-video-player">
+      <div 
+        ref={playerRef} 
+        data-plyr-provider="youtube" 
+        data-plyr-embed-id={videoId}
+      />
+      {/* Decorative premium border overlay */}
+      <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-2xl z-10"></div>
     </div>
   );
 }

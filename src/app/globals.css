@@ -24,6 +24,11 @@
     --input: 212 30% 92%;
     --ring: 228 54% 37%;
     --radius: 1rem;
+
+    /* Plyr Customization to match brand accent color */
+    --plyr-color-main: hsl(var(--accent));
+    --plyr-video-control-background-hover: hsl(var(--accent));
+    --plyr-video-control-color-hover: #fff;
   }
 }
 
@@ -37,4 +42,13 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline tracking-tight;
   }
+}
+
+/* Custom Plyr tweaks for a cleaner look */
+.custom-video-player .plyr--video {
+  border-radius: inherit;
+}
+
+.custom-video-player .plyr__video-embed iframe {
+  transform: scale(1.01); /* Slight overscale to hide potential slivers of YT chrome */
 }
