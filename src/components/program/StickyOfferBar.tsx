@@ -55,25 +55,25 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
         style={{ background: 'linear-gradient(to right, #FF6B6B, #FF8E53)' }}
       />
 
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
         
         {/* Pricing Typography */}
-        <div className="flex flex-col items-center md:items-start text-center md:text-left">
-          <p className="text-[#94A3B8] text-sm">
+        <div className="flex flex-row md:flex-col items-center md:items-start text-center md:text-left gap-3 md:gap-0">
+          <p className="text-[#94A3B8] text-xs md:text-sm">
             Join <span className="line-through">₹1000/month</span>
           </p>
           <div className="flex flex-col">
             <p className="text-white text-sm">
-              Now Pay <span className="text-white font-bold text-xl">₹589 today</span>
+              Now Pay <span className="text-white font-bold text-lg md:text-xl">₹589 today</span>
             </p>
-            <p className="text-[10px] text-[#94A3B8] uppercase font-bold tracking-wider">
+            <p className="hidden md:block text-[10px] text-[#94A3B8] uppercase font-bold tracking-wider">
               (+ GST) Lifetime Access
             </p>
           </div>
         </div>
 
         {/* Countdown Timer */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 md:gap-4">
           {[
             { label: 'days', val: timeLeft.d },
             { label: 'mins', val: timeLeft.m },
@@ -81,7 +81,7 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
           ].map((unit, idx) => (
             <div key={idx} className="flex flex-col items-center">
               <div 
-                className="w-12 h-12 flex items-center justify-center rounded-lg font-black text-xl"
+                className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg font-black text-lg md:text-xl"
                 style={{
                   border: '1px solid #FF6B6B',
                   color: '#FF6B6B',
@@ -90,14 +90,14 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
               >
                 {unit.val.toString().padStart(2, '0')}
               </div>
-              <span className="text-[10px] uppercase font-bold text-[#94A3B8] mt-1 tracking-widest">{unit.label}</span>
+              <span className="text-[8px] md:text-[10px] uppercase font-bold text-[#94A3B8] mt-1 tracking-widest">{unit.label}</span>
             </div>
           ))}
         </div>
 
         {/* CTA Button */}
         <Button 
-          className="rounded-full px-10 py-7 h-auto text-lg font-black text-white transition-all hover:scale-105 active:scale-95 group uppercase tracking-tight"
+          className="w-full md:w-auto rounded-full px-6 py-4 md:px-10 md:py-7 h-auto text-base md:text-lg font-black text-white transition-all hover:scale-105 active:scale-95 group uppercase tracking-tight"
           style={{
             background: 'linear-gradient(to right, #FF6B6B, #FF8E53)',
             boxShadow: '0 4px 15px rgba(255, 107, 107, 0.4)',
@@ -105,7 +105,7 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
           asChild
         >
           <a href={joinLink || '#'}>
-            Become a Member <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            Join Now <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </a>
         </Button>
 
