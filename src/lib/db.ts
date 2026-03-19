@@ -3,7 +3,6 @@ export interface Testimonial {
   name?: string;
   role?: string; // Used for "Place" or "Role"
   content: string;
-  imageUrl?: string;
 }
 
 export interface Feature {

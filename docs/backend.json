@@ -61,8 +61,7 @@
             "properties": {
               "name": { "type": "string" },
               "role": { "type": "string" },
-              "content": { "type": "string" },
-              "imageUrl": { "type": "string" }
+              "content": { "type": "string" }
             }
           }
         },
