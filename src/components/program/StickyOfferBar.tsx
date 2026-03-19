@@ -38,16 +38,16 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
   if (!timeLeft || !isVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[100] bg-primary/95 backdrop-blur-3xl border-t-4 border-accent p-6 md:p-8 shadow-[0_-20px_80px_-15px_rgba(0,0,0,0.6)] animate-in slide-in-from-bottom-full duration-700 ease-out">
+    <div className="fixed bottom-0 left-0 right-0 z-[100] bg-background/90 backdrop-blur-3xl border-t border-white/10 p-6 md:p-8 shadow-[0_-20px_80px_-15px_rgba(0,0,0,0.8)] animate-in slide-in-from-bottom-full duration-700 ease-out">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
         <div className="flex items-center gap-6 md:gap-10 text-white w-full md:w-auto justify-center md:justify-start">
-          <div className="hidden sm:flex items-center justify-center w-16 h-16 rounded-3xl bg-accent shadow-[0_0_30px_rgba(255,193,7,0.4)]">
-            <Timer className="w-8 h-8 text-primary" />
+          <div className="hidden sm:flex items-center justify-center w-16 h-16 rounded-3xl fiery-gradient fiery-glow">
+            <Timer className="w-8 h-8 text-white" />
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 justify-center md:justify-start">
               <Sparkles className="w-4 h-4 text-accent" />
-              <p className="text-[11px] font-black uppercase tracking-[0.4em] text-accent">Offer Ends In:</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.4em] text-accent">Enrollment Closing:</p>
             </div>
             <div className="flex gap-4 md:gap-6 lg:gap-8">
               {[
@@ -56,7 +56,7 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
                 { label: 'SEC', val: timeLeft.s },
               ].map((unit, idx) => (
                 <div key={idx} className="flex flex-col items-center min-w-[50px] md:min-w-[70px]">
-                  <div className="bg-white/10 backdrop-blur-md rounded-xl md:rounded-2xl p-2 md:p-3 w-full flex items-center justify-center border border-white/10 shadow-inner">
+                  <div className="bg-white/5 backdrop-blur-md rounded-xl md:rounded-2xl p-2 md:p-3 w-full flex items-center justify-center border border-white/10">
                     <span className="text-2xl md:text-4xl lg:text-5xl font-black tabular-nums tracking-tighter leading-none text-white">
                       {unit.val.toString().padStart(2, '0')}
                     </span>
@@ -71,11 +71,11 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
         <div className="flex items-center gap-6 md:gap-10 w-full md:w-auto">
           <div className="hidden lg:block text-right border-r border-white/10 pr-10">
             <p className="text-lg font-black text-white tracking-tight uppercase">Limited Cohort Access</p>
-            <p className="text-[11px] font-bold text-accent uppercase tracking-[0.2em]">85% Discount Applied</p>
+            <p className="text-[11px] font-bold text-accent uppercase tracking-[0.2em]">Immediate Grant Applied</p>
           </div>
           <Button 
             size="lg" 
-            className="w-full md:w-auto bg-accent hover:bg-amber-500 text-primary font-black rounded-full px-12 py-6 h-auto text-lg shadow-[0_0_40px_rgba(255,193,7,0.3)] group uppercase tracking-tighter transition-all hover:scale-105 active:scale-95"
+            className="w-full md:w-auto fiery-gradient fiery-glow text-white font-black rounded-full px-12 py-6 h-auto text-lg group uppercase tracking-tighter transition-all hover:scale-105 active:scale-95"
             asChild
           >
             <a href={joinLink || '#'}>

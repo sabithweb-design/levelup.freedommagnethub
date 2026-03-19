@@ -4,51 +4,29 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%; /* Off-white #F8F9FA */
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 217 50% 14%; /* Deep Navy #0B1E3C */
+    --background: 240 45% 4%; /* Deep Midnight #050511 */
+    --foreground: 215 20% 75%; /* Soft Gray/Blue #CBD5E1 */
+    --card: 240 37% 13%; /* Lighter Dark #15172E */
+    --card-foreground: 210 40% 98%;
+    --popover: 240 45% 6%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 355 100% 63%; /* Fiery Red/Orange #FF416C */
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222 47% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 45 100% 51%; /* Warm Gold #FFC107 */
-    --accent-foreground: 222 47% 11.2%;
+    --secondary: 240 37% 20%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 240 37% 15%;
+    --muted-foreground: 215 16% 56%;
+    --accent: 330 100% 60%; /* Neon Pink/Coral */
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 217 50% 14%;
+    --border: 240 37% 18%;
+    --input: 240 37% 18%;
+    --ring: 355 100% 63%;
     --radius: 1.125rem;
 
     /* Plyr Customization */
-    --plyr-color-main: hsl(var(--accent));
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --plyr-color-main: hsl(var(--primary));
   }
 }
 
@@ -60,25 +38,25 @@
     @apply bg-background text-foreground font-body antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-headline tracking-tight;
+    @apply font-headline tracking-tight text-white font-bold;
   }
 }
 
 /* Custom Utilities */
-.shadow-soft {
-  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+.glass-card {
+  @apply bg-card/40 backdrop-blur-xl border border-white/10 shadow-2xl;
 }
 
-.shadow-elevation {
-  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.12);
+.fiery-gradient {
+  background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%);
 }
 
-.bg-dark-navy {
-  background-color: #0B1E3C;
+.fiery-glow {
+  box-shadow: 0 0 30px rgba(255, 65, 108, 0.4);
 }
 
-.text-navy {
-  color: #0B1E3C;
+.text-gradient-accent {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-accent to-primary;
 }
 
 .custom-video-player .plyr--video {
