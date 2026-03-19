@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
@@ -184,7 +185,13 @@ export default function ProgramPage() {
         <CountdownCTA expiryDate={program.expiryDate} joinLink={program.joinButtonLink} />
       </div>
 
-      <StickyOfferBar expiryDate={program.expiryDate} joinLink={program.joinButtonLink} />
+      <StickyOfferBar 
+        expiryDate={program.expiryDate} 
+        joinLink={program.joinButtonLink}
+        oldPriceLabel={program.oldPriceLabel}
+        currentPriceLabel={program.currentPriceLabel}
+        priceSubtext={program.priceSubtext}
+      />
 
       <footer className="py-40 px-6 border-t border-white/5 bg-background/80 backdrop-blur-md text-white overflow-hidden relative">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-20 relative z-10">

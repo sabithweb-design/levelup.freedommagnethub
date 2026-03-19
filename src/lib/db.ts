@@ -33,4 +33,7 @@ export interface Program {
   faqs?: FAQItem[];
   expiryDate: string;
   joinButtonLink: string;
+  oldPriceLabel?: string;
+  currentPriceLabel?: string;
+  priceSubtext?: string;
 }

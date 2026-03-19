@@ -1,10 +1,25 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
-export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; joinLink: string }) {
+interface StickyOfferBarProps {
+  expiryDate: string;
+  joinLink: string;
+  oldPriceLabel?: string;
+  currentPriceLabel?: string;
+  priceSubtext?: string;
+}
+
+export function StickyOfferBar({ 
+  expiryDate, 
+  joinLink, 
+  oldPriceLabel = 'Join ₹1000 / month', 
+  currentPriceLabel = 'Now Pay ₹589 today', 
+  priceSubtext = '(₹499 + GST) Lifetime Access' 
+}: StickyOfferBarProps) {
   const [timeLeft, setTimeLeft] = useState<{ d: number; m: number; s: number } | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -68,14 +83,21 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
           {/* Pricing Typography */}
           <div className="text-right md:text-left text-white">
             <p className="text-xs md:text-sm opacity-90 leading-tight">
-              Join <span className="line-through opacity-70">₹1000 / month</span>
+              <span className="line-through opacity-70">{oldPriceLabel}</span>
             </p>
             <div className="flex flex-col mt-0.5">
               <p className="text-sm md:text-lg lg:text-xl leading-tight font-medium">
-                Now <span className="font-black">Pay ₹589 today</span>
+                {currentPriceLabel.split('₹').length > 1 ? (
+                  <>
+                    {currentPriceLabel.split('₹')[0]}
+                    <span className="font-black">₹{currentPriceLabel.split('₹')[1]}</span>
+                  </>
+                ) : (
+                  <span className="font-black">{currentPriceLabel}</span>
+                )}
               </p>
               <p className="text-[10px] md:text-xs font-black opacity-95">
-                (₹499 + GST) Lifetime Access
+                {priceSubtext}
               </p>
             </div>
           </div>

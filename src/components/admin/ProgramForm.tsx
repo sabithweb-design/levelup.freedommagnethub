@@ -13,7 +13,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, Type, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, MessageSquareQuote, LayoutList } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, Type, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, MessageSquareQuote, LayoutList, Tag } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -44,6 +44,9 @@ export function ProgramForm({ programId }: { programId: string }) {
     demoVideoUrl: '',
     joinButtonLink: '',
     offerEndTime: '',
+    oldPriceLabel: '',
+    currentPriceLabel: '',
+    priceSubtext: '',
     videoTestimonials: ['', '', '', ''],
     features: [] as Feature[],
     faqs: [] as FAQItem[],
@@ -66,6 +69,9 @@ export function ProgramForm({ programId }: { programId: string }) {
         demoVideoUrl: program.demoVideoId ? `https://www.youtube.com/watch?v=${program.demoVideoId}` : '',
         joinButtonLink: program.joinButtonLink || '',
         offerEndTime: program.expiryDate || '',
+        oldPriceLabel: program.oldPriceLabel || 'Join ₹1000 / month',
+        currentPriceLabel: program.currentPriceLabel || 'Now Pay ₹589 today',
+        priceSubtext: program.priceSubtext || '(₹499 + GST) Lifetime Access',
         videoTestimonials: program.videoTestimonials || ['', '', '', ''],
         features: program.features || [],
         faqs: program.faqs || [],
@@ -181,6 +187,9 @@ export function ProgramForm({ programId }: { programId: string }) {
       faqs: formData.faqs,
       joinButtonLink: formData.joinButtonLink,
       expiryDate: formData.offerEndTime || new Date().toISOString(),
+      oldPriceLabel: formData.oldPriceLabel,
+      currentPriceLabel: formData.currentPriceLabel,
+      priceSubtext: formData.priceSubtext,
     };
 
     setDoc(programRef, updateData, { merge: true })
@@ -328,6 +337,44 @@ export function ProgramForm({ programId }: { programId: string }) {
               className="min-h-[100px]"
             />
           </div>
+
+          <div className="space-y-4 p-6 bg-accent/5 rounded-xl border border-accent/20">
+            <div className="flex items-center gap-2 mb-4">
+              <Tag className="w-4 h-4 text-accent" />
+              <Label className="text-sm font-bold uppercase tracking-widest text-accent">Sticky Offer Bar Pricing</Label>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="oldPriceLabel">Old Price Label (Strikethrough)</Label>
+                <Input 
+                  id="oldPriceLabel" 
+                  value={formData.oldPriceLabel} 
+                  onChange={e => setFormData({...formData, oldPriceLabel: e.target.value})} 
+                  placeholder="e.g. Join ₹1000 / month"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="currentPriceLabel">Current Price Label</Label>
+                <Input 
+                  id="currentPriceLabel" 
+                  value={formData.currentPriceLabel} 
+                  onChange={e => setFormData({...formData, currentPriceLabel: e.target.value})} 
+                  placeholder="e.g. Now Pay ₹589 today"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="priceSubtext">Price Subtext</Label>
+                <Input 
+                  id="priceSubtext" 
+                  value={formData.priceSubtext} 
+                  onChange={e => setFormData({...formData, priceSubtext: e.target.value})} 
+                  placeholder="e.g. (₹499 + GST) Lifetime Access"
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="demo">Demo Video (YouTube URL)</Label>

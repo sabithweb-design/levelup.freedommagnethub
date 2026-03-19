@@ -93,6 +93,18 @@
         "expiryDate": {
           "type": "string",
           "format": "date-time"
+        },
+        "oldPriceLabel": {
+          "type": "string",
+          "description": "Strikethrough price label, e.g., 'Join ₹1000 / month'"
+        },
+        "currentPriceLabel": {
+          "type": "string",
+          "description": "Active price highlight, e.g., 'Now Pay ₹589 today'"
+        },
+        "priceSubtext": {
+          "type": "string",
+          "description": "Small text below active price, e.g., '(₹499 + GST) Lifetime Access'"
         }
       },
       "required": [
