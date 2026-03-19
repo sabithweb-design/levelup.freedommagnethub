@@ -39,6 +39,7 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[100] bg-primary/95 backdrop-blur-2xl border-t-4 border-accent p-4 md:p-6 lg:p-8 shadow-[0_-20px_80px_-15px_rgba(0,0,0,0.8)] animate-in slide-in-from-bottom-full duration-700 ease-out">
+      {/* Decorative top glow line */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-accent to-transparent opacity-100"></div>
       
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10">
