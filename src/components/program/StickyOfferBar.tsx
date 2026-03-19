@@ -40,15 +40,15 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
 
   return (
     <div 
-      className="fixed bottom-0 left-0 right-0 z-[100] p-4 md:py-6 md:px-8 shadow-2xl animate-in slide-in-from-bottom-full duration-500 ease-out bg-[#FF4B2B]"
+      className="fixed bottom-0 left-0 right-0 z-[100] p-4 md:py-4 md:px-8 shadow-2xl animate-in slide-in-from-bottom-full duration-500 ease-out bg-[#FF4B2B]"
     >
-      <div className="max-w-4xl mx-auto flex flex-col gap-6">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         
-        {/* Top Section: Timer and Pricing */}
-        <div className="flex items-center justify-between gap-4">
+        {/* Left/Middle Content Group: Timer and Pricing */}
+        <div className="flex items-center justify-between md:justify-start gap-4 md:gap-12 flex-1">
           
           {/* Countdown Timer */}
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-2 md:gap-3">
             {[
               { label: 'days', val: timeLeft.d },
               { label: 'mint', val: timeLeft.m },
@@ -56,34 +56,34 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
             ].map((unit, idx) => (
               <div key={idx} className="flex flex-col items-center">
                 <div 
-                  className="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-xl font-bold text-lg md:text-2xl border border-white/40 text-white"
+                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg font-bold text-lg md:text-xl border border-white/40 text-white"
                 >
                   {unit.val.toString().padStart(2, '0')}
                 </div>
-                <span className="text-[10px] md:text-xs font-medium text-white/90 mt-1">{unit.label}</span>
+                <span className="text-[9px] md:text-[10px] font-medium text-white/90 mt-1 uppercase tracking-tighter">{unit.label}</span>
               </div>
             ))}
           </div>
 
           {/* Pricing Typography */}
-          <div className="text-right text-white">
-            <p className="text-xs md:text-sm opacity-90">
-              Join <span className="line-through">₹1000 / month</span>
+          <div className="text-right md:text-left text-white">
+            <p className="text-[10px] md:text-xs opacity-90 leading-tight">
+              Join <span className="line-through opacity-70">₹1000 / month</span>
             </p>
             <div className="flex flex-col">
-              <p className="text-sm md:text-lg">
+              <p className="text-xs md:text-base leading-tight">
                 Now <span className="font-bold">Pay ₹589 today</span>
               </p>
-              <p className="text-[10px] md:text-xs font-bold">
+              <p className="text-[9px] md:text-[11px] font-bold opacity-90">
                 (₹499 + GST) Lifetime Access
               </p>
             </div>
           </div>
         </div>
 
-        {/* Bottom Section: CTA Button */}
+        {/* Action Button: Now sits on the same line on desktop */}
         <Button 
-          className="w-full rounded-full py-8 text-lg md:text-xl font-black bg-white text-[#FF4B2B] hover:bg-white/95 transition-all shadow-lg active:scale-95 group"
+          className="w-full md:w-auto md:min-w-[240px] rounded-full py-7 md:py-6 text-base md:text-lg font-black bg-white text-[#FF4B2B] hover:bg-white/95 transition-all shadow-lg active:scale-95 group uppercase tracking-tight"
           asChild
         >
           <a href={joinLink || '#'}>
