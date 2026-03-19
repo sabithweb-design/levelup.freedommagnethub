@@ -4,24 +4,24 @@
 
 @layer base {
   :root {
-    --background: 240 45% 4%; /* Deep Midnight #050511 */
+    --background: 225 39% 7%; /* Midnight Blue #0B0F19 */
     --foreground: 215 20% 75%; /* Soft Gray/Blue #CBD5E1 */
-    --card: 240 37% 7%; /* Translucent Dark */
+    --card: 222 34% 13%; /* Slate Navy #151B2B */
     --card-foreground: 210 40% 98%;
-    --popover: 240 45% 4%;
+    --popover: 225 39% 7%;
     --popover-foreground: 210 40% 98%;
     --primary: 355 100% 63%; /* Fiery Red/Orange #FF416C */
     --primary-foreground: 210 40% 98%;
-    --secondary: 240 37% 12%;
+    --secondary: 222 34% 10%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 240 37% 10%;
+    --muted: 222 34% 10%;
     --muted-foreground: 215 16% 56%;
     --accent: 330 100% 60%; /* Neon Pink */
     --accent-foreground: 210 40% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 240 37% 15%;
-    --input: 240 37% 15%;
+    --border: 222 34% 15%;
+    --input: 222 34% 15%;
     --ring: 355 100% 63%;
     --radius: 1.125rem;
 
@@ -36,10 +36,9 @@
   }
   body {
     @apply bg-background text-foreground font-body antialiased;
-    background-image: 
-      radial-gradient(circle at 0% 0%, #1E103C 0%, transparent 40%),
-      radial-gradient(circle at 100% 100%, #0B1B3D 0%, transparent 40%);
-    background-attachment: fixed;
+    /* Rich Midnight Blue background with Hero spotlight */
+    background: radial-gradient(circle at 50% 0%, #1A253C 0%, #0B0F19 60%), #0B0F19;
+    background-attachment: scroll;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline tracking-tight text-white font-bold;
@@ -48,7 +47,8 @@
 
 /* Custom Utilities */
 .glass-card {
-  @apply bg-white/[0.03] backdrop-blur-[12px] border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.4)];
+  /* Using --card variable (#151B2B) with backdrop blur and translucent border */
+  @apply bg-card/60 backdrop-blur-[12px] border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.4)];
 }
 
 .fiery-gradient {
