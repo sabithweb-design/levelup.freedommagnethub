@@ -20,15 +20,14 @@ export function Features({ features }: { features?: Feature[] }) {
 
   return (
     <section className="py-40 px-6 relative">
-      <div className="absolute inset-0 bg-primary/5 -skew-y-3 origin-right -z-10"></div>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-24 relative">
           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4 block">Engineered Methodology</span>
           <h2 className="text-4xl md:text-6xl font-headline font-black text-white mb-6 uppercase tracking-tight">
             The Mastery Framework
           </h2>
-          <div className="h-1.5 w-24 bg-gradient-to-r from-accent to-primary mx-auto mb-8 rounded-full"></div>
-          <p className="text-foreground text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
+          <div className="h-1.5 w-24 fiery-gradient mx-auto mb-8 rounded-full"></div>
+          <p className="text-foreground/80 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
             We don't just teach code. We provide the tools, mindset, and network required for long-term professional autonomy.
           </p>
         </div>
@@ -37,7 +36,7 @@ export function Features({ features }: { features?: Feature[] }) {
           {features.map((feature, idx) => {
             const Icon = iconMap[feature.iconName] || Star;
             return (
-              <Card key={idx} className="glass-card group hover:-translate-y-2 transition-all duration-500 rounded-[2.5rem] overflow-hidden">
+              <Card key={idx} className="glass-card group hover:-translate-y-2 transition-all duration-500 rounded-[2.5rem] overflow-hidden border-white/5">
                 <CardContent className="pt-12 pb-12 px-10">
                   <div className="bg-white/5 text-accent w-16 h-16 rounded-2xl flex items-center justify-center mb-8 group-hover:fiery-gradient group-hover:text-white transition-all duration-500 group-hover:fiery-glow">
                     <Icon className="w-8 h-8" />

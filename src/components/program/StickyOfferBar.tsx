@@ -38,7 +38,7 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
   if (!timeLeft || !isVisible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[100] bg-background/90 backdrop-blur-3xl border-t border-white/10 p-6 md:p-8 shadow-[0_-20px_80px_-15px_rgba(0,0,0,0.8)] animate-in slide-in-from-bottom-full duration-700 ease-out">
+    <div className="fixed bottom-0 left-0 right-0 z-[100] bg-background/60 backdrop-blur-[24px] border-t border-white/10 p-6 md:p-8 shadow-[0_-20px_80px_-15px_rgba(0,0,0,0.8)] animate-in slide-in-from-bottom-full duration-700 ease-out">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
         <div className="flex items-center gap-6 md:gap-10 text-white w-full md:w-auto justify-center md:justify-start">
           <div className="hidden sm:flex items-center justify-center w-16 h-16 rounded-3xl fiery-gradient fiery-glow">

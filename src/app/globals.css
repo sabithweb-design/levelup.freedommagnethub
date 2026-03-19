@@ -6,22 +6,22 @@
   :root {
     --background: 240 45% 4%; /* Deep Midnight #050511 */
     --foreground: 215 20% 75%; /* Soft Gray/Blue #CBD5E1 */
-    --card: 240 37% 13%; /* Lighter Dark #15172E */
+    --card: 240 37% 7%; /* Translucent Dark */
     --card-foreground: 210 40% 98%;
-    --popover: 240 45% 6%;
+    --popover: 240 45% 4%;
     --popover-foreground: 210 40% 98%;
     --primary: 355 100% 63%; /* Fiery Red/Orange #FF416C */
     --primary-foreground: 210 40% 98%;
-    --secondary: 240 37% 20%;
+    --secondary: 240 37% 12%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 240 37% 15%;
+    --muted: 240 37% 10%;
     --muted-foreground: 215 16% 56%;
-    --accent: 330 100% 60%; /* Neon Pink/Coral */
+    --accent: 330 100% 60%; /* Neon Pink */
     --accent-foreground: 210 40% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 240 37% 18%;
-    --input: 240 37% 18%;
+    --border: 240 37% 15%;
+    --input: 240 37% 15%;
     --ring: 355 100% 63%;
     --radius: 1.125rem;
 
@@ -36,6 +36,10 @@
   }
   body {
     @apply bg-background text-foreground font-body antialiased;
+    background-image: 
+      radial-gradient(circle at 0% 0%, #1E103C 0%, transparent 40%),
+      radial-gradient(circle at 100% 100%, #0B1B3D 0%, transparent 40%);
+    background-attachment: fixed;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline tracking-tight text-white font-bold;
@@ -44,7 +48,7 @@
 
 /* Custom Utilities */
 .glass-card {
-  @apply bg-card/40 backdrop-blur-xl border border-white/10 shadow-2xl;
+  @apply bg-white/[0.03] backdrop-blur-[12px] border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.4)];
 }
 
 .fiery-gradient {
@@ -52,11 +56,11 @@
 }
 
 .fiery-glow {
-  box-shadow: 0 0 30px rgba(255, 65, 108, 0.4);
+  box-shadow: 0 0 25px rgba(255, 65, 108, 0.4);
 }
 
 .text-gradient-accent {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-accent to-primary;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#FF416C] via-[#FF4B2B] to-[#FAD0C4];
 }
 
 .custom-video-player .plyr--video {

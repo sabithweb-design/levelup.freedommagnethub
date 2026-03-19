@@ -12,12 +12,12 @@ export function VideoTestimonials({ videoIds }: { videoIds: string[] }) {
         <div className="text-center mb-20">
           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4 block">Impact Analysis</span>
           <h2 className="text-4xl md:text-6xl font-headline font-black text-white mb-6 uppercase tracking-tight">Student Success Stories</h2>
-          <div className="h-1.5 w-20 bg-gradient-to-r from-accent to-primary mx-auto rounded-full"></div>
+          <div className="h-1.5 w-20 fiery-gradient mx-auto rounded-full"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {videoIds.map((id, idx) => (
             <div key={idx} className="group relative">
-              <div className="absolute -inset-4 bg-primary/10 rounded-[3rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute -inset-4 bg-primary/20 rounded-[3rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 glass-card p-1">
                 <VideoPlayer videoId={id} />
               </div>
@@ -45,13 +45,13 @@ export function ImageTestimonials({ testimonials }: { testimonials: Testimonial[
       <div className="text-center mb-24">
         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4 block">Market Feedback</span>
         <h2 className="text-4xl md:text-7xl font-headline font-black text-white uppercase tracking-tighter mb-6">Voice of the Network</h2>
-        <p className="text-foreground text-xl font-medium max-w-2xl mx-auto">
+        <p className="text-foreground/80 text-xl font-medium max-w-2xl mx-auto">
           Unfiltered perspectives from professionals who have navigated the Freedom Framework.
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
         {testimonials.map((t, idx) => (
-          <Card key={idx} className="h-full glass-card hover:-translate-y-2 transition-all duration-500 rounded-[3rem] overflow-hidden group flex flex-col">
+          <Card key={idx} className="h-full glass-card hover:-translate-y-2 transition-all duration-500 rounded-[3rem] overflow-hidden group flex flex-col border-white/5">
             <div className="h-1.5 w-full fiery-gradient"></div>
             <CardContent className="p-12 flex flex-col flex-grow relative">
               <Quote className="absolute top-10 right-10 w-20 h-20 text-white/5 -rotate-12 group-hover:text-accent/10 transition-all duration-500" />

@@ -62,9 +62,15 @@ export default function ProgramPage() {
   const selectedAlignment = program.textAlign || 'center';
 
   return (
-    <div className="bg-background min-h-screen selection:bg-primary selection:text-white">
+    <div className="bg-background min-h-screen selection:bg-primary selection:text-white relative">
+      {/* Background Ambient Glows */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        <div className="absolute top-[10%] left-[-10%] w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-[20%] right-[-10%] w-[600px] h-[600px] bg-accent/10 rounded-full blur-[140px] animate-pulse delay-1000"></div>
+      </div>
+
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-white/5">
+      <nav className="sticky top-0 z-50 bg-background/60 backdrop-blur-[12px] border-b border-white/5">
         <div className="py-4 px-6 max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-1 group cursor-pointer">
             <div className="flex flex-col">
@@ -90,23 +96,18 @@ export default function ProgramPage() {
 
       {/* Hero Section */}
       <header className="relative pt-24 pb-48 px-6 overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl -z-10 pointer-events-none">
-          <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-primary/10 rounded-full blur-[160px]"></div>
-          <div className="absolute bottom-[10%] right-[-10%] w-[50%] h-[50%] bg-accent/10 rounded-full blur-[140px]"></div>
-        </div>
-
         <div className={cn("max-w-5xl mx-auto flex flex-col", alignmentClasses[selectedAlignment])}>
-          <div className="inline-flex items-center gap-2 mb-10 px-6 py-2 rounded-full border border-white/10 bg-white/5 w-fit backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 mb-10 px-6 py-2 rounded-full border border-white/10 bg-white/5 w-fit backdrop-blur-md">
             <Sparkles className="w-4 h-4 text-accent" />
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white">Elite Certification Path</span>
           </div>
           
           <h1 
-            className="font-headline font-black text-white mb-10 leading-[0.9] tracking-tighter"
+            className="font-headline font-black text-gradient-accent mb-10 leading-[0.9] tracking-tighter"
             style={{ 
-              fontSize: program.titleFontSize ? `${program.titleFontSize}px` : undefined,
-              lineHeight: program.lineHeight,
-              letterSpacing: program.letterSpacing ? `${program.letterSpacing}px` : undefined,
+              fontSize: program.titleFontSize ? `${program.titleFontSize}px` : 'clamp(3rem, 10vw, 8rem)',
+              lineHeight: program.lineHeight || 0.9,
+              letterSpacing: program.letterSpacing ? `${program.letterSpacing}px` : '-0.04em',
               textAlign: selectedAlignment
             }}
           >
@@ -114,9 +115,9 @@ export default function ProgramPage() {
           </h1>
           
           <p 
-            className="text-foreground mb-16 max-w-3xl font-medium leading-relaxed"
+            className="text-foreground/90 mb-16 max-w-3xl font-medium leading-relaxed"
             style={{ 
-              fontSize: program.subtitleFontSize ? `${program.subtitleFontSize}px` : undefined,
+              fontSize: program.subtitleFontSize ? `${program.subtitleFontSize}px` : 'clamp(1.1rem, 2vw, 1.5rem)',
               textAlign: selectedAlignment
             }}
           >
@@ -124,7 +125,7 @@ export default function ProgramPage() {
           </p>
           
           <div className={cn("flex flex-col sm:flex-row items-center gap-6 mb-24", selectedAlignment === 'center' ? 'justify-center' : selectedAlignment === 'right' ? 'justify-end' : 'justify-start')}>
-            <Button size="lg" className="h-20 px-12 text-xl font-black fiery-gradient fiery-glow hover:brightness-110 text-white rounded-full transition-all group uppercase tracking-tight" asChild>
+            <Button size="lg" className="h-20 px-12 text-xl font-black fiery-gradient fiery-glow hover:brightness-110 text-white rounded-full transition-all group uppercase tracking-tight hover:scale-105 active:scale-95" asChild>
               <a href="#join">
                 GRAB YOUR SEAT <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-2 transition-transform" />
               </a>
@@ -140,7 +141,7 @@ export default function ProgramPage() {
 
           <div className="max-w-4xl w-full mx-auto relative group">
             <div className="absolute -inset-4 bg-primary/20 rounded-[3rem] blur-3xl opacity-50 group-hover:opacity-70 transition-opacity"></div>
-            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 bg-card/40 backdrop-blur-md p-1">
+            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 bg-white/[0.03] backdrop-blur-[12px] p-1">
               <VideoPlayer videoId={program.demoVideoId} />
             </div>
           </div>
@@ -148,7 +149,7 @@ export default function ProgramPage() {
       </header>
 
       {/* Trust Bar */}
-      <div className="bg-card/30 border-y border-white/5 py-14 px-6 backdrop-blur-sm">
+      <div className="bg-white/[0.02] border-y border-white/5 py-14 px-6 backdrop-blur-[8px]">
         <div className="max-w-7xl mx-auto flex flex-wrap justify-center md:justify-between items-center gap-8 text-white/60">
           <div className="flex items-center gap-3"><Globe className="w-6 h-6 text-accent" /><span className="font-black uppercase tracking-tighter text-xl">Global Network</span></div>
           <div className="flex items-center gap-3"><Trophy className="w-6 h-6 text-accent" /><span className="font-black uppercase tracking-tighter text-xl text-white">Industry Certified</span></div>
@@ -185,8 +186,7 @@ export default function ProgramPage() {
 
       <StickyOfferBar expiryDate={program.expiryDate} joinLink={program.joinButtonLink} />
 
-      <footer className="py-40 px-6 border-t border-white/5 bg-background text-white overflow-hidden relative">
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] translate-x-1/4 translate-y-1/4"></div>
+      <footer className="py-40 px-6 border-t border-white/5 bg-background/80 backdrop-blur-md text-white overflow-hidden relative">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-20 relative z-10">
           <div className="md:col-span-2">
             <div className="flex items-center gap-1 mb-10">
@@ -199,7 +199,7 @@ export default function ProgramPage() {
                 </span>
               </div>
             </div>
-            <p className="text-foreground text-xl max-w-md mb-10 font-medium leading-relaxed">
+            <p className="text-foreground/80 text-xl max-w-md mb-10 font-medium leading-relaxed">
               We engineer pathways to professional autonomy through strategic education and world-class mentorship.
             </p>
             <div className="flex gap-4">
