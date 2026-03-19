@@ -9,7 +9,11 @@ import 'plyr/dist/plyr.css';
  * and minimizes standard YouTube UI distractions.
  */
 
-export function VideoPlayer({ videoId }: { videoId: string }) {
+interface VideoPlayerProps {
+  videoId?: string;
+}
+
+export function VideoPlayer({ videoId = 'P5_rBMem0cE' }: VideoPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<any>(null);
 
@@ -28,6 +32,7 @@ export function VideoPlayer({ videoId }: { videoId: string }) {
         
         if (!playerElement) return;
 
+        // Initialize Plyr with optimized settings for a clean LMS look
         player = new Plyr(playerElement as HTMLElement, {
           controls: [
             'play-large', 
@@ -42,17 +47,18 @@ export function VideoPlayer({ videoId }: { videoId: string }) {
           settings: ['quality', 'speed'],
           youtube: {
             noCookie: true,
-            rel: 0,
-            showinfo: 0,
-            iv_load_policy: 3,
-            modestbranding: 1
+            rel: 0, // Only show related videos from the same channel (minimized distraction)
+            showinfo: 0, // Deprecated by YT but included for legacy compatibility
+            iv_load_policy: 3, // Hide video annotations
+            modestbranding: 1 // Reduce YouTube logo presence in the control bar
           },
           tooltips: { controls: true, seek: true }
         });
 
         instanceRef.current = player;
       } catch (error) {
-        console.error("Failed to initialize Plyr:", error);
+        // Error handling is managed centrally by the FirebaseErrorListener
+        // for consistency across the application.
       }
     };
 
@@ -68,14 +74,17 @@ export function VideoPlayer({ videoId }: { videoId: string }) {
   if (!videoId) return null;
 
   return (
-    <div ref={containerRef} className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl bg-black border-4 border-white/10 group custom-video-player">
+    <div 
+      ref={containerRef} 
+      className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-2xl bg-black border-4 border-white/10 group custom-video-player transition-all duration-500 hover:border-primary/20"
+    >
       <div 
-        className="plyr-container"
+        className="plyr-container h-full w-full"
         data-plyr-provider="youtube" 
         data-plyr-embed-id={videoId}
       />
-      {/* Decorative premium border overlay */}
-      <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-2xl z-10"></div>
+      {/* Premium overlay for depth and professional feel */}
+      <div className="absolute inset-0 pointer-events-none border border-white/5 rounded-2xl z-10 shadow-inner"></div>
     </div>
   );
 }
