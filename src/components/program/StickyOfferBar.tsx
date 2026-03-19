@@ -2,16 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Timer, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; joinLink: string }) {
   const [timeLeft, setTimeLeft] = useState<{ d: number; m: number; s: number } | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Timer calculation logic
     const calculate = () => {
-      // For testing purposes, if no date is provided or it's invalid, we use a 24h default
       const target = expiryDate ? new Date(expiryDate).getTime() : new Date().getTime() + 24 * 60 * 60 * 1000;
       const difference = target - new Date().getTime();
       
@@ -27,7 +25,6 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
     const timer = setInterval(() => setTimeLeft(calculate()), 1000);
     setTimeLeft(calculate());
 
-    // Visibility logic (show after scroll)
     const handleScroll = () => {
       setIsVisible(window.scrollY > 400);
     };
@@ -43,69 +40,54 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
 
   return (
     <div 
-      className="fixed bottom-0 left-0 right-0 z-[100] p-4 md:py-4 md:px-6 shadow-2xl animate-in slide-in-from-bottom-full duration-700 ease-out"
-      style={{
-        backgroundColor: 'rgba(10, 11, 26, 0.85)',
-        backdropFilter: 'blur(12px)',
-      }}
+      className="fixed bottom-0 left-0 right-0 z-[100] p-4 md:py-6 md:px-8 shadow-2xl animate-in slide-in-from-bottom-full duration-500 ease-out bg-[#FF4B2B]"
     >
-      {/* Glowing Top Border */}
-      <div 
-        className="absolute top-0 left-0 right-0 h-[2px]" 
-        style={{ background: 'linear-gradient(to right, #FF6B6B, #FF8E53)' }}
-      />
-
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6">
+      <div className="max-w-4xl mx-auto flex flex-col gap-6">
         
-        {/* Pricing Typography */}
-        <div className="flex flex-row md:flex-col items-center md:items-start text-center md:text-left gap-3 md:gap-0">
-          <p className="text-[#94A3B8] text-xs md:text-sm">
-            Join <span className="line-through">₹1000/month</span>
-          </p>
-          <div className="flex flex-col">
-            <p className="text-white text-sm">
-              Now Pay <span className="text-white font-bold text-lg md:text-xl">₹589 today</span>
+        {/* Top Section: Timer and Pricing */}
+        <div className="flex items-center justify-between gap-4">
+          
+          {/* Countdown Timer */}
+          <div className="flex items-center gap-2 md:gap-4">
+            {[
+              { label: 'days', val: timeLeft.d },
+              { label: 'mint', val: timeLeft.m },
+              { label: 'sec', val: timeLeft.s },
+            ].map((unit, idx) => (
+              <div key={idx} className="flex flex-col items-center">
+                <div 
+                  className="w-10 h-10 md:w-14 md:h-14 flex items-center justify-center rounded-xl font-bold text-lg md:text-2xl border border-white/40 text-white"
+                >
+                  {unit.val.toString().padStart(2, '0')}
+                </div>
+                <span className="text-[10px] md:text-xs font-medium text-white/90 mt-1">{unit.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Pricing Typography */}
+          <div className="text-right text-white">
+            <p className="text-xs md:text-sm opacity-90">
+              Join <span className="line-through">₹1000 / month</span>
             </p>
-            <p className="hidden md:block text-[10px] text-[#94A3B8] uppercase font-bold tracking-wider">
-              (+ GST) Lifetime Access
-            </p>
+            <div className="flex flex-col">
+              <p className="text-sm md:text-lg">
+                Now <span className="font-bold">Pay ₹589 today</span>
+              </p>
+              <p className="text-[10px] md:text-xs font-bold">
+                (₹499 + GST) Lifetime Access
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Countdown Timer */}
-        <div className="flex items-center gap-3 md:gap-4">
-          {[
-            { label: 'days', val: timeLeft.d },
-            { label: 'mins', val: timeLeft.m },
-            { label: 'secs', val: timeLeft.s },
-          ].map((unit, idx) => (
-            <div key={idx} className="flex flex-col items-center">
-              <div 
-                className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg font-black text-lg md:text-xl"
-                style={{
-                  border: '1px solid #FF6B6B',
-                  color: '#FF6B6B',
-                  background: 'rgba(255, 107, 107, 0.05)'
-                }}
-              >
-                {unit.val.toString().padStart(2, '0')}
-              </div>
-              <span className="text-[8px] md:text-[10px] uppercase font-bold text-[#94A3B8] mt-1 tracking-widest">{unit.label}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* CTA Button */}
+        {/* Bottom Section: CTA Button */}
         <Button 
-          className="w-full md:w-auto rounded-full px-6 py-4 md:px-10 md:py-7 h-auto text-base md:text-lg font-black text-white transition-all hover:scale-105 active:scale-95 group uppercase tracking-tight"
-          style={{
-            background: 'linear-gradient(to right, #FF6B6B, #FF8E53)',
-            boxShadow: '0 4px 15px rgba(255, 107, 107, 0.4)',
-          }}
+          className="w-full rounded-full py-8 text-lg md:text-xl font-black bg-white text-[#FF4B2B] hover:bg-white/95 transition-all shadow-lg active:scale-95 group"
           asChild
         >
           <a href={joinLink || '#'}>
-            Join Now <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            Become a Member
           </a>
         </Button>
 
