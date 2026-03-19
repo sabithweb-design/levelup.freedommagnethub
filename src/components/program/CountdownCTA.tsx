@@ -8,8 +8,21 @@ export function CountdownCTA({ expiryDate, joinLink }: { expiryDate: string; joi
   const [timeLeft, setTimeLeft] = useState<{ h: number; m: number; s: number } | null>(null);
 
   useEffect(() => {
+    // Use the same personalized 24h timer as the Sticky Bar for consistency
+    const STORAGE_KEY = 'fmh_sticky_offer_expiry';
+    let targetTime: number;
+
+    const storedExpiry = localStorage.getItem(STORAGE_KEY);
+    
+    if (storedExpiry) {
+      targetTime = parseInt(storedExpiry, 10);
+    } else {
+      targetTime = Date.now() + 24 * 60 * 60 * 1000;
+      localStorage.setItem(STORAGE_KEY, targetTime.toString());
+    }
+
     const calculate = () => {
-      const difference = new Date(expiryDate).getTime() - new Date().getTime();
+      const difference = targetTime - Date.now();
       if (difference <= 0) return null;
 
       return {
@@ -22,7 +35,7 @@ export function CountdownCTA({ expiryDate, joinLink }: { expiryDate: string; joi
     const timer = setInterval(() => setTimeLeft(calculate()), 1000);
     setTimeLeft(calculate());
     return () => clearInterval(timer);
-  }, [expiryDate]);
+  }, []);
 
   return (
     <section className="py-48 px-6 relative overflow-hidden border-t border-white/5">

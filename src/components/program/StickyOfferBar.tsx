@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -24,9 +23,22 @@ export function StickyOfferBar({
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // Personalized 24-hour timer logic
+    const STORAGE_KEY = 'fmh_sticky_offer_expiry';
+    let targetTime: number;
+
+    const storedExpiry = localStorage.getItem(STORAGE_KEY);
+    
+    if (storedExpiry) {
+      targetTime = parseInt(storedExpiry, 10);
+    } else {
+      // Set expiry to 24 hours from now
+      targetTime = Date.now() + 24 * 60 * 60 * 1000;
+      localStorage.setItem(STORAGE_KEY, targetTime.toString());
+    }
+
     const calculate = () => {
-      const target = expiryDate ? new Date(expiryDate).getTime() : new Date().getTime() + 24 * 60 * 60 * 1000;
-      const difference = target - new Date().getTime();
+      const difference = targetTime - Date.now();
       
       if (difference <= 0) return null;
 
@@ -37,7 +49,11 @@ export function StickyOfferBar({
       };
     };
 
-    const timer = setInterval(() => setTimeLeft(calculate()), 1000);
+    const timer = setInterval(() => {
+      const remaining = calculate();
+      setTimeLeft(remaining);
+    }, 1000);
+
     setTimeLeft(calculate());
 
     const handleScroll = () => {
@@ -49,7 +65,7 @@ export function StickyOfferBar({
       clearInterval(timer);
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [expiryDate]);
+  }, []);
 
   if (!timeLeft || !isVisible) return null;
 
@@ -71,7 +87,7 @@ export function StickyOfferBar({
             ].map((unit, idx) => (
               <div key={idx} className="flex flex-col items-center">
                 <div 
-                  className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-lg font-black text-xl md:text-2xl border border-white/40 text-white"
+                  className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center rounded-lg font-black text-2xl md:text-3xl border border-white/40 text-white bg-white/10"
                 >
                   {unit.val.toString().padStart(2, '0')}
                 </div>
@@ -86,7 +102,7 @@ export function StickyOfferBar({
               <span className="line-through opacity-70">{oldPriceLabel}</span>
             </p>
             <div className="flex flex-col mt-0.5">
-              <p className="text-sm md:text-lg lg:text-xl leading-tight font-medium">
+              <p className="text-lg md:text-2xl lg:text-3xl leading-tight font-medium">
                 {currentPriceLabel.split('₹').length > 1 ? (
                   <>
                     {currentPriceLabel.split('₹')[0]}
@@ -96,16 +112,16 @@ export function StickyOfferBar({
                   <span className="font-black">{currentPriceLabel}</span>
                 )}
               </p>
-              <p className="text-[10px] md:text-xs font-black opacity-95">
+              <p className="text-xs md:text-sm font-black opacity-95">
                 {priceSubtext}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Action Button: Single line on desktop, full-width on mobile */}
+        {/* Action Button */}
         <Button 
-          className="w-full md:w-auto md:min-w-[260px] rounded-full py-8 md:py-7 text-lg md:text-xl font-black bg-white text-[#FF4B2B] hover:bg-white/95 transition-all shadow-lg active:scale-95 group uppercase tracking-tight"
+          className="w-full md:w-auto md:min-w-[280px] rounded-full py-8 md:py-8 text-xl md:text-2xl font-black bg-white text-[#FF4B2B] hover:bg-white/95 transition-all shadow-lg active:scale-95 group uppercase tracking-tight"
           asChild
         >
           <a href={joinLink || '#'}>
