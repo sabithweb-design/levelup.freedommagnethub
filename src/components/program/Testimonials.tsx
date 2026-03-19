@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { Card, CardContent } from '@/components/ui/card';
 import { VideoPlayer } from './VideoPlayer';
 import { Testimonial } from '@/lib/db';
@@ -33,8 +32,14 @@ export function ImageTestimonials({ testimonials }: { testimonials: Testimonial[
             <CardContent className="pt-6 flex flex-col h-full">
               <p className="text-foreground italic mb-6 flex-grow leading-relaxed">"{t.content}"</p>
               <div className="flex items-center gap-4">
-                <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-accent/20">
-                  <Image src={t.imageUrl} alt={t.name} fill className="object-cover" />
+                <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-accent/20 bg-muted">
+                  {/* Using standard img for external URL resilience */}
+                  <img 
+                    src={t.imageUrl} 
+                    alt={t.name} 
+                    className="object-cover w-full h-full" 
+                    loading="lazy"
+                  />
                 </div>
                 <div>
                   <h4 className="font-bold text-sm text-primary">{t.name}</h4>

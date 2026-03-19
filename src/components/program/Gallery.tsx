@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { Card } from '@/components/ui/card';
 
 export function Gallery({ images }: { images: string[] }) {
@@ -20,12 +19,12 @@ export function Gallery({ images }: { images: string[] }) {
         {images.map((src, idx) => (
           <Card key={idx} className="overflow-hidden border-none shadow-xl hover:shadow-2xl transition-all duration-300 group aspect-[4/3]">
             <div className="relative h-full w-full">
-              <Image
+              {/* Using standard img for external URL resilience */}
+              <img
                 src={src}
                 alt={`Program preview ${idx + 1}`}
-                fill
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </div>
