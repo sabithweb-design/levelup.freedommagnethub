@@ -1,9 +1,9 @@
+
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { useFirestore, useDoc, useMemoFirebase, useStorage } from '@/firebase';
-import { doc, setDoc, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useState, useEffect } from 'react';
+import { useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,12 +13,12 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, ImagePlus, ListPlus, HelpCircle, Type, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, Type, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, MessageSquareQuote, LayoutList } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
-import { Feature, FAQItem } from '@/lib/db';
+import { Feature, FAQItem, Testimonial } from '@/lib/db';
 
 function getYouTubeId(url: string) {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -28,10 +28,7 @@ function getYouTubeId(url: string) {
 
 export function ProgramForm({ programId }: { programId: string }) {
   const db = useFirestore();
-  const storage = useStorage();
   const { toast } = useToast();
-  const galleryInputRef = useRef<HTMLInputElement>(null);
-  const testimonialInputRef = useRef<HTMLInputElement>(null);
   
   const programRef = useMemoFirebase(() => doc(db, 'programs', programId), [db, programId]);
   const { data: program, isLoading } = useDoc(programRef);
@@ -50,12 +47,10 @@ export function ProgramForm({ programId }: { programId: string }) {
     videoTestimonials: ['', '', '', ''],
     features: [] as Feature[],
     faqs: [] as FAQItem[],
+    imageTestimonials: [] as Testimonial[],
   });
 
-  const [galleryFiles, setGalleryFiles] = useState<{file: File, preview: string}[]>([]);
-  const [testimonialFiles, setTestimonialFiles] = useState<{file: File, preview: string}[]>([]);
   const [galleryUrlInput, setGalleryUrlInput] = useState('');
-  const [testimonialUrlInput, setTestimonialUrlInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -74,36 +69,14 @@ export function ProgramForm({ programId }: { programId: string }) {
         videoTestimonials: program.videoTestimonials || ['', '', '', ''],
         features: program.features || [],
         faqs: program.faqs || [],
+        imageTestimonials: program.imageTestimonials || [],
       });
     }
   }, [program]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'gallery' | 'testimonial') => {
-    const files = Array.from(e.target.files || []);
-    const newFiles = files.map(file => ({
-      file,
-      preview: URL.createObjectURL(file)
-    }));
-
-    if (type === 'gallery') {
-      setGalleryFiles(prev => [...prev, ...newFiles]);
-    } else {
-      setTestimonialFiles(prev => [...prev, ...newFiles]);
-    }
-  };
-
-  const removeSelectedFile = (index: number, type: 'gallery' | 'testimonial') => {
-    if (type === 'gallery') {
-      setGalleryFiles(prev => prev.filter((_, i) => i !== index));
-    } else {
-      setTestimonialFiles(prev => prev.filter((_, i) => i !== index));
-    }
-  };
-
   const removeExistingImage = (url: string) => {
-    if (!program) return;
-    const newGallery = (program.gallery || []).filter((item: string) => item !== url);
-    updateDoc(programRef, { gallery: newGallery })
+    const newGallery = (program?.gallery || []).filter((item: string) => item !== url);
+    setDoc(programRef, { gallery: newGallery }, { merge: true })
       .catch(e => {
         errorEmitter.emit('permission-error', new FirestorePermissionError({
           path: programRef.path,
@@ -113,24 +86,10 @@ export function ProgramForm({ programId }: { programId: string }) {
       });
   };
 
-  const removeExistingTestimonial = (index: number) => {
-    if (!program) return;
-    const newTestimonials = (program.imageTestimonials || []).filter((_: any, i: number) => i !== index);
-    updateDoc(programRef, { imageTestimonials: newTestimonials })
-      .catch(e => {
-        errorEmitter.emit('permission-error', new FirestorePermissionError({
-          path: programRef.path,
-          operation: 'update',
-          requestResourceData: { imageTestimonials: newTestimonials }
-        }));
-      });
-  };
-
   const addGalleryUrl = () => {
     if (!galleryUrlInput) return;
-    if (!program) return;
-    const newGallery = [...(program.gallery || []), galleryUrlInput];
-    updateDoc(programRef, { gallery: newGallery })
+    const newGallery = [...(program?.gallery || []), galleryUrlInput];
+    setDoc(programRef, { gallery: newGallery }, { merge: true })
       .then(() => {
         setGalleryUrlInput('');
         toast({ title: "Image Linked", description: "Successfully added image from URL." });
@@ -144,27 +103,24 @@ export function ProgramForm({ programId }: { programId: string }) {
       });
   };
 
-  const addTestimonialUrl = () => {
-    if (!testimonialUrlInput) return;
-    if (!program) return;
-    const newTestimonials = [...(program.imageTestimonials || []), {
-      name: "Verified Student",
-      role: "Program Graduate",
-      content: "Excellent experience with the curriculum.",
-      imageUrl: testimonialUrlInput
-    }];
-    updateDoc(programRef, { imageTestimonials: newTestimonials })
-      .then(() => {
-        setTestimonialUrlInput('');
-        toast({ title: "Profile Linked", description: "Successfully added profile from URL." });
-      })
-      .catch(e => {
-        errorEmitter.emit('permission-error', new FirestorePermissionError({
-          path: programRef.path,
-          operation: 'update',
-          requestResourceData: { imageTestimonials: newTestimonials }
-        }));
-      });
+  const addTestimonial = () => {
+    setFormData(prev => ({
+      ...prev,
+      imageTestimonials: [...prev.imageTestimonials, { content: '', name: '', role: '' }]
+    }));
+  };
+
+  const updateTestimonial = (index: number, field: keyof Testimonial, value: string) => {
+    const newTestimonials = [...formData.imageTestimonials];
+    newTestimonials[index] = { ...newTestimonials[index], [field]: value };
+    setFormData(prev => ({ ...prev, imageTestimonials: newTestimonials }));
+  };
+
+  const removeTestimonial = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      imageTestimonials: prev.imageTestimonials.filter((_, i) => i !== index)
+    }));
   };
 
   const addFeature = () => {
@@ -209,86 +165,38 @@ export function ProgramForm({ programId }: { programId: string }) {
 
   const handleSave = async () => {
     setIsSaving(true);
-    try {
-      const uploadedGalleryUrls = [];
-      for (const item of galleryFiles) {
-        try {
-          const fileRef = ref(storage, `programs/${programId}/gallery/${Date.now()}-${item.file.name}`);
-          const snapshot = await uploadBytes(fileRef, item.file);
-          const url = await getDownloadURL(snapshot.ref);
-          uploadedGalleryUrls.push(url);
-        } catch (err: any) {
-          console.error("Gallery upload error:", err);
-          throw new Error(`Failed to upload gallery image: ${err.message}`);
-        }
-      }
+    const updateData = {
+      id: programId,
+      title: formData.title,
+      subtitle: formData.subtitle,
+      titleFontSize: formData.titleFontSize,
+      subtitleFontSize: formData.subtitleFontSize,
+      lineHeight: formData.lineHeight,
+      letterSpacing: formData.letterSpacing,
+      textAlign: formData.textAlign,
+      demoVideoId: getYouTubeId(formData.demoVideoUrl),
+      videoTestimonials: formData.videoTestimonials.map(v => getYouTubeId(v)),
+      imageTestimonials: formData.imageTestimonials,
+      features: formData.features,
+      faqs: formData.faqs,
+      joinButtonLink: formData.joinButtonLink,
+      expiryDate: formData.offerEndTime || new Date().toISOString(),
+    };
 
-      const uploadedTestimonialUrls = [];
-      for (const item of testimonialFiles) {
-        try {
-          const fileRef = ref(storage, `programs/${programId}/testimonials/${Date.now()}-${item.file.name}`);
-          const snapshot = await uploadBytes(fileRef, item.file);
-          const url = await getDownloadURL(snapshot.ref);
-          uploadedTestimonialUrls.push(url);
-        } catch (err: any) {
-          console.error("Testimonial upload error:", err);
-          throw new Error(`Failed to upload profile photo: ${err.message}`);
-        }
-      }
-
-      const currentGallery = program?.gallery || [];
-      const currentImageTestimonials = program?.imageTestimonials || [];
-
-      const newImageTestimonialsFromFiles = uploadedTestimonialUrls.map(url => ({
-        name: "Verified Student",
-        role: "Program Graduate",
-        content: "This course provided the breakthrough I needed for my professional development.",
-        imageUrl: url
-      }));
-
-      const updateData = {
-        id: programId,
-        title: formData.title,
-        subtitle: formData.subtitle,
-        titleFontSize: formData.titleFontSize,
-        subtitleFontSize: formData.subtitleFontSize,
-        lineHeight: formData.lineHeight,
-        letterSpacing: formData.letterSpacing,
-        textAlign: formData.textAlign,
-        demoVideoId: getYouTubeId(formData.demoVideoUrl),
-        gallery: [...currentGallery, ...uploadedGalleryUrls],
-        videoTestimonials: formData.videoTestimonials.map(v => getYouTubeId(v)),
-        imageTestimonials: [...currentImageTestimonials, ...newImageTestimonialsFromFiles],
-        features: formData.features,
-        faqs: formData.faqs,
-        joinButtonLink: formData.joinButtonLink,
-        expiryDate: formData.offerEndTime || new Date().toISOString(),
-      };
-
-      setDoc(programRef, updateData, { merge: true })
-        .then(() => {
-          toast({ title: "Success", description: "Program content updated successfully." });
-          setGalleryFiles([]);
-          setTestimonialFiles([]);
-        })
-        .catch(error => {
-          errorEmitter.emit('permission-error', new FirestorePermissionError({
-            path: programRef.path,
-            operation: 'update',
-            requestResourceData: updateData
-          }));
-        });
-
-    } catch (e: any) {
-      console.error(e);
-      toast({ 
-        variant: "destructive", 
-        title: "Upload Failed", 
-        description: e.message || "Ensure Firebase Storage is enabled in your console." 
+    setDoc(programRef, updateData, { merge: true })
+      .then(() => {
+        toast({ title: "Success", description: "Program content updated successfully." });
+      })
+      .catch(error => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: programRef.path,
+          operation: 'update',
+          requestResourceData: updateData
+        }));
+      })
+      .finally(() => {
+        setIsSaving(false);
       });
-    } finally {
-      setIsSaving(false);
-    }
   };
 
   if (isLoading) return <div className="flex justify-center p-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
@@ -467,140 +375,41 @@ export function ProgramForm({ programId }: { programId: string }) {
       </Card>
 
       <Card className="shadow-sm border-border/50">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle>Gallery & Visuals</CardTitle>
-            <CardDescription>Upload course previews or add via direct URL.</CardDescription>
-          </div>
+        <CardHeader>
+          <CardTitle>Gallery & Visuals</CardTitle>
+          <CardDescription>Add program previews via direct URL (Cloudinary, Unsplash, etc.).</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-8">
-          <div className="space-y-6">
-            <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
-              <Label className="text-xs font-black uppercase tracking-widest text-primary mb-3 block">Link External Image</Label>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <LinkIcon className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
-                  <Input 
-                    value={galleryUrlInput}
-                    onChange={e => setGalleryUrlInput(e.target.value)}
-                    placeholder="https://images.unsplash.com/photo-..."
-                    className="pl-9"
-                  />
-                </div>
-                <Button onClick={addGalleryUrl} disabled={!galleryUrlInput} className="bg-primary">
-                  <Plus className="w-4 h-4 mr-2" /> Add URL
-                </Button>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label className="text-base font-bold">Course Previews ({program?.gallery?.length || 0})</Label>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                {program?.gallery?.map((url: string, idx: number) => (
-                  <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border group bg-muted">
-                    <img src={url} alt="Gallery" className="object-cover w-full h-full" />
-                    <button 
-                      onClick={() => removeExistingImage(url)}
-                      className="absolute top-1 right-1 bg-destructive text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-                {galleryFiles.map((fileObj, idx) => (
-                  <div key={`new-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-primary/50 bg-muted/30">
-                    <img src={fileObj.preview} alt="New Preview" className="object-cover w-full h-full opacity-60" />
-                    <button 
-                      onClick={() => removeSelectedFile(idx, 'gallery')}
-                      className="absolute top-1 right-1 bg-black/70 text-white p-1 rounded-full hover:bg-black"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-                <input 
-                  ref={galleryInputRef}
-                  type="file" 
-                  multiple 
-                  accept="image/*"
-                  className="hidden" 
-                  onChange={e => handleFileChange(e, 'gallery')} 
+        <CardContent className="space-y-6">
+          <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
+            <Label className="text-xs font-black uppercase tracking-widest text-primary mb-3 block">Link External Image</Label>
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <LinkIcon className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
+                <Input 
+                  value={galleryUrlInput}
+                  onChange={e => setGalleryUrlInput(e.target.value)}
+                  placeholder="https://res.cloudinary.com/..."
+                  className="pl-9"
                 />
-                <button 
-                  onClick={() => galleryInputRef.current?.click()}
-                  className="aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors bg-muted/10"
-                >
-                  <ImagePlus className="w-6 h-6 text-muted-foreground mb-1" />
-                  <span className="text-[10px] uppercase font-bold text-muted-foreground">Upload File</span>
-                </button>
               </div>
+              <Button onClick={addGalleryUrl} disabled={!galleryUrlInput} className="bg-primary">
+                <Plus className="w-4 h-4 mr-2" /> Add URL
+              </Button>
             </div>
           </div>
 
-          <div className="space-y-6 border-t pt-8">
-            <div className="p-4 bg-accent/5 rounded-xl border border-accent/10">
-              <Label className="text-xs font-black uppercase tracking-widest text-accent mb-3 block">Link Student Photo URL</Label>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <LinkIcon className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
-                  <Input 
-                    value={testimonialUrlInput}
-                    onChange={e => setTestimonialUrlInput(e.target.value)}
-                    placeholder="https://example.com/student-photo.jpg"
-                    className="pl-9"
-                  />
-                </div>
-                <Button onClick={addTestimonialUrl} disabled={!testimonialUrlInput} className="bg-accent">
-                  <Plus className="w-4 h-4 mr-2" /> Add URL
-                </Button>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label className="text-base font-bold">Student Profiles ({program?.imageTestimonials?.length || 0})</Label>
-              </div>
-              <div className="flex flex-wrap gap-4">
-                {program?.imageTestimonials?.map((t: any, idx: number) => (
-                  <div key={idx} className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-accent/20 bg-muted group">
-                    <img src={t.imageUrl} alt="Testimonial" className="object-cover w-full h-full" />
-                    <button 
-                      onClick={() => removeExistingTestimonial(idx)}
-                      className="absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
-                {testimonialFiles.map((fileObj, idx) => (
-                  <div key={`new-t-${idx}`} className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-primary/50 group bg-muted/30">
-                    <img src={fileObj.preview} alt="New Testimonial" className="object-cover w-full h-full opacity-60" />
-                    <button 
-                      onClick={() => removeSelectedFile(idx, 'testimonial')}
-                      className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-colors opacity-0 group-hover:opacity-100"
-                    >
-                      <X className="w-5 h-5 text-white" />
-                    </button>
-                  </div>
-                ))}
-                <input 
-                  ref={testimonialInputRef}
-                  type="file" 
-                  multiple 
-                  accept="image/*"
-                  className="hidden" 
-                  onChange={e => handleFileChange(e, 'testimonial')} 
-                />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {program?.gallery?.map((url: string, idx: number) => (
+              <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border group bg-muted">
+                <img src={url} alt="Gallery" className="object-cover w-full h-full" />
                 <button 
-                  onClick={() => testimonialInputRef.current?.click()}
-                  className="w-16 h-16 border-2 border-dashed rounded-full flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors bg-muted/10"
+                  onClick={() => removeExistingImage(url)}
+                  className="absolute top-1 right-1 bg-destructive text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  <Plus className="w-5 h-5 text-muted-foreground" />
+                  <X className="w-3 h-3" />
                 </button>
               </div>
-            </div>
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -608,11 +417,70 @@ export function ProgramForm({ programId }: { programId: string }) {
       <Card className="shadow-sm border-border/50">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
+            <CardTitle>Typed Testimonials</CardTitle>
+            <CardDescription>Add student feedback. Name and Place are optional.</CardDescription>
+          </div>
+          <Button variant="outline" size="sm" className="flex gap-2" onClick={addTestimonial}>
+            <MessageSquareQuote className="w-4 h-4" />
+            Add Testimonial
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {formData.imageTestimonials.length === 0 && (
+            <div className="py-10 text-center border-2 border-dashed rounded-xl text-muted-foreground bg-muted/5">
+              No testimonials added. This section will be hidden on the live site.
+            </div>
+          )}
+          {formData.imageTestimonials.map((t, idx) => (
+            <div key={idx} className="p-6 border rounded-2xl space-y-4 relative group bg-white shadow-sm">
+              <button 
+                onClick={() => removeTestimonial(idx)}
+                className="absolute top-4 right-4 p-1 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+              
+              <div className="space-y-2">
+                <Label className="text-xs font-black uppercase tracking-widest text-primary">Testimonial Content</Label>
+                <Textarea 
+                  value={t.content} 
+                  onChange={e => updateTestimonial(idx, 'content', e.target.value)} 
+                  placeholder="Type what the student said..."
+                  className="min-h-[100px]"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Student Name (Optional)</Label>
+                  <Input 
+                    value={t.name} 
+                    onChange={e => updateTestimonial(idx, 'name', e.target.value)} 
+                    placeholder="e.g. John Doe"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Student Place/Role (Optional)</Label>
+                  <Input 
+                    value={t.role} 
+                    onChange={e => updateTestimonial(idx, 'role', e.target.value)} 
+                    placeholder="e.g. London, UK"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-sm border-border/50">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
             <CardTitle>The Freedom Framework (Features)</CardTitle>
-            <CardDescription>Customize the core value propositions of your program.</CardDescription>
+            <CardDescription>Customize the core value propositions.</CardDescription>
           </div>
           <Button variant="outline" size="sm" className="flex gap-2" onClick={addFeature}>
-            <ListPlus className="w-4 h-4" />
+            <LayoutList className="w-4 h-4" />
             Add Feature
           </Button>
         </CardHeader>
@@ -657,7 +525,7 @@ export function ProgramForm({ programId }: { programId: string }) {
                 <Textarea 
                   value={feature.description} 
                   onChange={e => updateFeature(idx, 'description', e.target.value)} 
-                  placeholder="Short explanation of this feature..."
+                  placeholder="Short explanation..."
                 />
               </div>
             </div>
@@ -669,10 +537,10 @@ export function ProgramForm({ programId }: { programId: string }) {
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Common Questions (FAQ)</CardTitle>
-            <CardDescription>Address student concerns directly from the dashboard.</CardDescription>
+            <CardDescription>Address student concerns directly.</CardDescription>
           </div>
           <Button variant="outline" size="sm" className="flex gap-2" onClick={addFAQ}>
-            <HelpCircle className="w-4 h-4" />
+            <Plus className="w-4 h-4" />
             Add Question
           </Button>
         </CardHeader>
@@ -709,7 +577,7 @@ export function ProgramForm({ programId }: { programId: string }) {
       <Card className="shadow-sm border-border/50">
         <CardHeader>
           <CardTitle>Video Testimonials</CardTitle>
-          <CardDescription>Set the 4 main YouTube video testimonial IDs.</CardDescription>
+          <CardDescription>Set up to 4 YouTube video testimonial IDs.</CardDescription>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {formData.videoTestimonials.map((url, idx) => (
