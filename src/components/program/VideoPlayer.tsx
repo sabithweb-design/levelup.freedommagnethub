@@ -7,6 +7,7 @@ import 'plyr/dist/plyr.css';
  * @fileOverview A professional custom video player using Plyr.js.
  * Wraps YouTube videos to provide a clean, branded LMS-style interface
  * and minimizes standard YouTube UI distractions.
+ * Includes auto-pause functionality for multiple players.
  */
 
 interface VideoPlayerProps {
@@ -47,18 +48,33 @@ export function VideoPlayer({ videoId = 'P5_rBMem0cE' }: VideoPlayerProps) {
           settings: ['quality', 'speed'],
           youtube: {
             noCookie: true,
-            rel: 0, // Only show related videos from the same channel (minimized distraction)
-            showinfo: 0, // Deprecated by YT but included for legacy compatibility
-            iv_load_policy: 3, // Hide video annotations
-            modestbranding: 1 // Reduce YouTube logo presence in the control bar
+            rel: 0,
+            showinfo: 0,
+            iv_load_policy: 3,
+            modestbranding: 1
           },
           tooltips: { controls: true, seek: true }
+        });
+
+        // Register the player instance globally for auto-pause logic
+        if (!(window as any).plyrInstances) {
+          (window as any).plyrInstances = [];
+        }
+        (window as any).plyrInstances.push(player);
+
+        // Add auto-pause logic: when this player plays, pause all others
+        player.on('play', () => {
+          const allPlayers = (window as any).plyrInstances || [];
+          allPlayers.forEach((p: any) => {
+            if (p !== player && typeof p.pause === 'function') {
+              p.pause();
+            }
+          });
         });
 
         instanceRef.current = player;
       } catch (error) {
         // Error handling is managed centrally by the FirebaseErrorListener
-        // for consistency across the application.
       }
     };
 
@@ -66,6 +82,12 @@ export function VideoPlayer({ videoId = 'P5_rBMem0cE' }: VideoPlayerProps) {
 
     return () => {
       if (instanceRef.current) {
+        // Clean up global registry
+        if ((window as any).plyrInstances) {
+          (window as any).plyrInstances = (window as any).plyrInstances.filter(
+            (p: any) => p !== instanceRef.current
+          );
+        }
         instanceRef.current.destroy();
       }
     };
