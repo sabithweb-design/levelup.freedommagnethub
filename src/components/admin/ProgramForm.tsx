@@ -13,7 +13,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, ImagePlus, ListPlus, HelpCircle, Type, AlignLeft, AlignCenter, AlignRight } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, ImagePlus, ListPlus, HelpCircle, Type, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -54,6 +54,8 @@ export function ProgramForm({ programId }: { programId: string }) {
 
   const [galleryFiles, setGalleryFiles] = useState<{file: File, preview: string}[]>([]);
   const [testimonialFiles, setTestimonialFiles] = useState<{file: File, preview: string}[]>([]);
+  const [galleryUrlInput, setGalleryUrlInput] = useState('');
+  const [testimonialUrlInput, setTestimonialUrlInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -107,6 +109,60 @@ export function ProgramForm({ programId }: { programId: string }) {
           path: programRef.path,
           operation: 'update',
           requestResourceData: { gallery: newGallery }
+        }));
+      });
+  };
+
+  const removeExistingTestimonial = (index: number) => {
+    if (!program) return;
+    const newTestimonials = (program.imageTestimonials || []).filter((_: any, i: number) => i !== index);
+    updateDoc(programRef, { imageTestimonials: newTestimonials })
+      .catch(e => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: programRef.path,
+          operation: 'update',
+          requestResourceData: { imageTestimonials: newTestimonials }
+        }));
+      });
+  };
+
+  const addGalleryUrl = () => {
+    if (!galleryUrlInput) return;
+    if (!program) return;
+    const newGallery = [...(program.gallery || []), galleryUrlInput];
+    updateDoc(programRef, { gallery: newGallery })
+      .then(() => {
+        setGalleryUrlInput('');
+        toast({ title: "Image Linked", description: "Successfully added image from URL." });
+      })
+      .catch(e => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: programRef.path,
+          operation: 'update',
+          requestResourceData: { gallery: newGallery }
+        }));
+      });
+  };
+
+  const addTestimonialUrl = () => {
+    if (!testimonialUrlInput) return;
+    if (!program) return;
+    const newTestimonials = [...(program.imageTestimonials || []), {
+      name: "Verified Student",
+      role: "Program Graduate",
+      content: "Excellent experience with the curriculum.",
+      imageUrl: testimonialUrlInput
+    }];
+    updateDoc(programRef, { imageTestimonials: newTestimonials })
+      .then(() => {
+        setTestimonialUrlInput('');
+        toast({ title: "Profile Linked", description: "Successfully added profile from URL." });
+      })
+      .catch(e => {
+        errorEmitter.emit('permission-error', new FirestorePermissionError({
+          path: programRef.path,
+          operation: 'update',
+          requestResourceData: { imageTestimonials: newTestimonials }
         }));
       });
   };
@@ -183,7 +239,7 @@ export function ProgramForm({ programId }: { programId: string }) {
       const currentGallery = program?.gallery || [];
       const currentImageTestimonials = program?.imageTestimonials || [];
 
-      const newImageTestimonials = uploadedTestimonialUrls.map(url => ({
+      const newImageTestimonialsFromFiles = uploadedTestimonialUrls.map(url => ({
         name: "Verified Student",
         role: "Program Graduate",
         content: "This course provided the breakthrough I needed for my professional development.",
@@ -202,7 +258,7 @@ export function ProgramForm({ programId }: { programId: string }) {
         demoVideoId: getYouTubeId(formData.demoVideoUrl),
         gallery: [...currentGallery, ...uploadedGalleryUrls],
         videoTestimonials: formData.videoTestimonials.map(v => getYouTubeId(v)),
-        imageTestimonials: [...currentImageTestimonials, ...newImageTestimonials],
+        imageTestimonials: [...currentImageTestimonials, ...newImageTestimonialsFromFiles],
         features: formData.features,
         faqs: formData.faqs,
         joinButtonLink: formData.joinButtonLink,
@@ -413,6 +469,145 @@ export function ProgramForm({ programId }: { programId: string }) {
       <Card className="shadow-sm border-border/50">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
+            <CardTitle>Gallery & Visuals</CardTitle>
+            <CardDescription>Upload course previews or add via direct URL.</CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-8">
+          <div className="space-y-6">
+            <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
+              <Label className="text-xs font-black uppercase tracking-widest text-primary mb-3 block">Link External Image</Label>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <LinkIcon className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
+                  <Input 
+                    value={galleryUrlInput}
+                    onChange={e => setGalleryUrlInput(e.target.value)}
+                    placeholder="https://images.unsplash.com/photo-..."
+                    className="pl-9"
+                  />
+                </div>
+                <Button onClick={addGalleryUrl} disabled={!galleryUrlInput} className="bg-primary">
+                  <Plus className="w-4 h-4 mr-2" /> Add URL
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-bold">Course Previews ({program?.gallery?.length || 0})</Label>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {program?.gallery?.map((url: string, idx: number) => (
+                  <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border group bg-muted">
+                    <img src={url} alt="Gallery" className="object-cover w-full h-full" />
+                    <button 
+                      onClick={() => removeExistingImage(url)}
+                      className="absolute top-1 right-1 bg-destructive text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+                {galleryFiles.map((fileObj, idx) => (
+                  <div key={`new-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-primary/50 bg-muted/30">
+                    <img src={fileObj.preview} alt="New Preview" className="object-cover w-full h-full opacity-60" />
+                    <button 
+                      onClick={() => removeSelectedFile(idx, 'gallery')}
+                      className="absolute top-1 right-1 bg-black/70 text-white p-1 rounded-full hover:bg-black"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+                <input 
+                  ref={galleryInputRef}
+                  type="file" 
+                  multiple 
+                  accept="image/*"
+                  className="hidden" 
+                  onChange={e => handleFileChange(e, 'gallery')} 
+                />
+                <button 
+                  onClick={() => galleryInputRef.current?.click()}
+                  className="aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors bg-muted/10"
+                >
+                  <ImagePlus className="w-6 h-6 text-muted-foreground mb-1" />
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground">Upload File</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6 border-t pt-8">
+            <div className="p-4 bg-accent/5 rounded-xl border border-accent/10">
+              <Label className="text-xs font-black uppercase tracking-widest text-accent mb-3 block">Link Student Photo URL</Label>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <LinkIcon className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
+                  <Input 
+                    value={testimonialUrlInput}
+                    onChange={e => setTestimonialUrlInput(e.target.value)}
+                    placeholder="https://example.com/student-photo.jpg"
+                    className="pl-9"
+                  />
+                </div>
+                <Button onClick={addTestimonialUrl} disabled={!testimonialUrlInput} className="bg-accent">
+                  <Plus className="w-4 h-4 mr-2" /> Add URL
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-bold">Student Profiles ({program?.imageTestimonials?.length || 0})</Label>
+              </div>
+              <div className="flex flex-wrap gap-4">
+                {program?.imageTestimonials?.map((t: any, idx: number) => (
+                  <div key={idx} className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-accent/20 bg-muted group">
+                    <img src={t.imageUrl} alt="Testimonial" className="object-cover w-full h-full" />
+                    <button 
+                      onClick={() => removeExistingTestimonial(idx)}
+                      className="absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+                {testimonialFiles.map((fileObj, idx) => (
+                  <div key={`new-t-${idx}`} className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-primary/50 group bg-muted/30">
+                    <img src={fileObj.preview} alt="New Testimonial" className="object-cover w-full h-full opacity-60" />
+                    <button 
+                      onClick={() => removeSelectedFile(idx, 'testimonial')}
+                      className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-colors opacity-0 group-hover:opacity-100"
+                    >
+                      <X className="w-5 h-5 text-white" />
+                    </button>
+                  </div>
+                ))}
+                <input 
+                  ref={testimonialInputRef}
+                  type="file" 
+                  multiple 
+                  accept="image/*"
+                  className="hidden" 
+                  onChange={e => handleFileChange(e, 'testimonial')} 
+                />
+                <button 
+                  onClick={() => testimonialInputRef.current?.click()}
+                  className="w-16 h-16 border-2 border-dashed rounded-full flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors bg-muted/10"
+                >
+                  <Plus className="w-5 h-5 text-muted-foreground" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-sm border-border/50">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
             <CardTitle>The Freedom Framework (Features)</CardTitle>
             <CardDescription>Customize the core value propositions of your program.</CardDescription>
           </div>
@@ -512,118 +707,6 @@ export function ProgramForm({ programId }: { programId: string }) {
       </Card>
 
       <Card className="shadow-sm border-border/50">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle>Gallery & Visuals</CardTitle>
-            <CardDescription>Upload course previews and student images.</CardDescription>
-          </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex gap-2"
-            onClick={() => galleryInputRef.current?.click()}
-          >
-            <ImagePlus className="w-4 h-4" />
-            Add More Images
-          </Button>
-        </CardHeader>
-        <CardContent className="space-y-8">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label className="text-base font-bold">Course Previews ({program?.gallery?.length || 0})</Label>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {program?.gallery?.map((url: string, idx: number) => (
-                <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border group bg-muted">
-                  <img src={url} alt="Gallery" className="object-cover w-full h-full" />
-                  <button 
-                    onClick={() => removeExistingImage(url)}
-                    className="absolute top-1 right-1 bg-destructive text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              ))}
-              {galleryFiles.map((fileObj, idx) => (
-                <div key={`new-${idx}`} className="relative aspect-square rounded-lg overflow-hidden border border-primary/50 bg-muted/30">
-                  <img src={fileObj.preview} alt="New Preview" className="object-cover w-full h-full opacity-60" />
-                  {isSaving && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                      <Loader2 className="w-5 h-5 animate-spin text-white" />
-                    </div>
-                  )}
-                  <button 
-                    onClick={() => removeSelectedFile(idx, 'gallery')}
-                    className="absolute top-1 right-1 bg-black/70 text-white p-1 rounded-full hover:bg-black"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              ))}
-              <input 
-                ref={galleryInputRef}
-                type="file" 
-                multiple 
-                accept="image/*"
-                className="hidden" 
-                onChange={e => handleFileChange(e, 'gallery')} 
-              />
-              <button 
-                onClick={() => galleryInputRef.current?.click()}
-                className="aspect-square border-2 border-dashed rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors bg-muted/10"
-              >
-                <Plus className="w-6 h-6 text-muted-foreground mb-1" />
-                <span className="text-[10px] uppercase font-bold text-muted-foreground">Select Files</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-4 border-t pt-8">
-            <div className="flex items-center justify-between">
-              <Label className="text-base font-bold">Student Profiles ({program?.imageTestimonials?.length || 0})</Label>
-            </div>
-            <div className="flex flex-wrap gap-4">
-              {program?.imageTestimonials?.map((t: any, idx: number) => (
-                <div key={idx} className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-accent/20 bg-muted">
-                  <img src={t.imageUrl} alt="Testimonial" className="object-cover w-full h-full" />
-                </div>
-              ))}
-              {testimonialFiles.map((fileObj, idx) => (
-                <div key={`new-t-${idx}`} className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-primary/50 group bg-muted/30">
-                  <img src={fileObj.preview} alt="New Testimonial" className="object-cover w-full h-full opacity-60" />
-                  {isSaving && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-full">
-                      <Loader2 className="w-5 h-5 animate-spin text-white" />
-                    </div>
-                  )}
-                  <button 
-                    onClick={() => removeSelectedFile(idx, 'testimonial')}
-                    className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-black/50 transition-colors opacity-0 group-hover:opacity-100"
-                  >
-                    <X className="w-5 h-5 text-white" />
-                  </button>
-                </div>
-              ))}
-              <input 
-                ref={testimonialInputRef}
-                type="file" 
-                multiple 
-                accept="image/*"
-                className="hidden" 
-                onChange={e => handleFileChange(e, 'testimonial')} 
-              />
-              <button 
-                onClick={() => testimonialInputRef.current?.click()}
-                className="w-16 h-16 border-2 border-dashed rounded-full flex flex-col items-center justify-center cursor-pointer hover:bg-muted/50 transition-colors bg-muted/10"
-              >
-                <Plus className="w-5 h-5 text-muted-foreground" />
-              </button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-sm border-border/50">
         <CardHeader>
           <CardTitle>Video Testimonials</CardTitle>
           <CardDescription>Set the 4 main YouTube video testimonial IDs.</CardDescription>
@@ -657,7 +740,7 @@ export function ProgramForm({ programId }: { programId: string }) {
           {isSaving ? (
             <>
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              UPLOADING & SAVING...
+              SAVING CHANGES...
             </>
           ) : (
             <>
