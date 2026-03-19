@@ -56,34 +56,34 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
             ].map((unit, idx) => (
               <div key={idx} className="flex flex-col items-center">
                 <div 
-                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg font-bold text-lg md:text-xl border border-white/40 text-white"
+                  className="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-lg font-black text-xl md:text-2xl border border-white/40 text-white"
                 >
                   {unit.val.toString().padStart(2, '0')}
                 </div>
-                <span className="text-[9px] md:text-[10px] font-medium text-white/90 mt-1 uppercase tracking-tighter">{unit.label}</span>
+                <span className="text-[10px] md:text-[11px] font-bold text-white/90 mt-1 uppercase tracking-tighter">{unit.label}</span>
               </div>
             ))}
           </div>
 
           {/* Pricing Typography */}
           <div className="text-right md:text-left text-white">
-            <p className="text-[10px] md:text-xs opacity-90 leading-tight">
+            <p className="text-xs md:text-sm opacity-90 leading-tight">
               Join <span className="line-through opacity-70">₹1000 / month</span>
             </p>
-            <div className="flex flex-col">
-              <p className="text-xs md:text-base leading-tight">
-                Now <span className="font-bold">Pay ₹589 today</span>
+            <div className="flex flex-col mt-0.5">
+              <p className="text-sm md:text-lg lg:text-xl leading-tight font-medium">
+                Now <span className="font-black">Pay ₹589 today</span>
               </p>
-              <p className="text-[9px] md:text-[11px] font-bold opacity-90">
+              <p className="text-[10px] md:text-xs font-black opacity-95">
                 (₹499 + GST) Lifetime Access
               </p>
             </div>
           </div>
         </div>
 
-        {/* Action Button: Now sits on the same line on desktop */}
+        {/* Action Button: Single line on desktop, full-width on mobile */}
         <Button 
-          className="w-full md:w-auto md:min-w-[240px] rounded-full py-7 md:py-6 text-base md:text-lg font-black bg-white text-[#FF4B2B] hover:bg-white/95 transition-all shadow-lg active:scale-95 group uppercase tracking-tight"
+          className="w-full md:w-auto md:min-w-[260px] rounded-full py-8 md:py-7 text-lg md:text-xl font-black bg-white text-[#FF4B2B] hover:bg-white/95 transition-all shadow-lg active:scale-95 group uppercase tracking-tight"
           asChild
         >
           <a href={joinLink || '#'}>
