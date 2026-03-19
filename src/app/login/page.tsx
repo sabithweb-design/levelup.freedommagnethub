@@ -2,14 +2,14 @@
 
 import { useState } from 'react';
 import { useAuth, useFirestore } from '@/firebase';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { ShieldCheck, Loader2, AlertCircle, LogIn, UserPlus, Eye, EyeOff } from 'lucide-react';
+import { ShieldCheck, Loader2, AlertCircle, LogIn, Eye, EyeOff } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 
@@ -31,7 +31,8 @@ export default function LoginPage() {
         createdAt: serverTimestamp(),
       }, { merge: true });
     } catch (e) {
-      console.error("Failed to create admin record:", e);
+      // Silently fail as the user might already have the record
+      // and we don't want to block login if it exists.
     }
   };
 
@@ -42,30 +43,12 @@ export default function LoginPage() {
 
     try {
       const credential = await signInWithEmailAndPassword(auth, email, password);
+      // Ensure the admin record exists on every successful login
       await ensureAdminRecord(credential.user.uid);
       toast({ title: "Welcome back!", description: "Successfully authenticated as admin." });
       router.push('/admin');
     } catch (err: any) {
       setError(err.message || 'Login failed. Please check your credentials.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleInitialize = async () => {
-    if (!email || !password) {
-      setError("Please enter an email and password to initialize.");
-      return;
-    }
-    setIsLoading(true);
-    setError(null);
-    try {
-      const credential = await createUserWithEmailAndPassword(auth, email, password);
-      await ensureAdminRecord(credential.user.uid);
-      toast({ title: "Admin Account Created", description: "Successfully initialized and logged in." });
-      router.push('/admin');
-    } catch (err: any) {
-      setError(err.message || "Failed to create account.");
     } finally {
       setIsLoading(false);
     }
@@ -136,7 +119,7 @@ export default function LoginPage() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="px-8 pb-8 flex flex-col gap-3">
+            <CardFooter className="px-8 pb-8">
               <Button 
                 type="submit" 
                 className="w-full h-14 rounded-xl font-bold text-lg bg-primary hover:bg-primary/95 shadow-xl shadow-primary/20 transition-all"
@@ -147,16 +130,6 @@ export default function LoginPage() {
                 ) : (
                   <span className="flex items-center gap-2"><LogIn className="w-5 h-5" /> LOGIN</span>
                 )}
-              </Button>
-
-              <Button 
-                type="button"
-                variant="ghost"
-                onClick={handleInitialize}
-                className="w-full text-[10px] uppercase tracking-widest text-muted-foreground hover:text-primary transition-all"
-                disabled={isLoading}
-              >
-                Need to initialize first-time access? Click here.
               </Button>
             </CardFooter>
           </form>
