@@ -62,16 +62,16 @@ export default function ProgramPage() {
   const selectedAlignment = program.textAlign || 'center';
 
   return (
-    <div className="bg-background min-h-screen selection:bg-primary selection:text-white">
+    <div className="bg-background min-h-screen selection:bg-accent selection:text-primary">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-border/50">
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-border/50">
         <div className="py-4 px-6 max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-1 group cursor-pointer">
             <div className="flex flex-col">
               <span className="font-headline font-black text-xl tracking-tighter text-primary leading-none uppercase">
                 Freedom
               </span>
-              <span className="font-headline font-black text-xl tracking-tighter text-[#333333] leading-none uppercase">
+              <span className="font-headline font-black text-xl tracking-tighter text-muted-foreground leading-none uppercase">
                 Magnet Hub
               </span>
             </div>
@@ -81,29 +81,28 @@ export default function ProgramPage() {
             <a href="#curriculum" className="hover:text-primary transition-colors">Previews</a>
             <a href="#testimonials" className="hover:text-primary transition-colors">Results</a>
             <a href="#faq" className="hover:text-primary transition-colors">Questions</a>
-            <Button size="sm" className="bg-accent hover:bg-accent/90 text-white rounded-full font-black px-8 py-5 shadow-lg shadow-accent/20" asChild>
-              <a href="#join">Get Started</a>
+            <Button size="sm" className="bg-accent hover:bg-accent/90 text-primary-foreground rounded-full font-black px-8 py-5 shadow-lg shadow-accent/20" asChild>
+              <a href="#join">GRAB YOUR SEAT</a>
             </Button>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <header className="relative pt-24 pb-40 px-6 overflow-hidden">
-        {/* Background Accents */}
+      {/* Hero Section - Dark Navy */}
+      <header className="relative pt-24 pb-48 px-6 overflow-hidden bg-dark-navy text-white">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl -z-10 pointer-events-none">
-          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[140px]"></div>
-          <div className="absolute bottom-[10%] right-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-[120px]"></div>
+          <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-accent/5 rounded-full blur-[140px]"></div>
+          <div className="absolute bottom-[10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]"></div>
         </div>
 
         <div className={cn("max-w-5xl mx-auto flex flex-col", alignmentClasses[selectedAlignment])}>
-          <div className="inline-flex items-center gap-2 mb-10 px-6 py-2 rounded-full border border-primary/10 bg-primary/5 w-fit">
-            <ShieldCheck className="w-4 h-4 text-primary" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Accredited Learning Path</span>
+          <div className="inline-flex items-center gap-2 mb-10 px-6 py-2 rounded-full border border-white/10 bg-white/5 w-fit">
+            <ShieldCheck className="w-4 h-4 text-accent" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent/80">Accredited Learning Path</span>
           </div>
           
           <h1 
-            className="font-headline font-black text-primary mb-10 leading-[0.9] tracking-tighter"
+            className="font-headline font-black text-white mb-10 leading-[0.9] tracking-tighter"
             style={{ 
               fontSize: program.titleFontSize ? `${program.titleFontSize}px` : undefined,
               lineHeight: program.lineHeight,
@@ -115,7 +114,7 @@ export default function ProgramPage() {
           </h1>
           
           <p 
-            className="text-muted-foreground mb-16 max-w-3xl font-medium leading-relaxed"
+            className="text-white/60 mb-16 max-w-3xl font-medium leading-relaxed"
             style={{ 
               fontSize: program.subtitleFontSize ? `${program.subtitleFontSize}px` : undefined,
               textAlign: selectedAlignment
@@ -125,23 +124,23 @@ export default function ProgramPage() {
           </p>
           
           <div className={cn("flex flex-col sm:flex-row items-center gap-6 mb-24", selectedAlignment === 'center' ? 'justify-center' : selectedAlignment === 'right' ? 'justify-end' : 'justify-start')}>
-            <Button size="lg" className="h-20 px-12 text-xl font-black bg-primary hover:bg-primary/95 text-white rounded-full shadow-2xl shadow-primary/30 group uppercase tracking-tight" asChild>
+            <Button size="lg" className="h-20 px-12 text-xl font-black bg-accent hover:bg-accent/90 text-primary rounded-full shadow-2xl shadow-accent/20 group uppercase tracking-tight" asChild>
               <a href="#join">
-                Claim Your Freedom <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                GRAB YOUR SEAT <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-2 transition-transform" />
               </a>
             </Button>
             <div className={cn("flex flex-col gap-1", selectedAlignment === 'center' ? 'items-center sm:items-start' : selectedAlignment === 'right' ? 'items-end' : 'items-start')}>
-              <div className="flex items-center gap-2 text-sm font-bold text-primary">
-                <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+              <div className="flex items-center gap-2 text-sm font-bold text-accent">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                 <span>Immediate Enrollment Open</span>
               </div>
-              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Secure SSL Transaction</p>
+              <p className="text-[10px] text-white/40 font-black uppercase tracking-widest">Secure SSL Transaction</p>
             </div>
           </div>
 
           <div className="max-w-4xl w-full mx-auto relative group">
-            <div className="absolute -inset-4 bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 rounded-[3rem] blur-2xl opacity-50"></div>
-            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white">
+            <div className="absolute -inset-4 bg-accent/10 rounded-[3rem] blur-3xl opacity-50"></div>
+            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white/10 bg-white/5 backdrop-blur-sm p-1">
               <VideoPlayer videoId={program.demoVideoId} />
             </div>
           </div>
@@ -149,25 +148,26 @@ export default function ProgramPage() {
       </header>
 
       {/* Proof of Excellence Bar */}
-      <div className="bg-primary py-12 px-6">
-        <div className="max-w-7xl mx-auto flex flex-wrap justify-center md:justify-between items-center gap-8 opacity-40 grayscale contrast-125">
-          <div className="flex items-center gap-3"><Globe className="w-6 h-6 text-white" /><span className="text-white font-black uppercase tracking-tighter text-xl">Global Network</span></div>
-          <div className="flex items-center gap-3"><Trophy className="w-6 h-6 text-white" /><span className="text-white font-black uppercase tracking-tighter text-xl">Industry Certified</span></div>
-          <div className="flex items-center gap-3"><Layout className="w-6 h-6 text-white" /><span className="text-white font-black uppercase tracking-tighter text-xl">Mastery Curriculum</span></div>
+      <div className="bg-accent py-14 px-6">
+        <div className="max-w-7xl mx-auto flex flex-wrap justify-center md:justify-between items-center gap-8 text-primary">
+          <div className="flex items-center gap-3"><Globe className="w-6 h-6" /><span className="font-black uppercase tracking-tighter text-xl">Global Network</span></div>
+          <div className="flex items-center gap-3"><Trophy className="w-6 h-6" /><span className="font-black uppercase tracking-tighter text-xl">Industry Certified</span></div>
+          <div className="flex items-center gap-3"><Layout className="w-6 h-6" /><span className="font-black uppercase tracking-tighter text-xl">Mastery Curriculum</span></div>
         </div>
       </div>
 
-      <section id="features" className="scroll-mt-20">
+      {/* Zebra Striping Start */}
+      <section id="features" className="scroll-mt-20 bg-background">
         <Features features={program.features} />
       </section>
 
       {program.gallery && program.gallery.length > 0 && (
-        <section id="curriculum" className="scroll-mt-20">
+        <section id="curriculum" className="scroll-mt-20 bg-background">
           <Gallery images={program.gallery} />
         </section>
       )}
       
-      <div id="testimonials" className="scroll-mt-20">
+      <div id="testimonials" className="scroll-mt-20 bg-background">
         {program.videoTestimonials && program.videoTestimonials.length > 0 && (
           <VideoTestimonials videoIds={program.videoTestimonials} />
         )}
@@ -176,67 +176,68 @@ export default function ProgramPage() {
         )}
       </div>
 
-      <section id="faq" className="scroll-mt-20">
+      <section id="faq" className="scroll-mt-20 bg-background">
         <FAQ faqs={program.faqs} />
       </section>
 
-      <div id="join" className="scroll-mt-20">
+      {/* CTA Bookend - Dark Navy */}
+      <div id="join" className="scroll-mt-20 bg-dark-navy">
         <CountdownCTA expiryDate={program.expiryDate} joinLink={program.joinButtonLink} />
       </div>
 
       <StickyOfferBar expiryDate={program.expiryDate} joinLink={program.joinButtonLink} />
 
-      <footer className="py-32 px-6 border-t border-border bg-muted/20">
+      <footer className="py-40 px-6 border-t border-white/10 bg-dark-navy text-white">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-20">
           <div className="md:col-span-2">
             <div className="flex items-center gap-1 mb-10">
               <div className="flex flex-col">
-                <span className="font-headline font-black text-3xl tracking-tighter text-primary leading-none uppercase">
+                <span className="font-headline font-black text-3xl tracking-tighter text-white leading-none uppercase">
                   Freedom
                 </span>
-                <span className="font-headline font-black text-3xl tracking-tighter text-[#333333] leading-none uppercase">
+                <span className="font-headline font-black text-3xl tracking-tighter text-accent leading-none uppercase">
                   Magnet Hub
                 </span>
               </div>
             </div>
-            <p className="text-muted-foreground text-xl max-w-md mb-10 font-medium leading-relaxed">
+            <p className="text-white/60 text-xl max-w-md mb-10 font-medium leading-relaxed">
               We engineer pathways to professional autonomy through strategic education and world-class mentorship.
             </p>
             <div className="flex gap-4">
-              <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary cursor-pointer hover:bg-primary hover:text-white transition-all"><Globe className="w-5 h-5" /></div>
-              <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary cursor-pointer hover:bg-primary hover:text-white transition-all"><Trophy className="w-5 h-5" /></div>
+              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-accent cursor-pointer hover:bg-accent hover:text-primary transition-all"><Globe className="w-5 h-5" /></div>
+              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-accent cursor-pointer hover:bg-accent hover:text-primary transition-all"><Trophy className="w-5 h-5" /></div>
             </div>
           </div>
           
           <div>
-            <h4 className="font-headline font-black text-xs uppercase tracking-[0.3em] mb-8 text-primary/50">Curriculum</h4>
-            <ul className="space-y-6 text-sm font-bold text-muted-foreground uppercase tracking-wider">
-              <li><a href="#curriculum" className="hover:text-primary transition-colors">Program Specs</a></li>
-              <li><a href="#features" className="hover:text-primary transition-colors">Learning Path</a></li>
-              <li><a href="#testimonials" className="hover:text-primary transition-colors">Student Results</a></li>
-              <li><Link href="/login" className="hover:text-primary transition-colors">Admin Console</Link></li>
+            <h4 className="font-headline font-black text-xs uppercase tracking-[0.3em] mb-8 text-white/30">Curriculum</h4>
+            <ul className="space-y-6 text-sm font-bold text-white/60 uppercase tracking-wider">
+              <li><a href="#curriculum" className="hover:text-accent transition-colors">Program Specs</a></li>
+              <li><a href="#features" className="hover:text-accent transition-colors">Learning Path</a></li>
+              <li><a href="#testimonials" className="hover:text-accent transition-colors">Student Results</a></li>
+              <li><Link href="/login" className="hover:text-accent transition-colors">Admin Console</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-headline font-black text-xs uppercase tracking-[0.3em] mb-8 text-primary/50">Company</h4>
-            <ul className="space-y-6 text-sm font-bold text-muted-foreground uppercase tracking-wider">
-              <li><a href="#" className="hover:text-primary transition-colors">Our Mission</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Support</a></li>
+            <h4 className="font-headline font-black text-xs uppercase tracking-[0.3em] mb-8 text-white/30">Company</h4>
+            <ul className="space-y-6 text-sm font-bold text-white/60 uppercase tracking-wider">
+              <li><a href="#" className="hover:text-accent transition-colors">Our Mission</a></li>
+              <li><a href="#" className="hover:text-accent transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="hover:text-accent transition-colors">Terms of Service</a></li>
+              <li><a href="#" className="hover:text-accent transition-colors">Support</a></li>
             </ul>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto pt-20 mt-20 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-6">
-          <p className="text-muted-foreground text-[10px] font-black uppercase tracking-widest">
+        <div className="max-w-7xl mx-auto pt-20 mt-20 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
+          <p className="text-white/40 text-[10px] font-black uppercase tracking-widest">
             &copy; {new Date().getFullYear()} Freedom Magnet Hub Global. All Rights Reserved.
           </p>
-          <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-            <span className="cursor-pointer hover:text-primary">English (US)</span>
-            <span className="cursor-pointer hover:text-primary">Terms</span>
-            <span className="cursor-pointer hover:text-primary">Privacy</span>
+          <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-white/20">
+            <span className="cursor-pointer hover:text-white">English (US)</span>
+            <span className="cursor-pointer hover:text-white">Terms</span>
+            <span className="cursor-pointer hover:text-white">Privacy</span>
           </div>
         </div>
       </footer>
