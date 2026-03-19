@@ -73,11 +73,11 @@ export function CountdownCTA({ expiryDate, joinLink }: { expiryDate: string; joi
         <div className="flex flex-col items-center gap-6">
           <Button 
             size="lg" 
-            className="h-24 px-16 text-2xl font-black fiery-gradient fiery-glow hover:brightness-110 text-white rounded-full transition-all hover:scale-105 active:scale-95 group uppercase tracking-tight"
+            className="h-16 px-10 text-lg font-black fiery-gradient fiery-glow hover:brightness-110 text-white rounded-full transition-all hover:scale-105 active:scale-95 group uppercase tracking-tight"
             asChild
           >
             <a href={joinLink || '#'}>
-              GRAB YOUR SEAT <ArrowRight className="ml-3 w-8 h-8 group-hover:translate-x-2 transition-transform" />
+              GRAB YOUR SEAT <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform" />
             </a>
           </Button>
           <div className="flex items-center gap-3 text-sm text-white/40 mt-4 font-bold uppercase tracking-widest">

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
@@ -126,9 +125,9 @@ export default function ProgramPage() {
           </p>
           
           <div className={cn("flex flex-col sm:flex-row items-center gap-6 mb-24", selectedAlignment === 'center' ? 'justify-center' : selectedAlignment === 'right' ? 'justify-end' : 'justify-start')}>
-            <Button size="lg" className="h-20 px-12 text-xl font-black fiery-gradient fiery-glow hover:brightness-110 text-white rounded-full transition-all group uppercase tracking-tight hover:scale-105 active:scale-95" asChild>
+            <Button size="lg" className="h-16 px-10 text-lg font-black fiery-gradient fiery-glow hover:brightness-110 text-white rounded-full transition-all group uppercase tracking-tight hover:scale-105 active:scale-95" asChild>
               <a href="#join">
-                GRAB YOUR SEAT <ArrowRight className="ml-2 w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                GRAB YOUR SEAT <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform" />
               </a>
             </Button>
             <div className={cn("flex flex-col gap-1", selectedAlignment === 'center' ? 'items-center sm:items-start' : selectedAlignment === 'right' ? 'items-end' : 'items-start')}>
