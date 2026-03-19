@@ -26,7 +26,6 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
     setTimeLeft(calculate());
 
     const handleScroll = () => {
-      // Show the bar after scrolling down 400px for better visibility
       setIsVisible(window.scrollY > 400);
     };
     window.addEventListener('scroll', handleScroll);
@@ -41,7 +40,6 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-[100] bg-primary/95 backdrop-blur-2xl border-t-4 border-accent p-4 md:p-6 lg:p-8 shadow-[0_-20px_80px_-15px_rgba(0,0,0,0.8)] animate-in slide-in-from-bottom-full duration-700 ease-out">
-      {/* Decorative Gradient Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1 bg-gradient-to-r from-transparent via-accent to-transparent opacity-100"></div>
       
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10">
@@ -51,7 +49,7 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
           </div>
           <div className="flex flex-col gap-1 md:gap-2">
             <div className="flex items-center gap-2 justify-center md:justify-start">
-              <Sparkles className="w-3 h-3 md:w-4 md:h-4 text-accent animate-spin-slow" />
+              <Sparkles className="w-3 h-3 md:w-4 h-4 text-accent" />
               <p className="text-[10px] md:text-[12px] font-black uppercase tracking-[0.4em] text-accent">Offer Ends In:</p>
             </div>
             <div className="flex gap-2 md:gap-4 lg:gap-6">
@@ -63,7 +61,7 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
               ].map((unit, idx) => (
                 <div key={idx} className="flex flex-col items-center min-w-[45px] md:min-w-[65px] lg:min-w-[75px]">
                   <div className="bg-white/10 backdrop-blur-md rounded-lg md:rounded-xl p-1.5 md:p-3 w-full flex items-center justify-center border border-white/20 shadow-inner">
-                    <span className="text-xl md:text-3xl lg:text-5xl font-black tabular-nums tracking-tighter leading-none text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
+                    <span className="text-xl md:text-3xl lg:text-5xl font-black tabular-nums tracking-tighter leading-none text-white">
                       {unit.val.toString().padStart(2, '0')}
                     </span>
                   </div>
@@ -81,11 +79,11 @@ export function StickyOfferBar({ expiryDate, joinLink }: { expiryDate: string; j
           </div>
           <Button 
             size="lg" 
-            className="w-full md:w-auto bg-accent hover:bg-accent/90 text-white font-black rounded-full px-8 md:px-10 lg:px-12 py-4 md:py-6 lg:py-8 h-auto text-lg md:text-xl lg:text-2xl shadow-[0_0_40px_rgba(255,0,0,0.5)] group uppercase tracking-tighter transition-all hover:scale-105 active:scale-95"
+            className="w-full md:w-auto bg-accent hover:bg-accent/90 text-white font-black rounded-full px-6 md:px-10 lg:px-12 py-3 md:py-6 lg:py-8 h-auto text-base md:text-xl lg:text-2xl shadow-[0_0_40px_rgba(255,0,0,0.5)] group uppercase tracking-tighter transition-all hover:scale-105 active:scale-95"
             asChild
           >
             <a href={joinLink || '#'}>
-              SECURE SPOT NOW <ArrowRight className="ml-2 md:ml-3 w-5 h-5 md:w-7 md:h-7 lg:w-8 lg:h-8 group-hover:translate-x-2 transition-transform" />
+              SECURE SPOT NOW <ArrowRight className="ml-2 md:ml-3 w-4 h-4 md:w-7 md:h-7 lg:w-8 lg:h-8 group-hover:translate-x-2 transition-transform" />
             </a>
           </Button>
         </div>

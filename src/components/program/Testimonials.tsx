@@ -33,7 +33,7 @@ export function ImageTestimonials({ testimonials }: { testimonials: Testimonial[
               <p className="text-foreground italic mb-6 flex-grow leading-relaxed">"{t.content}"</p>
               <div className="flex items-center gap-4">
                 <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-accent/20 bg-muted">
-                  {/* Using standard img for external URL resilience */}
+                  {/* Using standard img for resilience with external profile photos */}
                   <img 
                     src={t.imageUrl} 
                     alt={t.name} 

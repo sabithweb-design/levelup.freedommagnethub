@@ -19,7 +19,7 @@ export function Gallery({ images }: { images: string[] }) {
         {images.map((src, idx) => (
           <Card key={idx} className="overflow-hidden border-none shadow-xl hover:shadow-2xl transition-all duration-300 group aspect-[4/3]">
             <div className="relative h-full w-full">
-              {/* Using standard img for external URL resilience */}
+              {/* Using standard img for external URL resilience and bypassing strict NextJS hostname restrictions */}
               <img
                 src={src}
                 alt={`Program preview ${idx + 1}`}
