@@ -19,7 +19,7 @@ export function StickyOfferBar({
   currentPriceLabel = 'Now Pay ₹589 today', 
   priceSubtext = '(₹499 + GST) Lifetime Access' 
 }: StickyOfferBarProps) {
-  const [timeLeft, setTimeLeft] = useState<{ d: number; m: number; s: number } | null>(null);
+  const [timeLeft, setTimeLeft] = useState<{ h: number; m: number; s: number } | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export function StickyOfferBar({
       if (difference <= 0) return null;
 
       return {
-        d: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        h: Math.floor(difference / (1000 * 60 * 60)),
         m: Math.floor((difference / 1000 / 60) % 60),
         s: Math.floor((difference / 1000) % 60),
       };
@@ -81,9 +81,9 @@ export function StickyOfferBar({
           {/* Countdown Timer */}
           <div className="flex items-center gap-2 md:gap-3">
             {[
-              { label: 'days', val: timeLeft.d },
-              { label: 'mint', val: timeLeft.m },
-              { label: 'sec', val: timeLeft.s },
+              { label: 'Hours', val: timeLeft.h },
+              { label: 'Min', val: timeLeft.m },
+              { label: 'Sec', val: timeLeft.s },
             ].map((unit, idx) => (
               <div key={idx} className="flex flex-col items-center">
                 <div 
