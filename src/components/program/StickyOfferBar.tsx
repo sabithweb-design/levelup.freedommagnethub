@@ -125,7 +125,7 @@ export function StickyOfferBar({
           asChild
         >
           <a href={joinLink || '#'}>
-            Become a Member
+            Join Now
           </a>
         </Button>
 
