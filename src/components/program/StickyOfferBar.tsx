@@ -28,12 +28,18 @@ export function StickyOfferBar({
     let targetTime: number;
 
     const storedExpiry = localStorage.getItem(STORAGE_KEY);
+    const now = Date.now();
     
     if (storedExpiry) {
       targetTime = parseInt(storedExpiry, 10);
+      // Reset if expired to ensure the bar is always visible/active for testing and re-visits
+      if (targetTime <= now) {
+        targetTime = now + 24 * 60 * 60 * 1000;
+        localStorage.setItem(STORAGE_KEY, targetTime.toString());
+      }
     } else {
       // Set expiry to 24 hours from now
-      targetTime = Date.now() + 24 * 60 * 60 * 1000;
+      targetTime = now + 24 * 60 * 60 * 1000;
       localStorage.setItem(STORAGE_KEY, targetTime.toString());
     }
 
@@ -51,15 +57,23 @@ export function StickyOfferBar({
 
     const timer = setInterval(() => {
       const remaining = calculate();
-      setTimeLeft(remaining);
+      if (!remaining) {
+        // Handle reset logic within the interval if it hits zero while viewing
+        const newTarget = Date.now() + 24 * 60 * 60 * 1000;
+        localStorage.setItem(STORAGE_KEY, newTarget.toString());
+        targetTime = newTarget;
+      }
+      setTimeLeft(calculate());
     }, 1000);
 
     setTimeLeft(calculate());
 
     const handleScroll = () => {
-      setIsVisible(window.scrollY > 400);
+      // Reduced threshold to 100px so it appears almost immediately
+      setIsVisible(window.scrollY > 100);
     };
     window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial scroll position
     
     return () => {
       clearInterval(timer);
@@ -102,17 +116,10 @@ export function StickyOfferBar({
               <span className="line-through opacity-70">{oldPriceLabel}</span>
             </p>
             <div className="flex flex-col mt-0.5">
-              <p className="text-lg md:text-2xl lg:text-3xl leading-tight font-medium">
-                {currentPriceLabel.split('₹').length > 1 ? (
-                  <>
-                    {currentPriceLabel.split('₹')[0]}
-                    <span className="font-black">₹{currentPriceLabel.split('₹')[1]}</span>
-                  </>
-                ) : (
-                  <span className="font-black">{currentPriceLabel}</span>
-                )}
+              <p className="text-lg md:text-2xl lg:text-3xl leading-tight font-black">
+                {currentPriceLabel}
               </p>
-              <p className="text-xs md:text-sm font-black opacity-95">
+              <p className="text-xs md:text-sm font-bold opacity-95">
                 {priceSubtext}
               </p>
             </div>
@@ -121,7 +128,7 @@ export function StickyOfferBar({
 
         {/* Action Button */}
         <Button 
-          className="w-full md:w-auto md:min-w-[280px] rounded-full py-8 md:py-8 text-xl md:text-2xl font-black bg-white text-[#FF4B2B] hover:bg-white/95 transition-all shadow-lg active:scale-95 group uppercase tracking-tight"
+          className="w-full md:w-auto md:min-w-[200px] rounded-full py-7 md:py-8 text-xl md:text-2xl font-black bg-white text-[#FF4B2B] hover:bg-white/95 transition-all shadow-lg active:scale-95 group uppercase tracking-tight"
           asChild
         >
           <a href={joinLink || '#'}>
