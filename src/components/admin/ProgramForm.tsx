@@ -8,18 +8,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
-import { format } from 'date-fns';
 import { 
-  CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, Type, 
-  AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, 
-  MessageSquareQuote, LayoutList, Tag, Info, ShieldCheck, 
-  Globe, Trophy, Layout, Zap, Star, Users, BookOpen, 
-  Heading, ImageIcon, MessageSquare, HelpCircle
+  Loader2, Save, Plus, Trash2, AlignLeft, AlignCenter, AlignRight, 
+  Globe, Trophy, Zap, Star, Users, BookOpen, ShieldCheck
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
@@ -63,7 +56,7 @@ export function ProgramForm({ programId }: { programId: string }) {
     testimonialsSubtitle: '',
     faqTitle: '',
     faqSubtitle: '',
-    videoTestimonials: ['', '', '', ''],
+    videoTestimonials: [] as string[],
     features: [] as Feature[],
     trustItems: [] as TrustItem[],
     faqs: [] as FAQItem[],
@@ -99,7 +92,7 @@ export function ProgramForm({ programId }: { programId: string }) {
         testimonialsSubtitle: program.testimonialsSubtitle || 'Impact analysis and market feedback from the network.',
         faqTitle: program.faqTitle || 'Essential Inquiries',
         faqSubtitle: program.faqSubtitle || 'Clarifications on the engineered methodology.',
-        videoTestimonials: program.videoTestimonials || ['', '', '', ''],
+        videoTestimonials: program.videoTestimonials?.map(id => id ? `https://www.youtube.com/watch?v=${id}` : '') || [],
         features: program.features || [],
         trustItems: program.trustItems || [],
         faqs: program.faqs || [],
@@ -121,7 +114,7 @@ export function ProgramForm({ programId }: { programId: string }) {
       letterSpacing: formData.letterSpacing,
       textAlign: formData.textAlign,
       demoVideoId: formData.demoVideoUrl ? getYouTubeId(formData.demoVideoUrl) : '',
-      videoTestimonials: formData.videoTestimonials.map(v => v ? getYouTubeId(v) : '').filter(v => !!v),
+      videoTestimonials: formData.videoTestimonials.map(v => getYouTubeId(v)).filter(v => !!v),
       imageTestimonials: formData.imageTestimonials,
       featuresTitle: formData.featuresTitle,
       featuresSubtitle: formData.featuresSubtitle,
@@ -160,16 +153,15 @@ export function ProgramForm({ programId }: { programId: string }) {
       });
   };
 
-  // Helper functions for arrays
-  const addArrayItem = (key: 'features' | 'trustItems' | 'faqs' | 'imageTestimonials' | 'gallery', defaultValue: any) => {
+  const addArrayItem = (key: 'features' | 'trustItems' | 'faqs' | 'imageTestimonials' | 'gallery' | 'videoTestimonials', defaultValue: any) => {
     setFormData(prev => ({ ...prev, [key]: [...(prev[key] as any[]), defaultValue] }));
   };
 
-  const removeArrayItem = (key: 'features' | 'trustItems' | 'faqs' | 'imageTestimonials' | 'gallery', index: number) => {
+  const removeArrayItem = (key: 'features' | 'trustItems' | 'faqs' | 'imageTestimonials' | 'gallery' | 'videoTestimonials', index: number) => {
     setFormData(prev => ({ ...prev, [key]: (prev[key] as any[]).filter((_, i) => i !== index) }));
   };
 
-  const updateArrayItem = (key: 'features' | 'trustItems' | 'faqs' | 'imageTestimonials' | 'gallery', index: number, value: any) => {
+  const updateArrayItem = (key: 'features' | 'trustItems' | 'faqs' | 'imageTestimonials' | 'gallery' | 'videoTestimonials', index: number, value: any) => {
     const newItems = [...(formData[key] as any[])];
     if (typeof value === 'object' && value !== null) {
       newItems[index] = { ...newItems[index], ...value };
@@ -183,7 +175,7 @@ export function ProgramForm({ programId }: { programId: string }) {
 
   return (
     <div className="space-y-8 pb-20">
-      {/* Basic Information */}
+      {/* Hero Section & Pricing */}
       <Card className="shadow-sm border-border/50">
         <CardHeader>
           <CardTitle>Hero Section & Pricing</CardTitle>
@@ -238,11 +230,11 @@ export function ProgramForm({ programId }: { programId: string }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Demo Video (YouTube URL)</Label>
+              <Label>Demo Video (YouTube URL - Optional)</Label>
               <Input value={formData.demoVideoUrl} onChange={e => setFormData({...formData, demoVideoUrl: e.target.value})} placeholder="https://..." />
             </div>
             <div className="space-y-2">
-              <Label>Join Button Link (Stripe/Payment)</Label>
+              <Label>Join Button Link (Payment Link)</Label>
               <Input value={formData.joinButtonLink} onChange={e => setFormData({...formData, joinButtonLink: e.target.value})} placeholder="https://..." />
             </div>
           </div>
@@ -250,9 +242,18 @@ export function ProgramForm({ programId }: { programId: string }) {
           <div className="p-6 bg-accent/5 rounded-xl border border-accent/20 space-y-4">
             <Label className="text-xs uppercase font-black text-accent">Sticky Bar Pricing Details</Label>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Input value={formData.oldPriceLabel} onChange={e => setFormData({...formData, oldPriceLabel: e.target.value})} placeholder="Old Price Label" />
-              <Input value={formData.currentPriceLabel} onChange={e => setFormData({...formData, currentPriceLabel: e.target.value})} placeholder="Current Price Label" />
-              <Input value={formData.priceSubtext} onChange={e => setFormData({...formData, priceSubtext: e.target.value})} placeholder="Price Subtext" />
+              <div className="space-y-2">
+                <Label>Old Price Label</Label>
+                <Input value={formData.oldPriceLabel} onChange={e => setFormData({...formData, oldPriceLabel: e.target.value})} placeholder="Join ₹1000 / month" />
+              </div>
+              <div className="space-y-2">
+                <Label>Current Price Label</Label>
+                <Input value={formData.currentPriceLabel} onChange={e => setFormData({...formData, currentPriceLabel: e.target.value})} placeholder="Now Pay ₹589 today" />
+              </div>
+              <div className="space-y-2">
+                <Label>Price Subtext</Label>
+                <Input value={formData.priceSubtext} onChange={e => setFormData({...formData, priceSubtext: e.target.value})} placeholder="(₹499 + GST) Lifetime Access" />
+              </div>
             </div>
           </div>
         </CardContent>
@@ -262,8 +263,8 @@ export function ProgramForm({ programId }: { programId: string }) {
       <Card className="shadow-sm border-border/50">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>Trust Bar</CardTitle>
-            <CardDescription>Horizontal indicators below the hero section.</CardDescription>
+            <CardTitle>Trust Bar Indicators (Optional)</CardTitle>
+            <CardDescription>Horizontal trust elements below the hero section.</CardDescription>
           </div>
           <Button variant="outline" size="sm" onClick={() => addArrayItem('trustItems', { text: '', iconName: 'Globe' })}>
             <Plus className="w-4 h-4 mr-2" /> Add Item
@@ -304,8 +305,8 @@ export function ProgramForm({ programId }: { programId: string }) {
       <Card className="shadow-sm border-border/50">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>Framework Features</CardTitle>
-            <CardDescription>The core pillars of your program.</CardDescription>
+            <CardTitle>Framework Features Section</CardTitle>
+            <CardDescription>Explain the core pillars of your methodology.</CardDescription>
           </div>
           <Button variant="outline" size="sm" onClick={() => addArrayItem('features', { title: '', description: '', iconName: 'Zap' })}>
             <Plus className="w-4 h-4 mr-2" /> Add Feature
@@ -329,7 +330,7 @@ export function ProgramForm({ programId }: { programId: string }) {
               </Button>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Title</Label>
+                  <Label>Feature Title</Label>
                   <Input value={feature.title} onChange={e => updateArrayItem('features', idx, { title: e.target.value })} />
                 </div>
                 <div className="space-y-2">
@@ -338,7 +339,7 @@ export function ProgramForm({ programId }: { programId: string }) {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Description</Label>
+                <Label>Feature Description</Label>
                 <Textarea value={feature.description} onChange={e => updateArrayItem('features', idx, { description: e.target.value })} />
               </div>
             </div>
@@ -346,12 +347,12 @@ export function ProgramForm({ programId }: { programId: string }) {
         </CardContent>
       </Card>
 
-      {/* Gallery */}
+      {/* Gallery Section */}
       <Card className="shadow-sm border-border/50">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Curriculum Previews (Gallery)</CardTitle>
-            <CardDescription>Add image URLs for the module previews.</CardDescription>
+            <CardDescription>Add visual previews of your program content.</CardDescription>
           </div>
           <Button variant="outline" size="sm" onClick={() => addArrayItem('gallery', '')}>
             <Plus className="w-4 h-4 mr-2" /> Add Image
@@ -359,8 +360,14 @@ export function ProgramForm({ programId }: { programId: string }) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <Input value={formData.galleryTitle} onChange={e => setFormData({...formData, galleryTitle: e.target.value})} placeholder="Gallery Title" />
-            <Input value={formData.gallerySubtitle} onChange={e => setFormData({...formData, gallerySubtitle: e.target.value})} placeholder="Gallery Subtitle" />
+            <div className="space-y-2">
+              <Label>Gallery Section Title</Label>
+              <Input value={formData.galleryTitle} onChange={e => setFormData({...formData, galleryTitle: e.target.value})} />
+            </div>
+            <div className="space-y-2">
+              <Label>Gallery Section Subtitle</Label>
+              <Input value={formData.gallerySubtitle} onChange={e => setFormData({...formData, gallerySubtitle: e.target.value})} />
+            </div>
           </div>
           {formData.gallery.map((url, idx) => (
             <div key={idx} className="flex gap-2">
@@ -371,34 +378,52 @@ export function ProgramForm({ programId }: { programId: string }) {
         </CardContent>
       </Card>
 
-      {/* Testimonials */}
+      {/* Testimonials Section */}
       <Card className="shadow-sm border-border/50">
         <CardHeader>
-          <CardTitle>Testimonials & Social Proof</CardTitle>
-          <CardDescription>Manage both video and written feedback.</CardDescription>
+          <CardTitle>Testimonials & Social Proof (Optional)</CardTitle>
+          <CardDescription>Manage both video results and written success stories.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Input value={formData.testimonialsTitle} onChange={e => setFormData({...formData, testimonialsTitle: e.target.value})} placeholder="Testimonials Section Title" />
-            <Input value={formData.testimonialsSubtitle} onChange={e => setFormData({...formData, testimonialsSubtitle: e.target.value})} placeholder="Testimonials Section Subtitle" />
+            <div className="space-y-2">
+              <Label>Testimonials Title</Label>
+              <Input value={formData.testimonialsTitle} onChange={e => setFormData({...formData, testimonialsTitle: e.target.value})} />
+            </div>
+            <div className="space-y-2">
+              <Label>Testimonials Subtitle</Label>
+              <Input value={formData.testimonialsSubtitle} onChange={e => setFormData({...formData, testimonialsSubtitle: e.target.value})} />
+            </div>
           </div>
 
-          <div className="space-y-4">
-            <Label className="text-xs uppercase font-black text-primary">Video Testimonials (YouTube Links)</Label>
-            {formData.videoTestimonials.map((url, idx) => (
-              <Input key={idx} value={url} onChange={e => {
-                const newVids = [...formData.videoTestimonials];
-                newVids[idx] = e.target.value;
-                setFormData({...formData, videoTestimonials: newVids});
-              }} placeholder={`Video URL ${idx + 1}`} />
-            ))}
+          <div className="space-y-4 pt-6 border-t">
+            <div className="flex justify-between items-center">
+              <Label className="text-xs uppercase font-black text-primary">Video Testimonials (YouTube Links)</Label>
+              <Button variant="outline" size="sm" onClick={() => addArrayItem('videoTestimonials', '')}>
+                <Plus className="w-4 h-4 mr-2" /> Add Video
+              </Button>
+            </div>
+            <div className="space-y-2">
+              {formData.videoTestimonials.map((url, idx) => (
+                <div key={idx} className="flex gap-2">
+                  <Input 
+                    value={url} 
+                    onChange={e => updateArrayItem('videoTestimonials', idx, e.target.value)} 
+                    placeholder="https://www.youtube.com/watch?v=..." 
+                  />
+                  <Button variant="ghost" size="icon" onClick={() => removeArrayItem('videoTestimonials', idx)} className="text-destructive">
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-4 pt-6 border-t">
             <div className="flex justify-between items-center">
               <Label className="text-xs uppercase font-black text-primary">Written Student Success Stories</Label>
               <Button variant="outline" size="sm" onClick={() => addArrayItem('imageTestimonials', { name: '', role: '', content: '' })}>
-                <Plus className="w-4 h-4 mr-2" /> Add Success Story
+                <Plus className="w-4 h-4 mr-2" /> Add Written Story
               </Button>
             </div>
             {formData.imageTestimonials.map((t, idx) => (
@@ -407,22 +432,31 @@ export function ProgramForm({ programId }: { programId: string }) {
                   <Trash2 className="w-4 h-4" />
                 </Button>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Input value={t.name} onChange={e => updateArrayItem('imageTestimonials', idx, { name: e.target.value })} placeholder="Student Name" />
-                  <Input value={t.role} onChange={e => updateArrayItem('imageTestimonials', idx, { role: e.target.value })} placeholder="Outcome / Role" />
+                  <div className="space-y-2">
+                    <Label>Student Name</Label>
+                    <Input value={t.name} onChange={e => updateArrayItem('imageTestimonials', idx, { name: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Role / Outcome</Label>
+                    <Input value={t.role} onChange={e => updateArrayItem('imageTestimonials', idx, { role: e.target.value })} />
+                  </div>
                 </div>
-                <Textarea value={t.content} onChange={e => updateArrayItem('imageTestimonials', idx, { content: e.target.value })} placeholder="Testimonial Content" />
+                <div className="space-y-2">
+                  <Label>Testimonial Content</Label>
+                  <Textarea value={t.content} onChange={e => updateArrayItem('imageTestimonials', idx, { content: e.target.value })} />
+                </div>
               </div>
             ))}
           </div>
         </CardContent>
       </Card>
 
-      {/* FAQ */}
+      {/* FAQ Section */}
       <Card className="shadow-sm border-border/50">
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
             <CardTitle>Essential Inquiries (FAQ)</CardTitle>
-            <CardDescription>Address common student questions.</CardDescription>
+            <CardDescription>Address the most common questions from prospective students.</CardDescription>
           </div>
           <Button variant="outline" size="sm" onClick={() => addArrayItem('faqs', { question: '', answer: '' })}>
             <Plus className="w-4 h-4 mr-2" /> Add FAQ
@@ -430,33 +464,45 @@ export function ProgramForm({ programId }: { programId: string }) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <Input value={formData.faqTitle} onChange={e => setFormData({...formData, faqTitle: e.target.value})} placeholder="FAQ Title" />
-            <Input value={formData.faqSubtitle} onChange={e => setFormData({...formData, faqSubtitle: e.target.value})} placeholder="FAQ Subtitle" />
+            <div className="space-y-2">
+              <Label>FAQ Section Title</Label>
+              <Input value={formData.faqTitle} onChange={e => setFormData({...formData, faqTitle: e.target.value})} />
+            </div>
+            <div className="space-y-2">
+              <Label>FAQ Section Subtitle</Label>
+              <Input value={formData.faqSubtitle} onChange={e => setFormData({...formData, faqSubtitle: e.target.value})} />
+            </div>
           </div>
           {formData.faqs.map((faq, idx) => (
             <div key={idx} className="p-4 border rounded-xl bg-muted/20 space-y-4 relative">
               <Button variant="ghost" size="icon" onClick={() => removeArrayItem('faqs', idx)} className="absolute top-2 right-2 text-destructive"><Trash2 className="w-4 h-4" /></Button>
-              <Input value={faq.question} onChange={e => updateArrayItem('faqs', idx, { question: e.target.value })} placeholder="Question" />
-              <Textarea value={faq.answer} onChange={e => updateArrayItem('faqs', idx, { answer: e.target.value })} placeholder="Answer" />
+              <div className="space-y-2">
+                <Label>Question</Label>
+                <Input value={faq.question} onChange={e => updateArrayItem('faqs', idx, { question: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Answer</Label>
+                <Textarea value={faq.answer} onChange={e => updateArrayItem('faqs', idx, { answer: e.target.value })} />
+              </div>
             </div>
           ))}
         </CardContent>
       </Card>
 
-      {/* Footer */}
+      {/* Footer Settings */}
       <Card className="shadow-sm border-border/50">
         <CardHeader>
           <CardTitle>Footer Settings</CardTitle>
-          <CardDescription>Brand identity and legal notices.</CardDescription>
+          <CardDescription>Brand description and legal copyright details.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Footer Description</Label>
-            <Textarea value={formData.footerDescription} onChange={e => setFormData({...formData, footerDescription: e.target.value})} placeholder="We engineer pathways to..." />
+            <Label>Footer Brand Description</Label>
+            <Textarea value={formData.footerDescription} onChange={e => setFormData({...formData, footerDescription: e.target.value})} />
           </div>
           <div className="space-y-2">
             <Label>Copyright Notice</Label>
-            <Input value={formData.footerCopyright} onChange={e => setFormData({...formData, footerCopyright: e.target.value})} placeholder="Freedom Magnet Hub Global..." />
+            <Input value={formData.footerCopyright} onChange={e => setFormData({...formData, footerCopyright: e.target.value})} />
           </div>
         </CardContent>
       </Card>
@@ -469,7 +515,7 @@ export function ProgramForm({ programId }: { programId: string }) {
           className="px-12 h-14 rounded-full font-bold shadow-xl fiery-gradient text-white"
         >
           {isSaving ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Save className="mr-2 h-5 w-5" />}
-          SAVE ALL PROGRAM CHANGES
+          SAVE PROGRAM UPDATES
         </Button>
       </div>
     </div>
