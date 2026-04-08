@@ -69,11 +69,11 @@ export function StickyOfferBar({
     setTimeLeft(calculate());
 
     const handleScroll = () => {
-      // Reduced threshold to 100px so it appears almost immediately
+      // Bar appears almost immediately for impact
       setIsVisible(window.scrollY > 100);
     };
     window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Check initial scroll position
+    handleScroll(); 
     
     return () => {
       clearInterval(timer);
@@ -92,7 +92,7 @@ export function StickyOfferBar({
         {/* Left/Middle Content Group: Timer and Pricing */}
         <div className="flex items-center justify-between md:justify-start gap-4 md:gap-12 flex-1">
           
-          {/* Countdown Timer */}
+          {/* Countdown Timer - Increased Size as requested */}
           <div className="flex items-center gap-2 md:gap-3">
             {[
               { label: 'Hours', val: timeLeft.h },
@@ -110,7 +110,7 @@ export function StickyOfferBar({
             ))}
           </div>
 
-          {/* Pricing Typography */}
+          {/* Pricing Typography - Increased Size as requested */}
           <div className="text-right md:text-left text-white">
             <p className="text-xs md:text-sm opacity-90 leading-tight">
               <span className="line-through opacity-70">{oldPriceLabel}</span>
@@ -126,7 +126,7 @@ export function StickyOfferBar({
           </div>
         </div>
 
-        {/* Action Button */}
+        {/* Action Button - Concise "Join Now" and single-line responsive logic */}
         <Button 
           className="w-full md:w-auto md:min-w-[200px] rounded-full py-7 md:py-8 text-xl md:text-2xl font-black bg-white text-[#FF4B2B] hover:bg-white/95 transition-all shadow-lg active:scale-95 group uppercase tracking-tight"
           asChild
