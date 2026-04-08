@@ -13,12 +13,12 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, Type, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, MessageSquareQuote, LayoutList, Tag, Info } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, Type, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, MessageSquareQuote, LayoutList, Tag, Info, ShieldCheck, Globe, Trophy, Layout, Zap, Star, Users, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
-import { Feature, FAQItem, Testimonial } from '@/lib/db';
+import { Feature, FAQItem, Testimonial, TrustItem } from '@/lib/db';
 
 function getYouTubeId(url: string) {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -51,6 +51,7 @@ export function ProgramForm({ programId }: { programId: string }) {
     footerCopyright: '',
     videoTestimonials: ['', '', '', ''],
     features: [] as Feature[],
+    trustItems: [] as TrustItem[],
     faqs: [] as FAQItem[],
     imageTestimonials: [] as Testimonial[],
   });
@@ -78,100 +79,16 @@ export function ProgramForm({ programId }: { programId: string }) {
         footerCopyright: program.footerCopyright || `Freedom Magnet Hub Global. All Rights Reserved.`,
         videoTestimonials: program.videoTestimonials || ['', '', '', ''],
         features: program.features || [],
+        trustItems: program.trustItems || [
+          { text: 'Global Network', iconName: 'Globe' },
+          { text: 'Industry Certified', iconName: 'Trophy' },
+          { text: 'Mastery Curriculum', iconName: 'Layout' }
+        ],
         faqs: program.faqs || [],
         imageTestimonials: program.imageTestimonials || [],
       });
     }
   }, [program]);
-
-  const removeExistingImage = (url: string) => {
-    const newGallery = (program?.gallery || []).filter((item: string) => item !== url);
-    setDoc(programRef, { gallery: newGallery }, { merge: true })
-      .catch(e => {
-        errorEmitter.emit('permission-error', new FirestorePermissionError({
-          path: programRef.path,
-          operation: 'update',
-          requestResourceData: { gallery: newGallery }
-        }));
-      });
-  };
-
-  const addGalleryUrl = () => {
-    if (!galleryUrlInput) return;
-    const newGallery = [...(program?.gallery || []), galleryUrlInput];
-    setDoc(programRef, { gallery: newGallery }, { merge: true })
-      .then(() => {
-        setGalleryUrlInput('');
-        toast({ title: "Image Linked", description: "Successfully added image from URL." });
-      })
-      .catch(e => {
-        errorEmitter.emit('permission-error', new FirestorePermissionError({
-          path: programRef.path,
-          operation: 'update',
-          requestResourceData: { gallery: newGallery }
-        }));
-      });
-  };
-
-  const addTestimonial = () => {
-    setFormData(prev => ({
-      ...prev,
-      imageTestimonials: [...prev.imageTestimonials, { content: '', name: '', role: '' }]
-    }));
-  };
-
-  const updateTestimonial = (index: number, field: keyof Testimonial, value: string) => {
-    const newTestimonials = [...formData.imageTestimonials];
-    newTestimonials[index] = { ...newTestimonials[index], [field]: value };
-    setFormData(prev => ({ ...prev, imageTestimonials: newTestimonials }));
-  };
-
-  const removeTestimonial = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      imageTestimonials: prev.imageTestimonials.filter((_, i) => i !== index)
-    }));
-  };
-
-  const addFeature = () => {
-    setFormData(prev => ({
-      ...prev,
-      features: [...prev.features, { title: '', description: '', iconName: 'Trophy' }]
-    }));
-  };
-
-  const updateFeature = (index: number, field: keyof Feature, value: string) => {
-    const newFeatures = [...formData.features];
-    newFeatures[index] = { ...newFeatures[index], [field]: value };
-    setFormData(prev => ({ ...prev, features: newFeatures }));
-  };
-
-  const removeFeature = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      features: prev.features.filter((_, i) => i !== index)
-    }));
-  };
-
-  const addFAQ = () => {
-    setFormData(prev => ({
-      ...prev,
-      faqs: [...prev.faqs, { question: '', answer: '' }]
-    }));
-  };
-
-  const updateFAQ = (index: number, field: keyof FAQItem, value: string) => {
-    const newFAQs = [...formData.faqs];
-    newFAQs[index] = { ...newFAQs[index], [field]: value };
-    setFormData(prev => ({ ...prev, faqs: newFAQs }));
-  };
-
-  const removeFAQ = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      faqs: prev.faqs.filter((_, i) => i !== index)
-    }));
-  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -188,6 +105,7 @@ export function ProgramForm({ programId }: { programId: string }) {
       videoTestimonials: formData.videoTestimonials.map(v => getYouTubeId(v)),
       imageTestimonials: formData.imageTestimonials,
       features: formData.features,
+      trustItems: formData.trustItems,
       faqs: formData.faqs,
       joinButtonLink: formData.joinButtonLink,
       expiryDate: formData.offerEndTime || new Date().toISOString(),
@@ -212,6 +130,26 @@ export function ProgramForm({ programId }: { programId: string }) {
       .finally(() => {
         setIsSaving(false);
       });
+  };
+
+  const updateTrustItem = (index: number, field: keyof TrustItem, value: string) => {
+    const newItems = [...formData.trustItems];
+    newItems[index] = { ...newItems[index], [field]: value };
+    setFormData(prev => ({ ...prev, trustItems: newItems }));
+  };
+
+  const removeTrustItem = (index: number) => {
+    setFormData(prev => ({
+      ...prev,
+      trustItems: prev.trustItems.filter((_, i) => i !== index)
+    }));
+  };
+
+  const addTrustItem = () => {
+    setFormData(prev => ({
+      ...prev,
+      trustItems: [...prev.trustItems, { text: '', iconName: 'ShieldCheck' }]
+    }));
   };
 
   if (isLoading) return <div className="flex justify-center p-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
@@ -428,6 +366,58 @@ export function ProgramForm({ programId }: { programId: string }) {
       </Card>
 
       <Card className="shadow-sm border-border/50">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>Trust Indicators (Trust Bar)</CardTitle>
+            <CardDescription>Customize labels like 'Global Network'. Leave empty to hide the bar.</CardDescription>
+          </div>
+          <Button variant="outline" size="sm" className="flex gap-2" onClick={addTrustItem}>
+            <ShieldCheck className="w-4 h-4" />
+            Add Indicator
+          </Button>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {formData.trustItems.map((item, idx) => (
+            <div key={idx} className="p-4 border rounded-xl space-y-3 relative group bg-muted/20">
+              <button 
+                onClick={() => removeTrustItem(idx)}
+                className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Label Text</Label>
+                  <Input 
+                    value={item.text} 
+                    onChange={e => updateTrustItem(idx, 'text', e.target.value)} 
+                    placeholder="e.g. Global Network"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Icon</Label>
+                  <select 
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={item.iconName}
+                    onChange={e => updateTrustItem(idx, 'iconName', e.target.value)}
+                  >
+                    <option value="Globe">Globe</option>
+                    <option value="Trophy">Trophy</option>
+                    <option value="Layout">Layout</option>
+                    <option value="ShieldCheck">Shield</option>
+                    <option value="Zap">Zap</option>
+                    <option value="Users">Users</option>
+                    <option value="BookOpen">Book</option>
+                    <option value="Star">Star</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-sm border-border/50">
         <CardHeader>
           <CardTitle>Footer Settings</CardTitle>
           <CardDescription>Manage your brand identity and legal notices in the footer.</CardDescription>
@@ -455,230 +445,6 @@ export function ProgramForm({ programId }: { programId: string }) {
               <Info className="w-3 h-3" /> Note: The system automatically prefixes the year and copyright symbol.
             </p>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-sm border-border/50">
-        <CardHeader>
-          <CardTitle>Gallery & Visuals</CardTitle>
-          <CardDescription>Add program previews via direct URL (Cloudinary, Unsplash, etc.).</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="p-4 bg-primary/5 rounded-xl border border-primary/10">
-            <Label className="text-xs font-black uppercase tracking-widest text-primary mb-3 block">Link External Image</Label>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <LinkIcon className="absolute left-3 top-2.5 w-4 h-4 text-muted-foreground" />
-                <Input 
-                  value={galleryUrlInput}
-                  onChange={e => setGalleryUrlInput(e.target.value)}
-                  placeholder="https://res.cloudinary.com/..."
-                  className="pl-9"
-                />
-              </div>
-              <Button onClick={addGalleryUrl} disabled={!galleryUrlInput} className="bg-primary">
-                <Plus className="w-4 h-4 mr-2" /> Add URL
-              </Button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {program?.gallery?.map((url: string, idx: number) => (
-              <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border group bg-muted">
-                <img src={url} alt="Gallery" className="object-cover w-full h-full" />
-                <button 
-                  onClick={() => removeExistingImage(url)}
-                  className="absolute top-1 right-1 bg-destructive text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-sm border-border/50">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle>Typed Testimonials</CardTitle>
-            <CardDescription>Add student feedback. Name and Place are optional.</CardDescription>
-          </div>
-          <Button variant="outline" size="sm" className="flex gap-2" onClick={addTestimonial}>
-            <MessageSquareQuote className="w-4 h-4" />
-            Add Testimonial
-          </Button>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {formData.imageTestimonials.length === 0 && (
-            <div className="py-10 text-center border-2 border-dashed rounded-xl text-muted-foreground bg-muted/5">
-              No testimonials added. This section will be hidden on the live site.
-            </div>
-          )}
-          {formData.imageTestimonials.map((t, idx) => (
-            <div key={idx} className="p-6 border rounded-2xl space-y-4 relative group bg-white shadow-sm">
-              <button 
-                onClick={() => removeTestimonial(idx)}
-                className="absolute top-4 right-4 p-1 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-              
-              <div className="space-y-2">
-                <Label className="text-xs font-black uppercase tracking-widest text-primary">Testimonial Content</Label>
-                <Textarea 
-                  value={t.content} 
-                  onChange={e => updateTestimonial(idx, 'content', e.target.value)} 
-                  placeholder="Type what the student said..."
-                  className="min-h-[100px]"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Student Name (Optional)</Label>
-                  <Input 
-                    value={t.name} 
-                    onChange={e => updateTestimonial(idx, 'name', e.target.value)} 
-                    placeholder="e.g. John Doe"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Student Place/Role (Optional)</Label>
-                  <Input 
-                    value={t.role} 
-                    onChange={e => updateTestimonial(idx, 'role', e.target.value)} 
-                    placeholder="e.g. London, UK"
-                  />
-                </div>
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-sm border-border/50">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle>The Freedom Framework (Features)</CardTitle>
-            <CardDescription>Customize the core value propositions.</CardDescription>
-          </div>
-          <Button variant="outline" size="sm" className="flex gap-2" onClick={addFeature}>
-            <LayoutList className="w-4 h-4" />
-            Add Feature
-          </Button>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {formData.features.map((feature, idx) => (
-            <div key={idx} className="p-4 border rounded-xl space-y-3 relative group bg-muted/20">
-              <button 
-                onClick={() => removeFeature(idx)}
-                className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Feature Title</Label>
-                  <Input 
-                    value={feature.title} 
-                    onChange={e => updateFeature(idx, 'title', e.target.value)} 
-                    placeholder="e.g. Expert Led Instruction"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Icon Name</Label>
-                  <select 
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    value={feature.iconName}
-                    onChange={e => updateFeature(idx, 'iconName', e.target.value)}
-                  >
-                    <option value="Trophy">Trophy</option>
-                    <option value="BookOpen">Book</option>
-                    <option value="Globe">Globe</option>
-                    <option value="Users">Users</option>
-                    <option value="ShieldCheck">Shield</option>
-                    <option value="Zap">Zap</option>
-                    <option value="Star">Star</option>
-                    <option value="CheckCircle2">Checkmark</option>
-                  </select>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>Description</Label>
-                <Textarea 
-                  value={feature.description} 
-                  onChange={e => updateFeature(idx, 'description', e.target.value)} 
-                  placeholder="Short explanation..."
-                />
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-sm border-border/50">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle>Common Questions (FAQ)</CardTitle>
-            <CardDescription>Address student concerns directly.</CardDescription>
-          </div>
-          <Button variant="outline" size="sm" className="flex gap-2" onClick={addFAQ}>
-            <Plus className="w-4 h-4" />
-            Add Question
-          </Button>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {formData.faqs.map((faq, idx) => (
-            <div key={idx} className="p-4 border rounded-xl space-y-3 relative group bg-muted/20">
-              <button 
-                onClick={() => removeFAQ(idx)}
-                className="absolute top-2 right-2 p-1 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-              <div className="space-y-2">
-                <Label>Question</Label>
-                <Input 
-                  value={faq.question} 
-                  onChange={e => updateFAQ(idx, 'question', e.target.value)} 
-                  placeholder="e.g. Do I need prior experience?"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Answer</Label>
-                <Textarea 
-                  value={faq.answer} 
-                  onChange={e => updateFAQ(idx, 'answer', e.target.value)} 
-                  placeholder="Provide a detailed answer..."
-                />
-              </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card className="shadow-sm border-border/50">
-        <CardHeader>
-          <CardTitle>Video Testimonials</CardTitle>
-          <CardDescription>Set up to 4 YouTube video testimonial IDs.</CardDescription>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {formData.videoTestimonials.map((url, idx) => (
-            <div key={idx} className="space-y-2">
-              <Label htmlFor={`v-${idx}`}>Video {idx + 1}</Label>
-              <Input 
-                id={`v-${idx}`} 
-                value={url} 
-                onChange={e => {
-                  const newVids = [...formData.videoTestimonials];
-                  newVids[idx] = e.target.value;
-                  setFormData({...formData, videoTestimonials: newVids});
-                }} 
-                placeholder="YouTube URL or ID"
-              />
-            </div>
-          ))}
         </CardContent>
       </Card>
 

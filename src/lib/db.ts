@@ -11,6 +11,11 @@ export interface Feature {
   iconName: string;
 }
 
+export interface TrustItem {
+  text: string;
+  iconName: string;
+}
+
 export interface FAQItem {
   question: string;
   answer: string;
@@ -30,6 +35,7 @@ export interface Program {
   videoTestimonials: string[];
   imageTestimonials: Testimonial[];
   features?: Feature[];
+  trustItems?: TrustItem[];
   faqs?: FAQItem[];
   expiryDate: string;
   joinButtonLink: string;

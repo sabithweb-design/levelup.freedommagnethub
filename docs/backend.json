@@ -76,6 +76,17 @@
             }
           }
         },
+        "trustItems": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": { "type": "string" },
+              "iconName": { "type": "string" }
+            }
+          },
+          "description": "Optional trust indicators like 'Global Network' or 'Industry Certified'."
+        },
         "faqs": {
           "type": "array",
           "items": {

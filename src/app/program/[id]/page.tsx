@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
@@ -10,10 +11,21 @@ import { CountdownCTA } from '@/components/program/CountdownCTA';
 import { StickyOfferBar } from '@/components/program/StickyOfferBar';
 import { Features } from '@/components/program/Features';
 import { FAQ } from '@/components/program/FAQ';
-import { Loader2, ArrowRight, CheckCircle2, Globe, ShieldCheck, Trophy, Layout, Sparkles } from 'lucide-react';
+import { Loader2, ArrowRight, CheckCircle2, Globe, ShieldCheck, Trophy, Layout, Sparkles, LucideIcon, Star, Zap, Users, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+
+const trustIconMap: Record<string, LucideIcon> = {
+  Globe,
+  Trophy,
+  Layout,
+  ShieldCheck,
+  Zap,
+  Users,
+  BookOpen,
+  Star
+};
 
 export default function ProgramPage() {
   const params = useParams();
@@ -141,14 +153,24 @@ export default function ProgramPage() {
         </div>
       </header>
 
-      {/* Trust Bar */}
-      <div className="bg-white/[0.02] border-y border-white/5 py-14 px-6 backdrop-blur-[8px]">
-        <div className="max-w-7xl mx-auto flex flex-wrap justify-center md:justify-between items-center gap-8 text-white/60">
-          <div className="flex items-center gap-3"><Globe className="w-6 h-6 text-accent" /><span className="font-black uppercase tracking-tighter text-xl">Global Network</span></div>
-          <div className="flex items-center gap-3"><Trophy className="w-6 h-6 text-accent" /><span className="font-black uppercase tracking-tighter text-xl text-white">Industry Certified</span></div>
-          <div className="flex items-center gap-3"><Layout className="w-6 h-6 text-accent" /><span className="font-black uppercase tracking-tighter text-xl">Mastery Curriculum</span></div>
+      {/* Trust Bar - Now Editable and Optional */}
+      {program.trustItems && program.trustItems.length > 0 && (
+        <div className="bg-white/[0.02] border-y border-white/5 py-14 px-6 backdrop-blur-[8px]">
+          <div className="max-w-7xl mx-auto flex flex-wrap justify-center md:justify-between items-center gap-8 text-white/60">
+            {program.trustItems.map((item, idx) => {
+              const Icon = trustIconMap[item.iconName] || Globe;
+              return (
+                <div key={idx} className="flex items-center gap-3">
+                  <Icon className="w-6 h-6 text-accent" />
+                  <span className="font-black uppercase tracking-tighter text-xl text-white">
+                    {item.text}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       <section id="features" className="scroll-mt-20">
         <Features features={program.features} />
