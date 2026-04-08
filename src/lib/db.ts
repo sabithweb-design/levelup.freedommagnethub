@@ -30,7 +30,15 @@ export interface Program {
   lineHeight?: number;
   letterSpacing?: number;
   textAlign?: 'left' | 'center' | 'right';
-  demoVideoId: string;
+  demoVideoId?: string;
+  featuresTitle?: string;
+  featuresSubtitle?: string;
+  galleryTitle?: string;
+  gallerySubtitle?: string;
+  testimonialsTitle?: string;
+  testimonialsSubtitle?: string;
+  faqTitle?: string;
+  faqSubtitle?: string;
   gallery: string[];
   videoTestimonials: string[];
   imageTestimonials: Testimonial[];

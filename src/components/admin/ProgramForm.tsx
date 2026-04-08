@@ -13,7 +13,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
 import { format } from 'date-fns';
-import { CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, Type, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, MessageSquareQuote, LayoutList, Tag, Info, ShieldCheck, Globe, Trophy, Layout, Zap, Star, Users, BookOpen } from 'lucide-react';
+import { CalendarIcon, Loader2, Save, Plus, Trash2, Video, X, Type, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, MessageSquareQuote, LayoutList, Tag, Info, ShieldCheck, Globe, Trophy, Layout, Zap, Star, Users, BookOpen, Heading } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -21,6 +21,7 @@ import { FirestorePermissionError } from '@/firebase/errors';
 import { Feature, FAQItem, Testimonial, TrustItem } from '@/lib/db';
 
 function getYouTubeId(url: string) {
+  if (!url) return '';
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
   return (match && match[2].length === 11) ? match[2] : url;
@@ -49,6 +50,14 @@ export function ProgramForm({ programId }: { programId: string }) {
     priceSubtext: '',
     footerDescription: '',
     footerCopyright: '',
+    featuresTitle: '',
+    featuresSubtitle: '',
+    galleryTitle: '',
+    gallerySubtitle: '',
+    testimonialsTitle: '',
+    testimonialsSubtitle: '',
+    faqTitle: '',
+    faqSubtitle: '',
     videoTestimonials: ['', '', '', ''],
     features: [] as Feature[],
     trustItems: [] as TrustItem[],
@@ -56,7 +65,6 @@ export function ProgramForm({ programId }: { programId: string }) {
     imageTestimonials: [] as Testimonial[],
   });
 
-  const [galleryUrlInput, setGalleryUrlInput] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -77,6 +85,14 @@ export function ProgramForm({ programId }: { programId: string }) {
         priceSubtext: program.priceSubtext || '(₹499 + GST) Lifetime Access',
         footerDescription: program.footerDescription || 'We engineer pathways to professional autonomy through strategic education and world-class mentorship.',
         footerCopyright: program.footerCopyright || `Freedom Magnet Hub Global. All Rights Reserved.`,
+        featuresTitle: program.featuresTitle || 'The Mastery Framework',
+        featuresSubtitle: program.featuresSubtitle || "We don't just teach code. We provide the tools, mindset, and network required for long-term professional autonomy.",
+        galleryTitle: program.galleryTitle || 'Curriculum Previews',
+        gallerySubtitle: program.gallerySubtitle || 'Explore the assets, modules, and strategic frameworks waiting inside.',
+        testimonialsTitle: program.testimonialsTitle || 'Student Success Stories',
+        testimonialsSubtitle: program.testimonialsSubtitle || 'Impact analysis and market feedback from the network.',
+        faqTitle: program.faqTitle || 'Essential Inquiries',
+        faqSubtitle: program.faqSubtitle || 'Clarifications on the engineered methodology.',
         videoTestimonials: program.videoTestimonials || ['', '', '', ''],
         features: program.features || [],
         trustItems: program.trustItems || [
@@ -101,9 +117,17 @@ export function ProgramForm({ programId }: { programId: string }) {
       lineHeight: formData.lineHeight,
       letterSpacing: formData.letterSpacing,
       textAlign: formData.textAlign,
-      demoVideoId: getYouTubeId(formData.demoVideoUrl),
-      videoTestimonials: formData.videoTestimonials.map(v => getYouTubeId(v)),
+      demoVideoId: formData.demoVideoUrl ? getYouTubeId(formData.demoVideoUrl) : '',
+      videoTestimonials: formData.videoTestimonials.map(v => v ? getYouTubeId(v) : '').filter(v => !!v),
       imageTestimonials: formData.imageTestimonials,
+      featuresTitle: formData.featuresTitle,
+      featuresSubtitle: formData.featuresSubtitle,
+      galleryTitle: formData.galleryTitle,
+      gallerySubtitle: formData.gallerySubtitle,
+      testimonialsTitle: formData.testimonialsTitle,
+      testimonialsSubtitle: formData.testimonialsSubtitle,
+      faqTitle: formData.faqTitle,
+      faqSubtitle: formData.faqSubtitle,
       features: formData.features,
       trustItems: formData.trustItems,
       faqs: formData.faqs,
@@ -321,7 +345,7 @@ export function ProgramForm({ programId }: { programId: string }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="demo">Demo Video (YouTube URL)</Label>
+              <Label htmlFor="demo">Hero Demo Video (Optional YouTube URL)</Label>
               <div className="relative">
                 <Video className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                 <Input 
@@ -361,6 +385,39 @@ export function ProgramForm({ programId }: { programId: string }) {
                 />
               </PopoverContent>
             </Popover>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-sm border-border/50">
+        <CardHeader>
+          <CardTitle>Section Headings</CardTitle>
+          <CardDescription>Manage the main titles and descriptions for each section.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 border rounded-xl">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2"><LayoutList className="w-4 h-4 text-primary" /><Label className="font-bold">Features Section</Label></div>
+              <Input value={formData.featuresTitle} onChange={e => setFormData({...formData, featuresTitle: e.target.value})} placeholder="Features Title" />
+              <Textarea value={formData.featuresSubtitle} onChange={e => setFormData({...formData, featuresSubtitle: e.target.value})} placeholder="Features Subtitle" />
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2"><Layout className="w-4 h-4 text-primary" /><Label className="font-bold">Gallery Section</Label></div>
+              <Input value={formData.galleryTitle} onChange={e => setFormData({...formData, galleryTitle: e.target.value})} placeholder="Gallery Title" />
+              <Textarea value={formData.gallerySubtitle} onChange={e => setFormData({...formData, gallerySubtitle: e.target.value})} placeholder="Gallery Subtitle" />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 border rounded-xl">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2"><MessageSquareQuote className="w-4 h-4 text-primary" /><Label className="font-bold">Testimonials Section</Label></div>
+              <Input value={formData.testimonialsTitle} onChange={e => setFormData({...formData, testimonialsTitle: e.target.value})} placeholder="Testimonials Title" />
+              <Textarea value={formData.testimonialsSubtitle} onChange={e => setFormData({...formData, testimonialsSubtitle: e.target.value})} placeholder="Testimonials Subtitle" />
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2"><Info className="w-4 h-4 text-primary" /><Label className="font-bold">FAQ Section</Label></div>
+              <Input value={formData.faqTitle} onChange={e => setFormData({...formData, faqTitle: e.target.value})} placeholder="FAQ Title" />
+              <Textarea value={formData.faqSubtitle} onChange={e => setFormData({...formData, faqSubtitle: e.target.value})} placeholder="FAQ Subtitle" />
+            </div>
           </div>
         </CardContent>
       </Card>

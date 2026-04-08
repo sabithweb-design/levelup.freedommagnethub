@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -8,16 +9,22 @@ import {
 } from "@/components/ui/accordion";
 import { FAQItem } from '@/lib/db';
 
-export function FAQ({ faqs }: { faqs?: FAQItem[] }) {
+interface FAQProps {
+  faqs?: FAQItem[];
+  title?: string;
+  subtitle?: string;
+}
+
+export function FAQ({ faqs, title = 'Essential Inquiries', subtitle = 'Clarifications' }: FAQProps) {
   if (!faqs || faqs.length === 0) return null;
 
   return (
     <section className="py-40 px-6 relative overflow-hidden">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-20">
-          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4 block">Clarifications</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4 block">{subtitle}</span>
           <h2 className="text-4xl md:text-6xl font-headline font-black text-white uppercase tracking-tight">
-            Essential Inquiries
+            {title}
           </h2>
         </div>
 

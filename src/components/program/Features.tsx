@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -15,7 +16,13 @@ const iconMap: Record<string, LucideIcon> = {
   CheckCircle2
 };
 
-export function Features({ features }: { features?: Feature[] }) {
+interface FeaturesProps {
+  features?: Feature[];
+  title?: string;
+  subtitle?: string;
+}
+
+export function Features({ features, title = 'The Mastery Framework', subtitle = 'Engineered Methodology' }: FeaturesProps) {
   if (!features || features.length === 0) return null;
 
   return (
@@ -24,12 +31,14 @@ export function Features({ features }: { features?: Feature[] }) {
         <div className="text-center mb-24 relative">
           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4 block">Engineered Methodology</span>
           <h2 className="text-4xl md:text-6xl font-headline font-black text-white mb-6 uppercase tracking-tight">
-            The Mastery Framework
+            {title}
           </h2>
           <div className="h-1.5 w-24 fiery-gradient mx-auto mb-8 rounded-full"></div>
-          <p className="text-foreground/80 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
-            We don't just teach code. We provide the tools, mindset, and network required for long-term professional autonomy.
-          </p>
+          {subtitle && (
+            <p className="text-foreground/80 text-lg md:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
+              {subtitle}
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">

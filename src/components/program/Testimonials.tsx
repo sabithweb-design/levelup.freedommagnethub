@@ -1,21 +1,28 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { VideoPlayer } from './VideoPlayer';
 import { Testimonial } from '@/lib/db';
 import { Quote, CheckCircle2 } from 'lucide-react';
 
-export function VideoTestimonials({ videoIds }: { videoIds: string[] }) {
-  if (!videoIds || videoIds.length === 0) return null;
+interface TestimonialSectionProps {
+  title?: string;
+  subtitle?: string;
+}
+
+export function VideoTestimonials({ videoIds, title = 'Student Success Stories', subtitle = 'Impact Analysis' }: { videoIds: string[] } & TestimonialSectionProps) {
+  const activeVideos = videoIds.filter(v => !!v);
+  if (activeVideos.length === 0) return null;
   
   return (
     <section className="py-40 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-20">
-          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4 block">Impact Analysis</span>
-          <h2 className="text-4xl md:text-6xl font-headline font-black text-white mb-6 uppercase tracking-tight">Student Success Stories</h2>
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4 block">{subtitle}</span>
+          <h2 className="text-4xl md:text-6xl font-headline font-black text-white mb-6 uppercase tracking-tight">{title}</h2>
           <div className="h-1.5 w-20 fiery-gradient mx-auto rounded-full"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {videoIds.map((id, idx) => (
+          {activeVideos.map((id, idx) => (
             <div key={idx} className="group relative">
               <div className="absolute -inset-4 bg-primary/20 rounded-[3rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 glass-card p-1">
@@ -37,18 +44,18 @@ export function VideoTestimonials({ videoIds }: { videoIds: string[] }) {
   );
 }
 
-export function ImageTestimonials({ testimonials }: { testimonials: Testimonial[] }) {
+export function ImageTestimonials({ testimonials, title, subtitle }: { testimonials: Testimonial[] } & TestimonialSectionProps) {
   if (!testimonials || testimonials.length === 0) return null;
 
   return (
     <section className="py-40 px-6 max-w-7xl mx-auto">
-      <div className="text-center mb-24">
-        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4 block">Market Feedback</span>
-        <h2 className="text-4xl md:text-7xl font-headline font-black text-white uppercase tracking-tighter mb-6">Voice of the Network</h2>
-        <p className="text-foreground/80 text-xl font-medium max-w-2xl mx-auto">
-          Unfiltered perspectives from professionals who have navigated the Freedom Framework.
-        </p>
-      </div>
+      {(title || subtitle) && (
+        <div className="text-center mb-24">
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4 block">{subtitle || 'Market Feedback'}</span>
+          <h2 className="text-4xl md:text-7xl font-headline font-black text-white uppercase tracking-tighter mb-6">{title || 'Voice of the Network'}</h2>
+          <div className="h-1.5 w-20 fiery-gradient mx-auto rounded-full mb-8"></div>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
         {testimonials.map((t, idx) => (
           <Card key={idx} className="h-full glass-card hover:-translate-y-2 transition-all duration-500 rounded-[3rem] overflow-hidden group flex flex-col border-white/5">

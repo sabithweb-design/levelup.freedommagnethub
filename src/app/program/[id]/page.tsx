@@ -145,15 +145,17 @@ export default function ProgramPage() {
             </div>
           </div>
 
-          <div className="max-w-4xl w-full mx-auto relative group">
-            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 bg-white/[0.03] backdrop-blur-[12px] p-1">
-              <VideoPlayer videoId={program.demoVideoId} />
+          {program.demoVideoId && (
+            <div className="max-w-4xl w-full mx-auto relative group">
+              <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 bg-white/[0.03] backdrop-blur-[12px] p-1">
+                <VideoPlayer videoId={program.demoVideoId} />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </header>
 
-      {/* Trust Bar - Now Editable and Optional */}
+      {/* Trust Bar */}
       {program.trustItems && program.trustItems.length > 0 && (
         <div className="bg-white/[0.02] border-y border-white/5 py-14 px-6 backdrop-blur-[8px]">
           <div className="max-w-7xl mx-auto flex flex-wrap justify-center md:justify-between items-center gap-8 text-white/60">
@@ -173,26 +175,46 @@ export default function ProgramPage() {
       )}
 
       <section id="features" className="scroll-mt-20">
-        <Features features={program.features} />
+        <Features 
+          features={program.features} 
+          title={program.featuresTitle} 
+          subtitle={program.featuresSubtitle} 
+        />
       </section>
 
       {program.gallery && program.gallery.length > 0 && (
         <section id="curriculum" className="scroll-mt-20">
-          <Gallery images={program.gallery} />
+          <Gallery 
+            images={program.gallery} 
+            title={program.galleryTitle} 
+            subtitle={program.gallerySubtitle} 
+          />
         </section>
       )}
       
       <div id="testimonials" className="scroll-mt-20">
-        {program.videoTestimonials && program.videoTestimonials.length > 0 && (
-          <VideoTestimonials videoIds={program.videoTestimonials} />
+        {program.videoTestimonials && program.videoTestimonials.some(v => !!v) && (
+          <VideoTestimonials 
+            videoIds={program.videoTestimonials} 
+            title={program.testimonialsTitle}
+            subtitle={program.testimonialsSubtitle}
+          />
         )}
         {program.imageTestimonials && program.imageTestimonials.length > 0 && (
-          <ImageTestimonials testimonials={program.imageTestimonials} />
+          <ImageTestimonials 
+            testimonials={program.imageTestimonials} 
+            title={!program.videoTestimonials || !program.videoTestimonials.some(v => !!v) ? program.testimonialsTitle : undefined}
+            subtitle={!program.videoTestimonials || !program.videoTestimonials.some(v => !!v) ? program.testimonialsSubtitle : undefined}
+          />
         )}
       </div>
 
       <section id="faq" className="scroll-mt-20">
-        <FAQ faqs={program.faqs} />
+        <FAQ 
+          faqs={program.faqs} 
+          title={program.faqTitle} 
+          subtitle={program.faqSubtitle} 
+        />
       </section>
 
       <div id="join" className="scroll-mt-20">

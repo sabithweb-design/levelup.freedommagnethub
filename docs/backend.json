@@ -44,6 +44,38 @@
           "type": "string",
           "description": "The YouTube video ID for the main demo video."
         },
+        "featuresTitle": {
+          "type": "string",
+          "description": "Heading for the features section."
+        },
+        "featuresSubtitle": {
+          "type": "string",
+          "description": "Subheading for the features section."
+        },
+        "galleryTitle": {
+          "type": "string",
+          "description": "Heading for the gallery section."
+        },
+        "gallerySubtitle": {
+          "type": "string",
+          "description": "Subheading for the gallery section."
+        },
+        "testimonialsTitle": {
+          "type": "string",
+          "description": "Heading for the testimonials section."
+        },
+        "testimonialsSubtitle": {
+          "type": "string",
+          "description": "Subheading for the testimonials section."
+        },
+        "faqTitle": {
+          "type": "string",
+          "description": "Heading for the FAQ section."
+        },
+        "faqSubtitle": {
+          "type": "string",
+          "description": "Subheading for the FAQ section."
+        },
         "gallery": {
           "type": "array",
           "items": { "type": "string" },
@@ -130,7 +162,6 @@
         "id",
         "title",
         "subtitle",
-        "demoVideoId",
         "joinButtonLink",
         "expiryDate"
       ]
