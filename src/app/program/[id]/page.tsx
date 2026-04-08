@@ -72,6 +72,7 @@ export default function ProgramPage() {
   };
 
   const selectedAlignment = program.textAlign || 'center';
+  const hasVideo = !!program.demoVideoId;
 
   return (
     <div className="bg-background min-h-screen selection:bg-primary selection:text-white relative">
@@ -101,7 +102,10 @@ export default function ProgramPage() {
       </nav>
 
       {/* Hero Section */}
-      <header className="relative pt-24 pb-48 px-6 overflow-hidden">
+      <header className={cn(
+        "relative pt-24 px-6 overflow-hidden",
+        hasVideo ? "pb-48" : "pb-32"
+      )}>
         <div className={cn("max-w-5xl mx-auto flex flex-col", alignmentClasses[selectedAlignment])}>
           <div className="inline-flex items-center gap-2 mb-10 px-6 py-2 rounded-full border border-white/10 bg-white/5 w-fit backdrop-blur-md">
             <Sparkles className="w-4 h-4 text-accent" />
@@ -130,8 +134,12 @@ export default function ProgramPage() {
             {program.subtitle}
           </p>
           
-          <div className={cn("flex flex-col sm:flex-row items-center gap-6 mb-24", selectedAlignment === 'center' ? 'justify-center' : selectedAlignment === 'right' ? 'justify-end' : 'justify-start')}>
-            <Button size="lg" className="h-16 px-10 text-lg font-black fiery-gradient fiery-glow hover:brightness-110 text-white rounded-full transition-all group uppercase tracking-tight hover:scale-105 active:scale-95" asChild>
+          <div className={cn(
+            "flex flex-col sm:flex-row items-center gap-6 mb-24", 
+            selectedAlignment === 'center' ? 'justify-center' : selectedAlignment === 'right' ? 'justify-end' : 'justify-start',
+            !hasVideo && "mb-0"
+          )}>
+            <Button size="lg" className="h-14 px-10 text-lg font-black fiery-gradient fiery-glow hover:brightness-110 text-white rounded-full transition-all group uppercase tracking-tight hover:scale-105 active:scale-95" asChild>
               <a href="#join">
                 GRAB YOUR SEAT <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform" />
               </a>
@@ -145,8 +153,8 @@ export default function ProgramPage() {
             </div>
           </div>
 
-          {program.demoVideoId && (
-            <div className="max-w-4xl w-full mx-auto relative group">
+          {hasVideo && (
+            <div className="max-w-4xl w-full mx-auto relative group mt-24">
               <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 bg-white/[0.03] backdrop-blur-[12px] p-1">
                 <VideoPlayer videoId={program.demoVideoId} />
               </div>
