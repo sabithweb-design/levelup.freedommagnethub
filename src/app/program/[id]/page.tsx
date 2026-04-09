@@ -109,7 +109,7 @@ export default function ProgramPage() {
       {/* Hero Section */}
       <header className={cn(
         "relative pt-24 px-6 overflow-hidden",
-        hasVideo ? "pb-48" : "pb-32"
+        hasVideo ? "pb-32 md:pb-48" : "pb-20 md:pb-32"
       )}>
         <div className={cn("max-w-5xl mx-auto flex flex-col", alignmentClasses[selectedAlignment])}>
           <div className="inline-flex items-center gap-2 mb-10 px-6 py-2 rounded-full border border-white/10 bg-white/5 w-fit backdrop-blur-md">
@@ -140,7 +140,7 @@ export default function ProgramPage() {
           </p>
           
           <div className={cn(
-            "flex flex-col sm:flex-row items-center gap-6 mb-24", 
+            "flex flex-col sm:flex-row items-center gap-6 mb-12 md:mb-24", 
             selectedAlignment === 'center' ? 'justify-center' : selectedAlignment === 'right' ? 'justify-end' : 'justify-start',
             !hasVideo && "mb-0"
           )}>
@@ -159,7 +159,7 @@ export default function ProgramPage() {
           </div>
 
           {hasVideo && (
-            <div className="max-w-4xl w-full mx-auto relative group mt-24">
+            <div className="max-w-4xl w-full mx-auto relative group mt-12 md:mt-24">
               <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 bg-white/[0.03] backdrop-blur-[12px] p-1">
                 <VideoPlayer videoId={program.demoVideoId} />
               </div>
@@ -170,14 +170,14 @@ export default function ProgramPage() {
 
       {/* Trust Bar */}
       {hasTrust && (
-        <div className="bg-white/[0.02] border-y border-white/5 py-14 px-6 backdrop-blur-[8px]">
+        <div className="bg-white/[0.02] border-y border-white/5 py-10 md:py-14 px-6 backdrop-blur-[8px]">
           <div className="max-w-7xl mx-auto flex flex-wrap justify-center md:justify-between items-center gap-8 text-white/60">
             {program.trustItems?.map((item, idx) => {
               const Icon = trustIconMap[item.iconName] || Globe;
               return (
                 <div key={idx} className="flex items-center gap-3">
                   <Icon className="w-6 h-6 text-accent" />
-                  <span className="font-black uppercase tracking-tighter text-xl text-white">
+                  <span className="font-black uppercase tracking-tighter text-lg md:text-xl text-white">
                     {item.text}
                   </span>
                 </div>
@@ -187,58 +187,40 @@ export default function ProgramPage() {
         </div>
       )}
 
-      {hasFeatures && (
-        <section id="features" className="scroll-mt-20">
-          <Features 
-            features={program.features} 
-            title={program.featuresTitle} 
-            subtitle={program.featuresSubtitle} 
-          />
-        </section>
-      )}
+      <Features 
+        features={program.features} 
+        title={program.featuresTitle} 
+        subtitle={program.featuresSubtitle} 
+      />
 
-      {hasGallery && (
-        <section id="curriculum" className="scroll-mt-20">
-          <Gallery 
-            images={program.gallery} 
-            title={program.galleryTitle} 
-            subtitle={program.gallerySubtitle} 
-          />
-        </section>
-      )}
+      <Gallery 
+        images={program.gallery} 
+        title={program.galleryTitle} 
+        subtitle={program.gallerySubtitle} 
+      />
       
       {(hasVideoTestimonials || hasImageTestimonials) && (
         <div id="testimonials" className="scroll-mt-20">
-          {hasVideoTestimonials && (
-            <VideoTestimonials 
-              videoIds={program.videoTestimonials} 
-              title={program.testimonialsTitle}
-              subtitle={program.testimonialsSubtitle}
-            />
-          )}
-          {hasImageTestimonials && (
-            <ImageTestimonials 
-              testimonials={program.imageTestimonials} 
-              title={!hasVideoTestimonials ? program.testimonialsTitle : undefined}
-              subtitle={!hasVideoTestimonials ? program.testimonialsSubtitle : undefined}
-            />
-          )}
+          <VideoTestimonials 
+            videoIds={program.videoTestimonials} 
+            title={program.testimonialsTitle}
+            subtitle={program.testimonialsSubtitle}
+          />
+          <ImageTestimonials 
+            testimonials={program.imageTestimonials} 
+            title={!hasVideoTestimonials ? program.testimonialsTitle : undefined}
+            subtitle={!hasVideoTestimonials ? program.testimonialsSubtitle : undefined}
+          />
         </div>
       )}
 
-      {hasFAQ && (
-        <section id="faq" className="scroll-mt-20">
-          <FAQ 
-            faqs={program.faqs} 
-            title={program.faqTitle} 
-            subtitle={program.faqSubtitle} 
-          />
-        </section>
-      )}
+      <FAQ 
+        faqs={program.faqs} 
+        title={program.faqTitle} 
+        subtitle={program.faqSubtitle} 
+      />
 
-      <div id="join" className="scroll-mt-20">
-        <CountdownCTA expiryDate={program.expiryDate} joinLink={program.joinButtonLink} />
-      </div>
+      <CountdownCTA expiryDate={program.expiryDate} joinLink={program.joinButtonLink} />
 
       <StickyOfferBar 
         expiryDate={program.expiryDate} 
@@ -248,20 +230,20 @@ export default function ProgramPage() {
         priceSubtext={program.priceSubtext}
       />
 
-      <footer className="py-40 px-6 border-t border-white/5 bg-background/80 backdrop-blur-md text-white overflow-hidden relative">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-20 relative z-10">
+      <footer className="py-20 md:py-40 px-6 border-t border-white/5 bg-background/80 backdrop-blur-md text-white overflow-hidden relative">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-20 relative z-10">
           <div className="md:col-span-2">
-            <div className="flex items-center gap-1 mb-10">
+            <div className="flex items-center gap-1 mb-8 md:mb-10">
               <div className="flex flex-col">
-                <span className="font-headline font-black text-3xl tracking-tighter text-white leading-none uppercase">
+                <span className="font-headline font-black text-2xl md:text-3xl tracking-tighter text-white leading-none uppercase">
                   Freedom
                 </span>
-                <span className="font-headline font-black text-3xl tracking-tighter text-accent leading-none uppercase">
+                <span className="font-headline font-black text-2xl md:text-3xl tracking-tighter text-accent leading-none uppercase">
                   Magnet Hub
                 </span>
               </div>
             </div>
-            <p className="text-foreground/80 text-xl max-w-md mb-10 font-medium leading-relaxed">
+            <p className="text-foreground/80 text-lg md:text-xl max-w-md mb-8 md:mb-10 font-medium leading-relaxed">
               {program.footerDescription || 'We engineer pathways to professional autonomy through strategic education and world-class mentorship.'}
             </p>
             <div className="flex gap-4">
@@ -271,8 +253,8 @@ export default function ProgramPage() {
           </div>
           
           <div>
-            <h4 className="font-headline font-black text-xs uppercase tracking-[0.3em] mb-8 text-white/30">Curriculum</h4>
-            <ul className="space-y-6 text-sm font-bold text-white/40 uppercase tracking-wider">
+            <h4 className="font-headline font-black text-xs uppercase tracking-[0.3em] mb-6 md:mb-8 text-white/30">Curriculum</h4>
+            <ul className="space-y-4 md:space-y-6 text-sm font-bold text-white/40 uppercase tracking-wider">
               {hasGallery && <li><a href="#curriculum" className="hover:text-accent transition-colors">Program Specs</a></li>}
               {hasFeatures && <li><a href="#features" className="hover:text-accent transition-colors">Learning Path</a></li>}
               {(hasVideoTestimonials || hasImageTestimonials) && <li><a href="#testimonials" className="hover:text-accent transition-colors">Student Results</a></li>}
@@ -281,8 +263,8 @@ export default function ProgramPage() {
           </div>
 
           <div>
-            <h4 className="font-headline font-black text-xs uppercase tracking-[0.3em] mb-8 text-white/30">Company</h4>
-            <ul className="space-y-6 text-sm font-bold text-white/40 uppercase tracking-wider">
+            <h4 className="font-headline font-black text-xs uppercase tracking-[0.3em] mb-6 md:mb-8 text-white/30">Company</h4>
+            <ul className="space-y-4 md:space-y-6 text-sm font-bold text-white/40 uppercase tracking-wider">
               <li><a href="#" className="hover:text-accent transition-colors">Our Mission</a></li>
               <li><a href="#" className="hover:text-accent transition-colors">Privacy Policy</a></li>
               <li><a href="#" className="hover:text-accent transition-colors">Terms of Service</a></li>
@@ -291,7 +273,7 @@ export default function ProgramPage() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto pt-20 mt-20 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+        <div className="max-w-7xl mx-auto pt-10 md:pt-20 mt-10 md:mt-20 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <p className="text-white/20 text-[10px] font-black uppercase tracking-widest">
             &copy; {new Date().getFullYear()} {program.footerCopyright || 'Freedom Magnet Hub Global. All Rights Reserved.'}
           </p>

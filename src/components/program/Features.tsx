@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -26,9 +25,9 @@ export function Features({ features, title = 'The Mastery Framework', subtitle =
   if (!features || features.length === 0) return null;
 
   return (
-    <section className="py-40 px-6 relative">
+    <section id="features" className="py-24 md:py-40 px-6 relative scroll-mt-20">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-24 relative">
+        <div className="text-center mb-20 md:mb-24 relative">
           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4 block">Engineered Methodology</span>
           <h2 className="text-4xl md:text-6xl font-headline font-black text-white mb-6 uppercase tracking-tight">
             {title}

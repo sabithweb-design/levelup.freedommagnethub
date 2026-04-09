@@ -8,7 +8,6 @@ export function CountdownCTA({ expiryDate, joinLink }: { expiryDate: string; joi
   const [timeLeft, setTimeLeft] = useState<{ h: number; m: number; s: number } | null>(null);
 
   useEffect(() => {
-    // Use the same personalized 24h timer as the Sticky Bar for consistency
     const STORAGE_KEY = 'fmh_sticky_offer_expiry';
     let targetTime: number;
 
@@ -38,7 +37,7 @@ export function CountdownCTA({ expiryDate, joinLink }: { expiryDate: string; joi
   }, []);
 
   return (
-    <section className="py-48 px-6 relative overflow-hidden border-t border-white/5">
+    <section id="join" className="py-24 md:py-48 px-6 relative overflow-hidden border-t border-white/5 scroll-mt-20">
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[140px] -translate-y-1/2 translate-x-1/2 -z-10"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[140px] translate-y-1/2 -translate-x-1/2 -z-10"></div>
       
@@ -49,19 +48,19 @@ export function CountdownCTA({ expiryDate, joinLink }: { expiryDate: string; joi
         </div>
         
         <h2 className="text-4xl md:text-7xl font-headline font-black mb-8 tracking-tighter leading-none text-white uppercase">Achieve Professional Mastery</h2>
-        <p className="text-foreground/80 text-xl md:text-2xl mb-16 max-w-2xl mx-auto font-medium">
+        <p className="text-foreground/80 text-lg md:text-2xl mb-12 md:mb-16 max-w-2xl mx-auto font-medium">
           Secure your position in the upcoming cohort and begin your journey toward strategic autonomy.
         </p>
 
         {timeLeft && (
-          <div className="flex justify-center gap-6 mb-16">
+          <div className="flex justify-center gap-4 md:gap-6 mb-12 md:mb-16">
             {[
               { label: 'Hours', val: timeLeft.h },
               { label: 'Min', val: timeLeft.m },
               { label: 'Sec', val: timeLeft.s },
             ].map((unit, idx) => (
               <div key={idx} className="flex flex-col items-center">
-                <div className="glass-card w-24 h-24 md:w-32 md:h-32 rounded-[2rem] flex items-center justify-center text-4xl md:text-6xl font-black mb-3 border border-white/10 text-white">
+                <div className="glass-card w-20 h-20 md:w-32 md:h-32 rounded-[1.5rem] md:rounded-[2rem] flex items-center justify-center text-3xl md:text-6xl font-black mb-3 border border-white/10 text-white">
                   {unit.val.toString().padStart(2, '0')}
                 </div>
                 <span className="text-[10px] uppercase tracking-[0.3em] font-black text-white/40">{unit.label}</span>

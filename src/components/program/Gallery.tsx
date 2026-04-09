@@ -1,4 +1,3 @@
-
 import { Card } from '@/components/ui/card';
 
 interface GalleryProps {
@@ -11,9 +10,9 @@ export function Gallery({ images, title = 'Curriculum Previews', subtitle }: Gal
   if (!images || images.length === 0) return null;
 
   return (
-    <section className="py-40 px-6 relative">
+    <section id="curriculum" className="py-24 md:py-40 px-6 relative scroll-mt-20">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-20">
+        <div className="text-center mb-16 md:mb-20">
           <h2 className="text-4xl md:text-6xl font-headline font-black text-white mb-4 uppercase tracking-tight">
             {title}
           </h2>
