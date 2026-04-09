@@ -203,6 +203,7 @@ export default function ProgramPage() {
           subtitle={program.gallerySubtitle} 
           columns={program.galleryColumns}
           aspect={program.galleryAspect}
+          fit={program.galleryFit}
         />
       )}
       

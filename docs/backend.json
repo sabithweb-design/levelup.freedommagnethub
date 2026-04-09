@@ -69,6 +69,11 @@
           "enum": ["1/1", "16/9", "4/3", "3/4"],
           "description": "Aspect ratio of gallery images."
         },
+        "galleryFit": {
+          "type": "string",
+          "enum": ["cover", "contain"],
+          "description": "How images should fit within their gallery containers."
+        },
         "testimonialsTitle": {
           "type": "string",
           "description": "Heading for the testimonials section."

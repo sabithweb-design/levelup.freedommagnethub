@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { 
   Loader2, Save, Plus, Trash2, AlignLeft, AlignCenter, AlignRight, 
-  Globe, Trophy, Zap, Star, Users, BookOpen, ShieldCheck, LayoutGrid
+  Globe, Trophy, Zap, Star, Users, BookOpen, ShieldCheck, LayoutGrid, Maximize2
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -55,6 +55,7 @@ export function ProgramForm({ programId }: { programId: string }) {
     gallerySubtitle: '',
     galleryColumns: 4,
     galleryAspect: '4/3' as '1/1' | '16/9' | '4/3' | '3/4',
+    galleryFit: 'cover' as 'cover' | 'contain',
     testimonialsTitle: '',
     testimonialsSubtitle: '',
     faqTitle: '',
@@ -93,6 +94,7 @@ export function ProgramForm({ programId }: { programId: string }) {
         gallerySubtitle: program.gallerySubtitle || 'Explore the assets, modules, and strategic frameworks waiting inside.',
         galleryColumns: program.galleryColumns || 4,
         galleryAspect: program.galleryAspect || '4/3',
+        galleryFit: program.galleryFit || 'cover',
         testimonialsTitle: program.testimonialsTitle || 'Student Success Stories',
         testimonialsSubtitle: program.testimonialsSubtitle || 'Impact analysis and market feedback from the network.',
         faqTitle: program.faqTitle || 'Essential Inquiries',
@@ -127,6 +129,7 @@ export function ProgramForm({ programId }: { programId: string }) {
       gallerySubtitle: formData.gallerySubtitle,
       galleryColumns: formData.galleryColumns,
       galleryAspect: formData.galleryAspect,
+      galleryFit: formData.galleryFit,
       testimonialsTitle: formData.testimonialsTitle,
       testimonialsSubtitle: formData.testimonialsSubtitle,
       faqTitle: formData.faqTitle,
@@ -377,7 +380,7 @@ export function ProgramForm({ programId }: { programId: string }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-muted/20 rounded-xl border mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-6 bg-muted/20 rounded-xl border mb-6">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <LayoutGrid className="w-4 h-4 text-primary" />
@@ -393,7 +396,7 @@ export function ProgramForm({ programId }: { programId: string }) {
               </div>
             </div>
             <div className="space-y-4">
-              <Label className="text-xs uppercase font-black text-primary">Image Aspect Ratio (Size)</Label>
+              <Label className="text-xs uppercase font-black text-primary">Image Aspect Ratio (Shape)</Label>
               <div className="grid grid-cols-2 gap-2">
                 {[
                   { label: 'Square (1:1)', val: '1/1' },
@@ -411,6 +414,30 @@ export function ProgramForm({ programId }: { programId: string }) {
                     {opt.label}
                   </Button>
                 ))}
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Maximize2 className="w-4 h-4 text-primary" />
+                <Label className="text-xs uppercase font-black text-primary">Image Scaling (Fit)</Label>
+              </div>
+              <div className="grid grid-cols-1 gap-2">
+                <Button 
+                  variant={formData.galleryFit === 'cover' ? 'default' : 'outline'} 
+                  size="sm" 
+                  onClick={() => setFormData({...formData, galleryFit: 'cover'})}
+                  className="text-[10px] font-bold justify-start px-4"
+                >
+                  Cover (Fill & Crop)
+                </Button>
+                <Button 
+                  variant={formData.galleryFit === 'contain' ? 'default' : 'outline'} 
+                  size="sm" 
+                  onClick={() => setFormData({...formData, galleryFit: 'contain'})}
+                  className="text-[10px] font-bold justify-start px-4"
+                >
+                  Contain (Show All)
+                </Button>
               </div>
             </div>
           </div>

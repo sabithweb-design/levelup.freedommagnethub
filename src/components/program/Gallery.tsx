@@ -1,4 +1,6 @@
 
+'use client';
+
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
@@ -8,6 +10,7 @@ interface GalleryProps {
   subtitle?: string;
   columns?: number;
   aspect?: '1/1' | '16/9' | '4/3' | '3/4';
+  fit?: 'cover' | 'contain';
 }
 
 export function Gallery({ 
@@ -15,7 +18,8 @@ export function Gallery({
   title = 'Curriculum Previews', 
   subtitle,
   columns = 4,
-  aspect = '4/3'
+  aspect = '4/3',
+  fit = 'cover'
 }: GalleryProps) {
   if (!images || images.length === 0) return null;
 
@@ -32,6 +36,8 @@ export function Gallery({
     '4/3': 'aspect-[4/3]',
     '3/4': 'aspect-[3/4]',
   };
+
+  const fitClass = fit === 'contain' ? 'object-contain p-4 bg-white/[0.02]' : 'object-cover';
 
   return (
     <section id="curriculum" className="py-16 md:py-24 px-6 relative scroll-mt-20">
@@ -56,18 +62,24 @@ export function Gallery({
             <Card 
               key={idx} 
               className={cn(
-                "overflow-hidden border border-white/10 glass-card hover:shadow-primary/20 transition-all duration-500 group rounded-[2.5rem]",
+                "overflow-hidden border border-white/10 glass-card hover:shadow-primary/20 transition-all duration-500 group rounded-[2.5rem] bg-black/20",
                 aspectClasses[aspect] || 'aspect-[4/3]'
               )}
             >
-              <div className="relative h-full w-full">
+              <div className="relative h-full w-full flex items-center justify-center">
                 <img
                   src={src}
                   alt={`Module preview ${idx + 1}`}
-                  className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
+                  className={cn(
+                    "w-full h-full transition-transform duration-700",
+                    fitClass,
+                    fit === 'cover' && "group-hover:scale-110"
+                  )}
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                {fit === 'cover' && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                )}
               </div>
             </Card>
           ))}
