@@ -85,14 +85,14 @@ export function StickyOfferBar({
 
   return (
     <div 
-      className="fixed bottom-0 left-0 right-0 z-[100] p-4 md:py-4 md:px-8 shadow-2xl animate-in slide-in-from-bottom-full duration-500 ease-out bg-[#FF4B2B]"
+      className="fixed bottom-0 left-0 right-0 z-[100] p-4 md:py-4 md:px-8 shadow-2xl animate-in slide-in-from-bottom-full duration-500 ease-out fiery-gradient"
     >
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         
         {/* Left/Middle Content Group: Timer and Pricing */}
         <div className="flex items-center justify-between md:justify-start gap-4 md:gap-12 flex-1">
           
-          {/* Countdown Timer - Increased Size as requested */}
+          {/* Countdown Timer */}
           <div className="flex items-center gap-2 md:gap-3">
             {[
               { label: 'Hours', val: timeLeft.h },
@@ -110,7 +110,7 @@ export function StickyOfferBar({
             ))}
           </div>
 
-          {/* Pricing Typography - Increased Size as requested */}
+          {/* Pricing Typography */}
           <div className="text-right md:text-left text-white">
             <p className="text-xs md:text-sm opacity-90 leading-tight">
               <span className="line-through opacity-70">{oldPriceLabel}</span>
@@ -126,9 +126,9 @@ export function StickyOfferBar({
           </div>
         </div>
 
-        {/* Action Button - Concise "Join Now" and single-line responsive logic */}
+        {/* Action Button */}
         <Button 
-          className="w-full md:w-auto md:min-w-[200px] rounded-full py-7 md:py-8 text-xl md:text-2xl font-black bg-white text-[#FF4B2B] hover:bg-white/95 transition-all shadow-lg active:scale-95 group uppercase tracking-tight"
+          className="w-full md:w-auto md:min-w-[200px] rounded-full py-7 md:py-8 text-xl md:text-2xl font-black bg-white text-primary hover:bg-white/95 transition-all shadow-lg active:scale-95 group uppercase tracking-tight"
           asChild
         >
           <a href={joinLink || '#'}>
