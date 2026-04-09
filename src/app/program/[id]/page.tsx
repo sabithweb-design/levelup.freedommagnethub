@@ -109,7 +109,7 @@ export default function ProgramPage() {
       {/* Hero Section */}
       <header className={cn(
         "relative pt-24 px-6 overflow-hidden",
-        hasVideo ? "pb-32 md:pb-48" : "pb-20 md:pb-32"
+        hasVideo ? "pb-12 md:pb-16" : "pb-20 md:pb-32"
       )}>
         <div className={cn("max-w-5xl mx-auto flex flex-col", alignmentClasses[selectedAlignment])}>
           <div className="inline-flex items-center gap-2 mb-10 px-6 py-2 rounded-full border border-white/10 bg-white/5 w-fit backdrop-blur-md">
@@ -187,38 +187,44 @@ export default function ProgramPage() {
         </div>
       )}
 
-      <Features 
-        features={program.features} 
-        title={program.featuresTitle} 
-        subtitle={program.featuresSubtitle} 
-      />
+      {hasFeatures && (
+        <Features 
+          features={program.features} 
+          title={program.featuresTitle} 
+          subtitle={program.featuresSubtitle} 
+        />
+      )}
 
-      <Gallery 
-        images={program.gallery} 
-        title={program.galleryTitle} 
-        subtitle={program.gallerySubtitle} 
-      />
+      {hasGallery && (
+        <Gallery 
+          images={program.gallery} 
+          title={program.galleryTitle} 
+          subtitle={program.gallerySubtitle} 
+        />
+      )}
       
       {(hasVideoTestimonials || hasImageTestimonials) && (
         <div id="testimonials" className="scroll-mt-20">
           <VideoTestimonials 
-            videoIds={program.videoTestimonials} 
+            videoIds={program.videoTestimonials || []} 
             title={program.testimonialsTitle}
             subtitle={program.testimonialsSubtitle}
           />
           <ImageTestimonials 
-            testimonials={program.imageTestimonials} 
+            testimonials={program.imageTestimonials || []} 
             title={!hasVideoTestimonials ? program.testimonialsTitle : undefined}
             subtitle={!hasVideoTestimonials ? program.testimonialsSubtitle : undefined}
           />
         </div>
       )}
 
-      <FAQ 
-        faqs={program.faqs} 
-        title={program.faqTitle} 
-        subtitle={program.faqSubtitle} 
-      />
+      {hasFAQ && (
+        <FAQ 
+          faqs={program.faqs} 
+          title={program.faqTitle} 
+          subtitle={program.faqSubtitle} 
+        />
+      )}
 
       <CountdownCTA expiryDate={program.expiryDate} joinLink={program.joinButtonLink} />
 
