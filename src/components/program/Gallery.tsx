@@ -10,9 +10,9 @@ export function Gallery({ images, title = 'Curriculum Previews', subtitle }: Gal
   if (!images || images.length === 0) return null;
 
   return (
-    <section id="curriculum" className="py-24 md:py-40 px-6 relative scroll-mt-20">
+    <section id="curriculum" className="py-16 md:py-24 px-6 relative scroll-mt-20">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16 md:mb-20">
+        <div className="text-center mb-12 md:mb-16">
           <h2 className="text-4xl md:text-6xl font-headline font-black text-white mb-4 uppercase tracking-tight">
             {title}
           </h2>
@@ -24,7 +24,7 @@ export function Gallery({ images, title = 'Curriculum Previews', subtitle }: Gal
           )}
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {images.map((src, idx) => (
             <Card key={idx} className="overflow-hidden border border-white/10 glass-card hover:shadow-primary/20 transition-all duration-500 group aspect-[4/3] rounded-[2.5rem]">
               <div className="relative h-full w-full">

@@ -25,9 +25,9 @@ export function Features({ features, title = 'The Mastery Framework', subtitle =
   if (!features || features.length === 0) return null;
 
   return (
-    <section id="features" className="py-24 md:py-40 px-6 relative scroll-mt-20">
+    <section id="features" className="py-16 md:py-24 px-6 relative scroll-mt-20">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-20 md:mb-24 relative">
+        <div className="text-center mb-16 md:mb-20 relative">
           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-accent mb-4 block">Engineered Methodology</span>
           <h2 className="text-4xl md:text-6xl font-headline font-black text-white mb-6 uppercase tracking-tight">
             {title}
@@ -40,12 +40,12 @@ export function Features({ features, title = 'The Mastery Framework', subtitle =
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
           {features.map((feature, idx) => {
             const Icon = iconMap[feature.iconName] || Star;
             return (
               <Card key={idx} className="glass-card group hover:-translate-y-2 transition-all duration-500 rounded-[2.5rem] overflow-hidden border-white/5">
-                <CardContent className="pt-12 pb-12 px-10">
+                <CardContent className="pt-10 pb-10 px-8 md:px-10">
                   <div className="bg-white/5 text-accent w-16 h-16 rounded-2xl flex items-center justify-center mb-8 group-hover:fiery-gradient group-hover:text-white transition-all duration-500 group-hover:fiery-glow">
                     <Icon className="w-8 h-8" />
                   </div>

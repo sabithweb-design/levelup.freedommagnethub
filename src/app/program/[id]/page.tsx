@@ -108,17 +108,17 @@ export default function ProgramPage() {
 
       {/* Hero Section */}
       <header className={cn(
-        "relative pt-24 px-6 overflow-hidden",
-        hasVideo ? "pb-12 md:pb-16" : "pb-20 md:pb-32"
+        "relative pt-16 md:pt-24 px-6 overflow-hidden",
+        hasVideo ? "pb-8 md:pb-12" : "pb-16 md:pb-24"
       )}>
         <div className={cn("max-w-5xl mx-auto flex flex-col", alignmentClasses[selectedAlignment])}>
-          <div className="inline-flex items-center gap-2 mb-10 px-6 py-2 rounded-full border border-white/10 bg-white/5 w-fit backdrop-blur-md">
+          <div className="inline-flex items-center gap-2 mb-8 px-6 py-2 rounded-full border border-white/10 bg-white/5 w-fit backdrop-blur-md">
             <Sparkles className="w-4 h-4 text-accent" />
             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white">Elite Certification Path</span>
           </div>
           
           <h1 
-            className="font-headline font-black text-gradient-accent mb-10 leading-[0.9] tracking-tighter"
+            className="font-headline font-black text-gradient-accent mb-8 leading-[0.9] tracking-tighter"
             style={{ 
               fontSize: program.titleFontSize ? `${program.titleFontSize}px` : 'clamp(3rem, 10vw, 8rem)',
               lineHeight: program.lineHeight || 0.9,
@@ -130,7 +130,7 @@ export default function ProgramPage() {
           </h1>
           
           <p 
-            className="text-foreground/90 mb-16 max-w-3xl font-medium leading-relaxed"
+            className="text-foreground/90 mb-12 max-w-3xl font-medium leading-relaxed"
             style={{ 
               fontSize: program.subtitleFontSize ? `${program.subtitleFontSize}px` : 'clamp(1.1rem, 2vw, 1.5rem)',
               textAlign: selectedAlignment
@@ -140,7 +140,7 @@ export default function ProgramPage() {
           </p>
           
           <div className={cn(
-            "flex flex-col sm:flex-row items-center gap-6 mb-12 md:mb-24", 
+            "flex flex-col sm:flex-row items-center gap-6", 
             selectedAlignment === 'center' ? 'justify-center' : selectedAlignment === 'right' ? 'justify-end' : 'justify-start',
             !hasVideo && "mb-0"
           )}>
@@ -159,7 +159,7 @@ export default function ProgramPage() {
           </div>
 
           {hasVideo && (
-            <div className="max-w-4xl w-full mx-auto relative group mt-12 md:mt-24">
+            <div className="max-w-4xl w-full mx-auto relative group mt-10 md:mt-16">
               <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 bg-white/[0.03] backdrop-blur-[12px] p-1">
                 <VideoPlayer videoId={program.demoVideoId} />
               </div>
@@ -170,7 +170,7 @@ export default function ProgramPage() {
 
       {/* Trust Bar */}
       {hasTrust && (
-        <div className="bg-white/[0.02] border-y border-white/5 py-10 md:py-14 px-6 backdrop-blur-[8px]">
+        <div className="bg-white/[0.02] border-y border-white/5 py-8 md:py-10 px-6 backdrop-blur-[8px]">
           <div className="max-w-7xl mx-auto flex flex-wrap justify-center md:justify-between items-center gap-8 text-white/60">
             {program.trustItems?.map((item, idx) => {
               const Icon = trustIconMap[item.iconName] || Globe;
@@ -236,7 +236,7 @@ export default function ProgramPage() {
         priceSubtext={program.priceSubtext}
       />
 
-      <footer className="py-20 md:py-40 px-6 border-t border-white/5 bg-background/80 backdrop-blur-md text-white overflow-hidden relative">
+      <footer className="py-20 md:py-32 px-6 border-t border-white/5 bg-background/80 backdrop-blur-md text-white overflow-hidden relative">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-20 relative z-10">
           <div className="md:col-span-2">
             <div className="flex items-center gap-1 mb-8 md:mb-10">
@@ -279,7 +279,7 @@ export default function ProgramPage() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto pt-10 md:pt-20 mt-10 md:mt-20 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+        <div className="max-w-7xl mx-auto pt-10 md:pt-16 mt-10 md:mt-16 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
           <p className="text-white/20 text-[10px] font-black uppercase tracking-widest">
             &copy; {new Date().getFullYear()} {program.footerCopyright || 'Freedom Magnet Hub Global. All Rights Reserved.'}
           </p>
