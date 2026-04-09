@@ -210,6 +210,10 @@ export function ProgramForm({ programId }: { programId: string }) {
                 <Slider value={[formData.titleFontSize]} onValueChange={v => setFormData({...formData, titleFontSize: v[0]})} min={40} max={120} />
               </div>
               <div className="space-y-3">
+                <div className="flex justify-between"><Label>Line Height</Label><span>{formData.lineHeight}</span></div>
+                <Slider value={[formData.lineHeight * 100]} onValueChange={v => setFormData({...formData, lineHeight: v[0] / 100})} min={50} max={200} step={5} />
+              </div>
+              <div className="space-y-3">
                 <div className="flex justify-between"><Label>Subtitle Size</Label><span>{formData.subtitleFontSize}px</span></div>
                 <Slider value={[formData.subtitleFontSize]} onValueChange={v => setFormData({...formData, subtitleFontSize: v[0]})} min={14} max={48} />
               </div>
@@ -481,7 +485,7 @@ export function ProgramForm({ programId }: { programId: string }) {
                 <div key={idx} className="flex gap-2">
                   <Input 
                     value={url} 
-                    onChange={e => updateArrayItem('videoTestimonials', idx, e.target.value)} 
+                    onChange={updateArrayItem.bind(null, 'videoTestimonials', idx)} 
                     placeholder="https://www.youtube.com/watch?v=..." 
                   />
                   <Button variant="ghost" size="icon" onClick={() => removeArrayItem('videoTestimonials', idx)} className="text-destructive">
