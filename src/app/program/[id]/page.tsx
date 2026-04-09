@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
@@ -73,6 +72,12 @@ export default function ProgramPage() {
 
   const selectedAlignment = program.textAlign || 'center';
   const hasVideo = !!program.demoVideoId;
+  const hasFeatures = program.features && program.features.length > 0;
+  const hasGallery = program.gallery && program.gallery.length > 0;
+  const hasVideoTestimonials = program.videoTestimonials && program.videoTestimonials.some(v => !!v);
+  const hasImageTestimonials = program.imageTestimonials && program.imageTestimonials.length > 0;
+  const hasFAQ = program.faqs && program.faqs.length > 0;
+  const hasTrust = program.trustItems && program.trustItems.length > 0;
 
   return (
     <div className="bg-background min-h-screen selection:bg-primary selection:text-white relative">
@@ -90,10 +95,10 @@ export default function ProgramPage() {
             </div>
           </div>
           <div className="hidden lg:flex items-center gap-10 text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-            <a href="#features" className="hover:text-white transition-colors">Framework</a>
-            <a href="#curriculum" className="hover:text-white transition-colors">Previews</a>
-            <a href="#testimonials" className="hover:text-white transition-colors">Results</a>
-            <a href="#faq" className="hover:text-white transition-colors">Questions</a>
+            {hasFeatures && <a href="#features" className="hover:text-white transition-colors">Framework</a>}
+            {hasGallery && <a href="#curriculum" className="hover:text-white transition-colors">Previews</a>}
+            {(hasVideoTestimonials || hasImageTestimonials) && <a href="#testimonials" className="hover:text-white transition-colors">Results</a>}
+            {hasFAQ && <a href="#faq" className="hover:text-white transition-colors">Questions</a>}
             <Button size="sm" className="fiery-gradient fiery-glow hover:brightness-110 text-white rounded-full font-black px-8 py-5 transition-all" asChild>
               <a href="#join">GRAB YOUR SEAT</a>
             </Button>
@@ -164,10 +169,10 @@ export default function ProgramPage() {
       </header>
 
       {/* Trust Bar */}
-      {program.trustItems && program.trustItems.length > 0 && (
+      {hasTrust && (
         <div className="bg-white/[0.02] border-y border-white/5 py-14 px-6 backdrop-blur-[8px]">
           <div className="max-w-7xl mx-auto flex flex-wrap justify-center md:justify-between items-center gap-8 text-white/60">
-            {program.trustItems.map((item, idx) => {
+            {program.trustItems?.map((item, idx) => {
               const Icon = trustIconMap[item.iconName] || Globe;
               return (
                 <div key={idx} className="flex items-center gap-3">
@@ -182,15 +187,17 @@ export default function ProgramPage() {
         </div>
       )}
 
-      <section id="features" className="scroll-mt-20">
-        <Features 
-          features={program.features} 
-          title={program.featuresTitle} 
-          subtitle={program.featuresSubtitle} 
-        />
-      </section>
+      {hasFeatures && (
+        <section id="features" className="scroll-mt-20">
+          <Features 
+            features={program.features} 
+            title={program.featuresTitle} 
+            subtitle={program.featuresSubtitle} 
+          />
+        </section>
+      )}
 
-      {program.gallery && program.gallery.length > 0 && (
+      {hasGallery && (
         <section id="curriculum" className="scroll-mt-20">
           <Gallery 
             images={program.gallery} 
@@ -200,30 +207,34 @@ export default function ProgramPage() {
         </section>
       )}
       
-      <div id="testimonials" className="scroll-mt-20">
-        {program.videoTestimonials && program.videoTestimonials.some(v => !!v) && (
-          <VideoTestimonials 
-            videoIds={program.videoTestimonials} 
-            title={program.testimonialsTitle}
-            subtitle={program.testimonialsSubtitle}
-          />
-        )}
-        {program.imageTestimonials && program.imageTestimonials.length > 0 && (
-          <ImageTestimonials 
-            testimonials={program.imageTestimonials} 
-            title={!program.videoTestimonials || !program.videoTestimonials.some(v => !!v) ? program.testimonialsTitle : undefined}
-            subtitle={!program.videoTestimonials || !program.videoTestimonials.some(v => !!v) ? program.testimonialsSubtitle : undefined}
-          />
-        )}
-      </div>
+      {(hasVideoTestimonials || hasImageTestimonials) && (
+        <div id="testimonials" className="scroll-mt-20">
+          {hasVideoTestimonials && (
+            <VideoTestimonials 
+              videoIds={program.videoTestimonials} 
+              title={program.testimonialsTitle}
+              subtitle={program.testimonialsSubtitle}
+            />
+          )}
+          {hasImageTestimonials && (
+            <ImageTestimonials 
+              testimonials={program.imageTestimonials} 
+              title={!hasVideoTestimonials ? program.testimonialsTitle : undefined}
+              subtitle={!hasVideoTestimonials ? program.testimonialsSubtitle : undefined}
+            />
+          )}
+        </div>
+      )}
 
-      <section id="faq" className="scroll-mt-20">
-        <FAQ 
-          faqs={program.faqs} 
-          title={program.faqTitle} 
-          subtitle={program.faqSubtitle} 
-        />
-      </section>
+      {hasFAQ && (
+        <section id="faq" className="scroll-mt-20">
+          <FAQ 
+            faqs={program.faqs} 
+            title={program.faqTitle} 
+            subtitle={program.faqSubtitle} 
+          />
+        </section>
+      )}
 
       <div id="join" className="scroll-mt-20">
         <CountdownCTA expiryDate={program.expiryDate} joinLink={program.joinButtonLink} />
@@ -262,9 +273,9 @@ export default function ProgramPage() {
           <div>
             <h4 className="font-headline font-black text-xs uppercase tracking-[0.3em] mb-8 text-white/30">Curriculum</h4>
             <ul className="space-y-6 text-sm font-bold text-white/40 uppercase tracking-wider">
-              <li><a href="#curriculum" className="hover:text-accent transition-colors">Program Specs</a></li>
-              <li><a href="#features" className="hover:text-accent transition-colors">Learning Path</a></li>
-              <li><a href="#testimonials" className="hover:text-accent transition-colors">Student Results</a></li>
+              {hasGallery && <li><a href="#curriculum" className="hover:text-accent transition-colors">Program Specs</a></li>}
+              {hasFeatures && <li><a href="#features" className="hover:text-accent transition-colors">Learning Path</a></li>}
+              {(hasVideoTestimonials || hasImageTestimonials) && <li><a href="#testimonials" className="hover:text-accent transition-colors">Student Results</a></li>}
               <li><Link href="/login" className="hover:text-accent transition-colors">Admin Console</Link></li>
             </ul>
           </div>
