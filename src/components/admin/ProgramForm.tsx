@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -11,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
 import { 
   Loader2, Save, Plus, Trash2, AlignLeft, AlignCenter, AlignRight, 
-  Globe, Trophy, Zap, Star, Users, BookOpen, ShieldCheck
+  Globe, Trophy, Zap, Star, Users, BookOpen, ShieldCheck, LayoutGrid
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { errorEmitter } from '@/firebase/error-emitter';
@@ -52,6 +53,8 @@ export function ProgramForm({ programId }: { programId: string }) {
     featuresSubtitle: '',
     galleryTitle: '',
     gallerySubtitle: '',
+    galleryColumns: 4,
+    galleryAspect: '4/3' as '1/1' | '16/9' | '4/3' | '3/4',
     testimonialsTitle: '',
     testimonialsSubtitle: '',
     faqTitle: '',
@@ -88,6 +91,8 @@ export function ProgramForm({ programId }: { programId: string }) {
         featuresSubtitle: program.featuresSubtitle || "We don't just teach code. We provide the tools, mindset, and network required for long-term professional autonomy.",
         galleryTitle: program.galleryTitle || 'Curriculum Previews',
         gallerySubtitle: program.gallerySubtitle || 'Explore the assets, modules, and strategic frameworks waiting inside.',
+        galleryColumns: program.galleryColumns || 4,
+        galleryAspect: program.galleryAspect || '4/3',
         testimonialsTitle: program.testimonialsTitle || 'Student Success Stories',
         testimonialsSubtitle: program.testimonialsSubtitle || 'Impact analysis and market feedback from the network.',
         faqTitle: program.faqTitle || 'Essential Inquiries',
@@ -120,6 +125,8 @@ export function ProgramForm({ programId }: { programId: string }) {
       featuresSubtitle: formData.featuresSubtitle,
       galleryTitle: formData.galleryTitle,
       gallerySubtitle: formData.gallerySubtitle,
+      galleryColumns: formData.galleryColumns,
+      galleryAspect: formData.galleryAspect,
       testimonialsTitle: formData.testimonialsTitle,
       testimonialsSubtitle: formData.testimonialsSubtitle,
       faqTitle: formData.faqTitle,
@@ -369,6 +376,45 @@ export function ProgramForm({ programId }: { programId: string }) {
               <Input value={formData.gallerySubtitle} onChange={e => setFormData({...formData, gallerySubtitle: e.target.value})} />
             </div>
           </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-muted/20 rounded-xl border mb-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <LayoutGrid className="w-4 h-4 text-primary" />
+                <Label className="text-xs uppercase font-black text-primary">Grid Layout</Label>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-between"><Label>Desktop Columns</Label><span>{formData.galleryColumns}</span></div>
+                <Slider 
+                  value={[formData.galleryColumns]} 
+                  onValueChange={v => setFormData({...formData, galleryColumns: v[0]})} 
+                  min={2} max={5} step={1} 
+                />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <Label className="text-xs uppercase font-black text-primary">Image Aspect Ratio (Size)</Label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { label: 'Square (1:1)', val: '1/1' },
+                  { label: 'Video (16:9)', val: '16/9' },
+                  { label: 'Classic (4:3)', val: '4/3' },
+                  { label: 'Tall (3:4)', val: '3/4' },
+                ].map((opt) => (
+                  <Button 
+                    key={opt.val}
+                    variant={formData.galleryAspect === opt.val ? 'default' : 'outline'} 
+                    size="sm" 
+                    onClick={() => setFormData({...formData, galleryAspect: opt.val as any})}
+                    className="text-[10px] font-bold"
+                  >
+                    {opt.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+
           {formData.gallery.map((url, idx) => (
             <div key={idx} className="flex gap-2">
               <Input value={url} onChange={e => updateArrayItem('gallery', idx, e.target.value)} placeholder="https://image-url.com" />

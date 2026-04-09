@@ -35,6 +35,8 @@ export interface Program {
   featuresSubtitle?: string;
   galleryTitle?: string;
   gallerySubtitle?: string;
+  galleryColumns?: number;
+  galleryAspect?: '1/1' | '16/9' | '4/3' | '3/4';
   testimonialsTitle?: string;
   testimonialsSubtitle?: string;
   faqTitle?: string;

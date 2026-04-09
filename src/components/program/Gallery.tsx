@@ -1,13 +1,37 @@
+
 import { Card } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 interface GalleryProps {
   images: string[];
   title?: string;
   subtitle?: string;
+  columns?: number;
+  aspect?: '1/1' | '16/9' | '4/3' | '3/4';
 }
 
-export function Gallery({ images, title = 'Curriculum Previews', subtitle }: GalleryProps) {
+export function Gallery({ 
+  images, 
+  title = 'Curriculum Previews', 
+  subtitle,
+  columns = 4,
+  aspect = '4/3'
+}: GalleryProps) {
   if (!images || images.length === 0) return null;
+
+  const columnClasses: Record<number, string> = {
+    2: 'lg:grid-cols-2',
+    3: 'lg:grid-cols-3',
+    4: 'lg:grid-cols-4',
+    5: 'lg:grid-cols-5',
+  };
+
+  const aspectClasses: Record<string, string> = {
+    '1/1': 'aspect-square',
+    '16/9': 'aspect-video',
+    '4/3': 'aspect-[4/3]',
+    '3/4': 'aspect-[3/4]',
+  };
 
   return (
     <section id="curriculum" className="py-16 md:py-24 px-6 relative scroll-mt-20">
@@ -24,9 +48,18 @@ export function Gallery({ images, title = 'Curriculum Previews', subtitle }: Gal
           )}
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className={cn(
+          "grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8",
+          columnClasses[columns] || 'lg:grid-cols-4'
+        )}>
           {images.map((src, idx) => (
-            <Card key={idx} className="overflow-hidden border border-white/10 glass-card hover:shadow-primary/20 transition-all duration-500 group aspect-[4/3] rounded-[2.5rem]">
+            <Card 
+              key={idx} 
+              className={cn(
+                "overflow-hidden border border-white/10 glass-card hover:shadow-primary/20 transition-all duration-500 group rounded-[2.5rem]",
+                aspectClasses[aspect] || 'aspect-[4/3]'
+              )}
+            >
               <div className="relative h-full w-full">
                 <img
                   src={src}

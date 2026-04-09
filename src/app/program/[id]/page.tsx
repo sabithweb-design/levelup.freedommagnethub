@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
@@ -200,6 +201,8 @@ export default function ProgramPage() {
           images={program.gallery} 
           title={program.galleryTitle} 
           subtitle={program.gallerySubtitle} 
+          columns={program.galleryColumns}
+          aspect={program.galleryAspect}
         />
       )}
       
