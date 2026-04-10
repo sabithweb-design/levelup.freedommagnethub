@@ -37,8 +37,6 @@ export function Gallery({
     '3/4': 'aspect-[3/4]',
   };
 
-  const fitClass = fit === 'contain' ? 'object-contain p-4 bg-white/[0.02]' : 'object-cover';
-
   return (
     <section id="curriculum" className="py-16 md:py-24 px-6 relative scroll-mt-20">
       <div className="max-w-7xl mx-auto">
@@ -66,14 +64,18 @@ export function Gallery({
                 aspectClasses[aspect] || 'aspect-[4/3]'
               )}
             >
-              <div className="relative h-full w-full flex items-center justify-center">
+              <div 
+                className={cn(
+                  "relative h-full w-full flex items-center justify-center transition-colors duration-500",
+                  fit === 'contain' ? "bg-[#FDF5E6] p-6 md:p-8" : "bg-transparent"
+                )}
+              >
                 <img
                   src={src}
                   alt={`Module preview ${idx + 1}`}
                   className={cn(
-                    "w-full h-full transition-transform duration-700",
-                    fitClass,
-                    fit === 'cover' && "group-hover:scale-110"
+                    "transition-transform duration-700",
+                    fit === 'contain' ? "w-full h-full object-contain" : "w-full h-full object-cover group-hover:scale-110"
                   )}
                   loading="lazy"
                 />
