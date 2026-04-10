@@ -67,7 +67,7 @@ export function Gallery({
               <div 
                 className={cn(
                   "relative h-full w-full flex items-center justify-center transition-colors duration-500",
-                  fit === 'contain' ? "bg-[#FDF5E6] p-6 md:p-8" : "bg-transparent"
+                  fit === 'contain' ? "bg-[#FDF5E6] p-2 md:p-2" : "bg-transparent"
                 )}
               >
                 <img
