@@ -1,10 +1,9 @@
 "use client"
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Timer, ArrowRight, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 
-export function CountdownCTA({ expiryDate, joinLink }: { expiryDate: string; joinLink: string }) {
+export function CountdownCTA({ expiryDate }: { expiryDate: string; joinLink: string }) {
   const [timeLeft, setTimeLeft] = useState<{ h: number; m: number; s: number } | null>(null);
 
   useEffect(() => {
@@ -36,53 +35,32 @@ export function CountdownCTA({ expiryDate, joinLink }: { expiryDate: string; joi
     return () => clearInterval(timer);
   }, []);
 
+  if (!timeLeft) return null;
+
   return (
-    <section id="join" className="py-24 md:py-48 px-6 relative overflow-hidden border-t border-white/5 scroll-mt-20">
+    <section id="join" className="py-24 md:py-32 px-6 relative overflow-hidden border-t border-white/5 scroll-mt-20">
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[140px] -translate-y-1/2 translate-x-1/2 -z-10"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent/10 rounded-full blur-[140px] translate-y-1/2 -translate-x-1/2 -z-10"></div>
       
       <div className="max-w-4xl mx-auto text-center relative z-10">
-        <div className="inline-flex items-center gap-2 mb-10 px-6 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
+        <div className="inline-flex items-center gap-2 mb-12 px-6 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
           <ShieldCheck className="w-4 h-4 text-accent" />
-          <span className="text-xs font-black uppercase tracking-[0.3em] text-white">Final Call for Enrolment</span>
+          <span className="text-xs font-black uppercase tracking-[0.3em] text-white">Enrollment Opportunity Closing</span>
         </div>
-        
-        <h2 className="text-4xl md:text-7xl font-headline font-black mb-8 tracking-tighter leading-none text-white uppercase">Achieve Professional Mastery</h2>
-        <p className="text-foreground/80 text-lg md:text-2xl mb-12 md:mb-16 max-w-2xl mx-auto font-medium">
-          Secure your position in the upcoming cohort and begin your journey toward strategic autonomy.
-        </p>
 
-        {timeLeft && (
-          <div className="flex justify-center gap-4 md:gap-6 mb-12 md:mb-16">
-            {[
-              { label: 'Hours', val: timeLeft.h },
-              { label: 'Min', val: timeLeft.m },
-              { label: 'Sec', val: timeLeft.s },
-            ].map((unit, idx) => (
-              <div key={idx} className="flex flex-col items-center">
-                <div className="glass-card w-20 h-20 md:w-32 md:h-32 rounded-[1.5rem] md:rounded-[2rem] flex items-center justify-center text-3xl md:text-6xl font-black mb-3 border border-white/10 text-white">
-                  {unit.val.toString().padStart(2, '0')}
-                </div>
-                <span className="text-[10px] uppercase tracking-[0.3em] font-black text-white/40">{unit.label}</span>
+        <div className="flex justify-center gap-4 md:gap-8">
+          {[
+            { label: 'Hours', val: timeLeft.h },
+            { label: 'Min', val: timeLeft.m },
+            { label: 'Sec', val: timeLeft.s },
+          ].map((unit, idx) => (
+            <div key={idx} className="flex flex-col items-center">
+              <div className="glass-card w-24 h-24 md:w-40 md:h-40 rounded-[2rem] md:rounded-[2.5rem] flex items-center justify-center text-4xl md:text-7xl font-black mb-4 border border-white/10 text-white shadow-2xl">
+                {unit.val.toString().padStart(2, '0')}
               </div>
-            ))}
-          </div>
-        )}
-
-        <div className="flex flex-col items-center gap-6">
-          <Button 
-            size="lg" 
-            className="h-14 px-10 text-lg font-black fiery-gradient fiery-glow hover:brightness-110 text-white rounded-full transition-all hover:scale-105 active:scale-95 group uppercase tracking-tight"
-            asChild
-          >
-            <a href={joinLink || '#'}>
-              Join Now <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-2 transition-transform" />
-            </a>
-          </Button>
-          <div className="flex items-center gap-3 text-sm text-white/40 mt-4 font-bold uppercase tracking-widest">
-            <Timer className="w-5 h-5 text-accent" />
-            <span>Registration window closing</span>
-          </div>
+              <span className="text-[11px] uppercase tracking-[0.4em] font-black text-white/30">{unit.label}</span>
+            </div>
+          ))}
         </div>
       </div>
     </section>
