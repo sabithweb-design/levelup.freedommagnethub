@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useDoc, useMemoFirebase, useFirestore } from '@/firebase';
@@ -7,7 +6,6 @@ import { useParams } from 'next/navigation';
 import { VideoPlayer } from '@/components/program/VideoPlayer';
 import { Gallery } from '@/components/program/Gallery';
 import { VideoTestimonials, ImageTestimonials } from '@/components/program/Testimonials';
-import { CountdownCTA } from '@/components/program/CountdownCTA';
 import { StickyOfferBar } from '@/components/program/StickyOfferBar';
 import { Features } from '@/components/program/Features';
 import { FAQ } from '@/components/program/FAQ';
@@ -101,7 +99,7 @@ export default function ProgramPage() {
             {(hasVideoTestimonials || hasImageTestimonials) && <a href="#testimonials" className="hover:text-white transition-colors">Results</a>}
             {hasFAQ && <a href="#faq" className="hover:text-white transition-colors">Questions</a>}
             <Button size="sm" className="fiery-gradient fiery-glow hover:brightness-110 text-white rounded-full font-black px-8 py-5 transition-all" asChild>
-              <a href="#join">GRAB YOUR SEAT</a>
+              <a href={program.joinButtonLink || '#'}>GRAB YOUR SEAT</a>
             </Button>
           </div>
         </div>
@@ -146,7 +144,7 @@ export default function ProgramPage() {
             !hasVideo && "mb-0"
           )}>
             <Button size="lg" className="h-14 px-10 text-lg font-black fiery-gradient fiery-glow hover:brightness-110 text-white rounded-full transition-all group uppercase tracking-tight hover:scale-105 active:scale-95" asChild>
-              <a href="#join">
+              <a href={program.joinButtonLink || '#'}>
                 GRAB YOUR SEAT <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-2 transition-transform" />
               </a>
             </Button>
@@ -160,7 +158,7 @@ export default function ProgramPage() {
           </div>
 
           {hasVideo && (
-            <div className="max-w-4xl w-full mx-auto relative group mt-10 md:mt-16">
+            <div className="max-w-4xl w-full mx-auto relative group mt-10 md:mt-12">
               <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl border border-white/10 bg-white/[0.03] backdrop-blur-[12px] p-1">
                 <VideoPlayer videoId={program.demoVideoId} />
               </div>
@@ -229,8 +227,6 @@ export default function ProgramPage() {
           subtitle={program.faqSubtitle} 
         />
       )}
-
-      <CountdownCTA expiryDate={program.expiryDate} joinLink={program.joinButtonLink} />
 
       <StickyOfferBar 
         expiryDate={program.expiryDate} 
