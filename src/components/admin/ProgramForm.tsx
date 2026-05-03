@@ -173,11 +173,20 @@ export function ProgramForm({ programId }: { programId: string }) {
 
   const updateArrayItem = (key: 'features' | 'trustItems' | 'faqs' | 'imageTestimonials' | 'gallery' | 'videoTestimonials', index: number, value: any) => {
     const newItems = [...(formData[key] as any[])];
-    if (typeof value === 'object' && value !== null) {
-      newItems[index] = { ...newItems[index], ...value };
+    
+    // Only merge if the item and the new value are both objects
+    const currentItem = newItems[index];
+    if (
+      typeof currentItem === 'object' && 
+      currentItem !== null && 
+      typeof value === 'object' && 
+      value !== null
+    ) {
+      newItems[index] = { ...currentItem, ...value };
     } else {
       newItems[index] = value;
     }
+    
     setFormData(prev => ({ ...prev, [key]: newItems }));
   };
 
@@ -485,7 +494,7 @@ export function ProgramForm({ programId }: { programId: string }) {
                 <div key={idx} className="flex gap-2">
                   <Input 
                     value={url} 
-                    onChange={updateArrayItem.bind(null, 'videoTestimonials', idx)} 
+                    onChange={e => updateArrayItem('videoTestimonials', idx, e.target.value)} 
                     placeholder="https://www.youtube.com/watch?v=..." 
                   />
                   <Button variant="ghost" size="icon" onClick={() => removeArrayItem('videoTestimonials', idx)} className="text-destructive">
